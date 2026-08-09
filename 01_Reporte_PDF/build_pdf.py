@@ -1,9 +1,7 @@
 """
-build_perfect_pdf_clean.py — Reconstruye reporte_master_perfecto.tex con:
-1. Sin "Modelo C" en la nota metodológica del cuadro de decisión.
-2. Sin duplicado de "Aviso legal" en la página 1 (eliminado el segundo).
-3. Cuadro 14 (Balance Consolidado) formateado con la misma nota de fuente en gris que Cuadro 13 y los anteriores.
-4. Títulos y estructura en Georgia Bold via fontspec.
+build_perfect_pdf_scaled.py — Reduce 10% el tamaño de las figuras en el PDF (0.90 -> 0.81)
+y explaya el texto técnico de la Tesis de Inversión en la Página 1 con rigor académico
+sin ornamentos ni frases de IA.
 """
 
 import re, os
@@ -14,7 +12,13 @@ OUT_TEX = r"C:\Users\fedea\Valuacion\viejo\08_Modelo_Correcto\Reportes\Reporte\r
 with open(SRC_TEX, 'r', encoding='utf-8', errors='ignore') as f:
     tex = f.read()
 
-# 1. Preamble XeLaTeX con Georgia como Fuente Principal
+# 1. Reducir 10% el tamaño de las figuras (0.90\linewidth -> 0.81\linewidth, 0.88 -> 0.79)
+tex = re.sub(r'width=0\.90\\linewidth', r'width=0.81\\linewidth', tex)
+tex = re.sub(r'width=0\.88\\linewidth', r'width=0.79\\linewidth', tex)
+tex = re.sub(r'width=0\.85\\linewidth', r'width=0.765\\linewidth', tex)
+tex = re.sub(r'width=0\.95\\linewidth', r'width=0.855\\linewidth', tex)
+
+# 2. Preamble XeLaTeX con Georgia como Fuente Principal
 preamble_old = r"""\usepackage{helvet}
 \usepackage{mathpazo}
 \usepackage{titlesec}
@@ -37,19 +41,40 @@ preamble_new = r"""\usepackage{fontspec}
 tex = tex.replace(preamble_old, preamble_new)
 tex = tex.replace(r"\usepackage[utf8]{inputenc}", "% fontspec handled inputenc")
 
-# 2. Título Principal en Georgia
+# 3. Título Principal en Georgia
 tex = tex.replace(
     r"{\fontsize{24}{28}\selectfont \color{gsnavy} \textbf{Aluar Aluminio Argentino}}",
     r"{\fontsize{24}{28}\selectfont \georgiahead \color{gsnavy} \textbf{Aluar Aluminio Argentino}}"
 )
 
-# 3. Eliminar el segundo "Aviso legal:" duplicado en minipage
-tex = tex.replace(
-    r"\textbf{Aviso legal:} Este dictamen técnico es la salida cuantitativa de un modelo académico. No constituye recomendación de inversión.",
-    ""
-)
+# 4. Explayar Tesis de Inversión en Página 1 sin ornamentos ni frases de IA
+TESIS_EXPANDED = r"""\begin{minipage}[t]{0.56\textwidth}
+    \section*{Tesis de Inversión}
+    ALUAR consolida su posición como único productor primario de aluminio en Argentina (capacidad instalada de 460.000 toneladas anuales), operando un modelo de negocio integrado verticalmente con sesgo exportador estructural (~80\% de ingresos en dólares estadounidenses). Su ventaja competitiva emana de su matriz energética autogenerada: la Central Hidroeléctrica Futaleufú (320 MW asignados) y el Parque Eólico Aluar (200 MW operativos, en expansión a 582 MW con la Etapa V / La Flecha), asegurando su lugar en el primer cuartil de la curva global de cash cost C1 (~USD 1.930/Tn).
 
-# 4. Cuadro de Decisión Exacto del Screenshot SIN "Modelo C"
+    Bajo el modelo DCF estocástico con tasa de descuento mixta CAPM-Lambda ($WACC = 7,06\%$, $Ke = 9,30\%$, $\lambda = 0,20$), la valuación fundamental arroja un \textbf{dictamen técnico de COMPRAR}. El mercado subestima la solidez patrimonial de la compañía (deuda financiera concentrada en ON Serie 8 al 3,80\% bruto, $Kd_{\text{post-tax}} = 2,47\%$), la convergencia a largo plazo de la estructura de costos por depreciación del parque eólico y la compresión del riesgo país implícita en la curva soberana.
+
+    El precio objetivo determinístico base se ubica en \textbf{ARS 1.236,00 por acción} (USD 0,78), presentando un \textbf{upside del +25,8\%} sobre la cotización spot de ARS 982,50. Al incorporar el valor estocástico de la Opción Real de expansión eólica (PEAL V, +ARS 19,60 por acción vía simulación Longstaff-Schwartz / LSM), el \textbf{Target Price Integrado alcanza ARS 1.255,60 por acción} (USD 0,79, upside total del +27,8\%).
+
+    \vspace{0.25cm}
+    \begin{tcolorbox}[colback=white, colframe=gsblue!40, boxrule=0.5pt, title={\small\georgiahead \textbf{Catalizadores Clave y Factores de Riesgo (12-18m)}}, coltitle=gsnavy]
+        \footnotesize
+        \begin{itemize}
+            \item[\color{aluargreen}$\uparrow$] \textbf{Certificación ASI (Aluminio Verde):} Habilitación de prima comercial en la UE y exención del impuesto por carbono (CBAM).
+            \item[\color{aluargreen}$\uparrow$] \textbf{Desregulación Cambiaria y RIGI:} Normalización del flujo de dividendos y exención arancelaria en equipamiento eólico.
+            \item[\color{riskred}$\downarrow$] \textbf{Atraso del Tipo de Cambio Real (TCR):} Inflación interna en USD superior al crawling peg, encareciendo el OPEX local.
+            \item[\color{riskred}$\downarrow$] \textbf{Shock de Demanda en el LME:} Sobreoferta global que empuje la cotización internacional del aluminio por debajo de USD 2.200/Tn.
+        \end{itemize}
+    \end{tcolorbox}
+\end{minipage}"""
+
+pos_min_start = tex.find(r"\begin{minipage}[t]{0.56\textwidth}")
+if pos_min_start != -1:
+    pos_min_end = tex.find(r"\end{minipage}", pos_min_start)
+    if pos_min_end != -1:
+        tex = tex[:pos_min_start] + TESIS_EXPANDED + tex[pos_min_end + len(r"\end{minipage}"):]
+
+# 5. Cuadro de Decisión Exacto del Screenshot SIN "Modelo C"
 DECISION_BOX_EXACT = r"""\begin{tcolorbox}[colback=white, colframe=gsnavy, boxrule=1pt, arc=4pt, left=6pt, right=6pt, top=6pt, bottom=6pt]
     \begin{center}
         {\fontsize{18}{22}\selectfont \georgiahead \textbf{COMPRAR}} \\[0.2cm]
@@ -88,7 +113,7 @@ if pos_start != -1:
     if pos_end != -1:
         tex = tex[:pos_start] + DECISION_BOX_EXACT + tex[pos_end + len(r"\end{tcolorbox}"):]
 
-# 5. Numerar secciones principales
+# 6. Numerar secciones principales
 def convert_sec(m):
     cmd = m.group(1)
     title = m.group(2)
@@ -100,7 +125,7 @@ def convert_sec(m):
 tex = re.sub(r'\\(section)\*\{([^}]+)\}', convert_sec, tex)
 tex = re.sub(r'\\(subsection)\*\{([^}]+)\}', convert_sec, tex)
 
-# 6. Insertar TOC
+# 7. Insertar TOC
 TOC_BLOCK = r"""
 \clearpage
 \begingroup
@@ -115,7 +140,7 @@ tex = tex.replace(
     TOC_BLOCK + r"\section{\color{gsnavy}Descripción de la Compañía}"
 )
 
-# 7. Recuadro tcolorbox Cópula de Clayton
+# 8. Recuadro tcolorbox Cópula de Clayton
 COPULA_BOX = r"""
 \vspace{0.2cm}
 \begin{tcolorbox}[colback=lightgray!30, colframe=gsnavy, boxrule=0.8pt, title={\small\georgiahead \textbf{Limitación Metodológica: Selección de Cópula en la Valuación Estocástica}}, coltitle=white]
@@ -133,7 +158,7 @@ tex = tex.replace(
     r"\subsection{\color{gsblue}Pruebas de Ajuste de Distribuciones (Goodness-of-Fit) y Cópula de Clayton}" + "\n" + COPULA_BOX
 )
 
-# 8. Apéndice EEFF y Formatear Cuadro 14 con nota gris idéntica
+# 9. Apéndice EEFF y Formatear Cuadro 14 con nota gris idéntica
 APENDICE_EEFF = r"""
 \section*{\color{gsnavy}Apéndice: Estados Financieros Auditados FY2020--FY2025 (USD MM)}
 \label{sec:apendice-eeff}
@@ -197,8 +222,8 @@ tex = tex.replace(
     APENDICE_EEFF + "\n\\section*{Referencias Bibliográficas y Fuentes Académicas}"
 )
 
-# 9. Guardar TeX
+# 10. Guardar TeX
 with open(OUT_TEX, 'w', encoding='utf-8') as f:
     f.write(tex)
 
-print(f"[OK] {OUT_TEX} reconstruido limpiamente.")
+print(f"[OK] {OUT_TEX} construido con figuras 10% reducidas y Tesis de Inversión ampliada.")
