@@ -1,13 +1,9 @@
 """
-build_perfect_pdf_georgia_exact.py
-Genera reporte_master_perfecto.tex usando XeLaTeX y Georgia Font en todo el documento:
-- Título principal 'Aluar Aluminio Argentino' en Georgia Bold 24pt
-- Todos los encabezados (\section, \subsection, \subsubsection) en Georgia Bold
-- Cuadro de decisión idéntico 100% al screenshot proporcionado por el usuario
-- Las 30 figuras de figures_pristine/ incluidas
-- Cópula de Clayton recuadro de limitación metodológica
-- Tabla de contenidos (Índice) numerado
-- Apéndice EEFF antes de Referencias
+build_perfect_pdf_clean.py — Reconstruye reporte_master_perfecto.tex con:
+1. Sin "Modelo C" en la nota metodológica del cuadro de decisión.
+2. Sin duplicado de "Aviso legal" en la página 1 (eliminado el segundo).
+3. Cuadro 14 (Balance Consolidado) formateado con la misma nota de fuente en gris que Cuadro 13 y los anteriores.
+4. Títulos y estructura en Georgia Bold via fontspec.
 """
 
 import re, os
@@ -18,7 +14,7 @@ OUT_TEX = r"C:\Users\fedea\Valuacion\viejo\08_Modelo_Correcto\Reportes\Reporte\r
 with open(SRC_TEX, 'r', encoding='utf-8', errors='ignore') as f:
     tex = f.read()
 
-# 1. Configurar Preamble XeLaTeX con Georgia como Fuente Principal
+# 1. Preamble XeLaTeX con Georgia como Fuente Principal
 preamble_old = r"""\usepackage{helvet}
 \usepackage{mathpazo}
 \usepackage{titlesec}
@@ -47,7 +43,13 @@ tex = tex.replace(
     r"{\fontsize{24}{28}\selectfont \georgiahead \color{gsnavy} \textbf{Aluar Aluminio Argentino}}"
 )
 
-# 3. Cuadro de Decisión Exacto del Screenshot
+# 3. Eliminar el segundo "Aviso legal:" duplicado en minipage
+tex = tex.replace(
+    r"\textbf{Aviso legal:} Este dictamen técnico es la salida cuantitativa de un modelo académico. No constituye recomendación de inversión.",
+    ""
+)
+
+# 4. Cuadro de Decisión Exacto del Screenshot SIN "Modelo C"
 DECISION_BOX_EXACT = r"""\begin{tcolorbox}[colback=white, colframe=gsnavy, boxrule=1pt, arc=4pt, left=6pt, right=6pt, top=6pt, bottom=6pt]
     \begin{center}
         {\fontsize{18}{22}\selectfont \georgiahead \textbf{COMPRAR}} \\[0.2cm]
@@ -77,17 +79,16 @@ DECISION_BOX_EXACT = r"""\begin{tcolorbox}[colback=white, colframe=gsnavy, boxru
     \vspace{0.25cm}
     \color{bordergray}\rule{\textwidth}{0.5pt}
     \vspace{0.1cm}
-    {\tiny \color{gsgray} \textbf{Nota metodológica.} Este reporte corresponde al Modelo C Académico, que aplica la metodología $CRP = \lambda \times EMBI+$ y Opción Real aditiva por LSMC. Los parámetros de mercado (Beta OLS, Rf, EMBI+, CCL) están congelados al cierre del 23-jul-2026; el modelo Excel adjunto es reproducible pero no estático y puede mostrar una variación residual de hasta $\pm 5\,\%$ en el Target si se recalcula con datos de mercado más recientes. El detalle completo de los 18 supuestos del modelo, con fuente individual de cada uno, está disponible en el slide ``Metodología · Supuestos del modelo'' de la presentación adjunta y en la hoja ``0) Supuestos'' del modelo Excel oficial.\par}
+    {\tiny \color{gsgray} \textbf{Nota metodológica.} Este reporte aplica la metodología $CRP = \lambda \times EMBI+$ y Opción Real aditiva por LSMC. Los parámetros de mercado (Beta OLS, Rf, EMBI+, CCL) están congelados al cierre del 23-jul-2026; el modelo Excel adjunto es reproducible pero no estático y puede mostrar una variación residual de hasta $\pm 5\,\%$ en el Target si se recalcula con datos de mercado más recientes. El detalle completo de los 18 supuestos del modelo, con fuente individual de cada uno, está disponible en el slide ``Metodología · Supuestos del modelo'' de la presentación adjunta y en la hoja ``0) Supuestos'' del modelo Excel oficial.\par}
 \end{tcolorbox}"""
 
-# Reemplazar cuadro existente en el TeX por el exacto
 pos_start = tex.find(r"\begin{tcolorbox}[colback=lightgray!50")
 if pos_start != -1:
     pos_end = tex.find(r"\end{tcolorbox}", pos_start)
     if pos_end != -1:
         tex = tex[:pos_start] + DECISION_BOX_EXACT + tex[pos_end + len(r"\end{tcolorbox}"):]
 
-# 4. Numeración de secciones principales (excepto Tesis, Conclusión, Referencias)
+# 5. Numerar secciones principales
 def convert_sec(m):
     cmd = m.group(1)
     title = m.group(2)
@@ -99,7 +100,7 @@ def convert_sec(m):
 tex = re.sub(r'\\(section)\*\{([^}]+)\}', convert_sec, tex)
 tex = re.sub(r'\\(subsection)\*\{([^}]+)\}', convert_sec, tex)
 
-# 5. Insertar Table of Contents justo después del bloque de Tesis e Portada
+# 6. Insertar TOC
 TOC_BLOCK = r"""
 \clearpage
 \begingroup
@@ -114,7 +115,7 @@ tex = tex.replace(
     TOC_BLOCK + r"\section{\color{gsnavy}Descripción de la Compañía}"
 )
 
-# 6. Recuadro tcolorbox de Cópula de Clayton
+# 7. Recuadro tcolorbox Cópula de Clayton
 COPULA_BOX = r"""
 \vspace{0.2cm}
 \begin{tcolorbox}[colback=lightgray!30, colframe=gsnavy, boxrule=0.8pt, title={\small\georgiahead \textbf{Limitación Metodológica: Selección de Cópula en la Valuación Estocástica}}, coltitle=white]
@@ -132,7 +133,7 @@ tex = tex.replace(
     r"\subsection{\color{gsblue}Pruebas de Ajuste de Distribuciones (Goodness-of-Fit) y Cópula de Clayton}" + "\n" + COPULA_BOX
 )
 
-# 7. Apéndice EEFF antes de Referencias
+# 8. Apéndice EEFF y Formatear Cuadro 14 con nota gris idéntica
 APENDICE_EEFF = r"""
 \section*{\color{gsnavy}Apéndice: Estados Financieros Auditados FY2020--FY2025 (USD MM)}
 \label{sec:apendice-eeff}
@@ -146,7 +147,7 @@ NIC 29 tomando la columna del ejercicio corriente de su propio informe anual aud
 \begin{table}[H]
 \centering
 \caption{\textbf{Estado de Resultados Consolidado Auditado (FY2020--FY2025, USD MM)}
-{\small\color{gsgray} Fuente: Memorias anuales de Aluar S.A.I.C., PwC. CCL de cierre: 77, 165, 263, 503, 1.350, 1.430.}}
+{\small\color{gsgray} (Fuente: Memorias anuales de Aluar S.A.I.C., PwC. CCL de cierre: 77, 165, 263, 503, 1.350, 1.430.)}}
 \small
 \begin{tabular}{lrrrrrr}
 \toprule
@@ -171,7 +172,8 @@ Impuesto Ganancias             & (7,5)  & (47,9) & (82,8) & (11,3) & (66,7)  & (
 \vspace{0.1cm}
 \begin{table}[H]
 \centering
-\caption{\textbf{Balance Consolidado Resumido y Flujo de Fondos (FY2020--FY2025, USD MM)}}
+\caption{\textbf{Balance Consolidado Resumido y Flujo de Fondos (FY2020--FY2025, USD MM)}
+{\small\color{gsgray} (Fuente: Memorias anuales de Aluar S.A.I.C., PwC. CCL de cierre: 77, 165, 263, 503, 1.350, 1.430.)}}
 \small
 \begin{tabular}{lrrrrrr}
 \toprule
@@ -195,8 +197,8 @@ tex = tex.replace(
     APENDICE_EEFF + "\n\\section*{Referencias Bibliográficas y Fuentes Académicas}"
 )
 
-# 8. Guardar archivo TeX
+# 9. Guardar TeX
 with open(OUT_TEX, 'w', encoding='utf-8') as f:
     f.write(tex)
 
-print(f"[OK] {OUT_TEX} construido con Georgia font y Cuadro exacto.")
+print(f"[OK] {OUT_TEX} reconstruido limpiamente.")
