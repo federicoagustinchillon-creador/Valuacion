@@ -1,15 +1,16 @@
 """
-build_perfect_pdf.py — Construye el TeX perfecto desde el backup pre_xelatex de 906 líneas:
-- Configura Georgia en BOLD para todos los títulos via fontspec + titlesec
-- Mantiene el cuadro de decisión EXACTO del backup pre_xelatex
-- Añade el recuadro tcolorbox de limitación metodológica sobre Cópulas (Clayton vs Gaussiana)
-- Añade Índice general (tableofcontents) con numeración de secciones
-- Inserta Apéndice de Estados Financieros Auditados (EEFF) ANTES de Referencias Bibliográficas
-- Sin exceso de espacio en blanco
-- Sin vestigios ni frases de IA
+build_perfect_pdf_georgia_exact.py
+Genera reporte_master_perfecto.tex usando XeLaTeX y Georgia Font en todo el documento:
+- Título principal 'Aluar Aluminio Argentino' en Georgia Bold 24pt
+- Todos los encabezados (\section, \subsection, \subsubsection) en Georgia Bold
+- Cuadro de decisión idéntico 100% al screenshot proporcionado por el usuario
+- Las 30 figuras de figures_pristine/ incluidas
+- Cópula de Clayton recuadro de limitación metodológica
+- Tabla de contenidos (Índice) numerado
+- Apéndice EEFF antes de Referencias
 """
 
-import sys, os, re
+import re, os
 
 SRC_TEX = r"C:\Users\fedea\Valuacion\viejo\08_Modelo_Correcto\Reportes\Reporte\reporte_modelo_C_BACKUP_pre_xelatex_20260803_183015.tex"
 OUT_TEX = r"C:\Users\fedea\Valuacion\viejo\08_Modelo_Correcto\Reportes\Reporte\reporte_master_perfecto.tex"
@@ -17,7 +18,7 @@ OUT_TEX = r"C:\Users\fedea\Valuacion\viejo\08_Modelo_Correcto\Reportes\Reporte\r
 with open(SRC_TEX, 'r', encoding='utf-8', errors='ignore') as f:
     tex = f.read()
 
-# 1. Modificar el Preamble para usar fontspec con Georgia para Títulos
+# 1. Configurar Preamble XeLaTeX con Georgia como Fuente Principal
 preamble_old = r"""\usepackage{helvet}
 \usepackage{mathpazo}
 \usepackage{titlesec}
@@ -25,8 +26,8 @@ preamble_old = r"""\usepackage{helvet}
 \titleformat{\subsection}{\sffamily\large\bfseries\color{gsblue}}{\thesubsection}{1em}{}"""
 
 preamble_new = r"""\usepackage{fontspec}
+\setmainfont{Georgia}[BoldFont={Georgia Bold}, ItalicFont={Georgia Italic}]
 \newfontfamily\georgiahead{Georgia}[BoldFont={Georgia Bold}]
-\usepackage{mathpazo} % Palatino font para el cuerpo
 \usepackage{titlesec}
 \titleformat{\section}{\georgiahead\Large\bfseries\color{gsnavy}}{\thesection}{1em}{}
 \titleformat{\subsection}{\georgiahead\large\bfseries\color{gsblue}}{\thesubsection}{1em}{}
@@ -38,21 +39,67 @@ preamble_new = r"""\usepackage{fontspec}
 \setlength{\cftbeforesecskip}{4pt}"""
 
 tex = tex.replace(preamble_old, preamble_new)
+tex = tex.replace(r"\usepackage[utf8]{inputenc}", "% fontspec handled inputenc")
 
-# 2. Hacer numeradas las secciones principales excepto Tesis, Conclusión, Referencias y Apéndices
-def convert_sections(m):
-    cmd = m.group(1)   # section or subsection
+# 2. Título Principal en Georgia
+tex = tex.replace(
+    r"{\fontsize{24}{28}\selectfont \color{gsnavy} \textbf{Aluar Aluminio Argentino}}",
+    r"{\fontsize{24}{28}\selectfont \georgiahead \color{gsnavy} \textbf{Aluar Aluminio Argentino}}"
+)
+
+# 3. Cuadro de Decisión Exacto del Screenshot
+DECISION_BOX_EXACT = r"""\begin{tcolorbox}[colback=white, colframe=gsnavy, boxrule=1pt, arc=4pt, left=6pt, right=6pt, top=6pt, bottom=6pt]
+    \begin{center}
+        {\fontsize{18}{22}\selectfont \georgiahead \textbf{COMPRAR}} \\[0.2cm]
+        {\small \color{gsgray} Target Base: \textbf{ARS 1.236,00} (USD 0,78)} \\
+        {\small \color{gsgray} Opción Real PEAL V: \textbf{+ARS 19,60} (USD 0,01)} \\
+        {\small \color{gsnavy} \textbf{Target Integrado: ARS 1.255,60} (USD 0,79)} \\
+        {\small \color{gsgray} Cotización Spot: ARS 982,50}
+    \end{center}
+    \vspace{0.15cm}
+    \color{gsnavy}\rule{\textwidth}{0.5pt}
+    
+    \vspace{0.2cm}
+    \footnotesize
+    \begin{tabular}{@{}l@{\extracolsep{\fill}}r@{}}
+        \textbf{WACC del Modelo:} & 7,06 \% \\
+        \textbf{Ke (con $\lambda$):} & 9,30 \% \\
+        \textbf{Beta (Hamada):} & 0,888 \\
+        \textbf{ERP (Damodaran):} & 4,18 \% \\
+        \textbf{CRP ($\lambda \times$EMBI+):} & 0,88 \% \\
+        \textbf{Kd (pre / post-tax):} & 3,80 \% / 2,47 \% \\
+        \textbf{D/E objetivo:} & 0,486 \\
+        \textbf{Crec. Terminal ($g$):} & 2,00 \% \\
+        \textbf{Upside Base / Total:} & +25,8 \% / +27,8 \% \\
+        \textbf{Tipo de Cambio (CCL):} & 1.584,25 \\
+    \end{tabular}
+    
+    \vspace{0.25cm}
+    \color{bordergray}\rule{\textwidth}{0.5pt}
+    \vspace{0.1cm}
+    {\tiny \color{gsgray} \textbf{Nota metodológica.} Este reporte corresponde al Modelo C Académico, que aplica la metodología $CRP = \lambda \times EMBI+$ y Opción Real aditiva por LSMC. Los parámetros de mercado (Beta OLS, Rf, EMBI+, CCL) están congelados al cierre del 23-jul-2026; el modelo Excel adjunto es reproducible pero no estático y puede mostrar una variación residual de hasta $\pm 5\,\%$ en el Target si se recalcula con datos de mercado más recientes. El detalle completo de los 18 supuestos del modelo, con fuente individual de cada uno, está disponible en el slide ``Metodología · Supuestos del modelo'' de la presentación adjunta y en la hoja ``0) Supuestos'' del modelo Excel oficial.\par}
+\end{tcolorbox}"""
+
+# Reemplazar cuadro existente en el TeX por el exacto
+pos_start = tex.find(r"\begin{tcolorbox}[colback=lightgray!50")
+if pos_start != -1:
+    pos_end = tex.find(r"\end{tcolorbox}", pos_start)
+    if pos_end != -1:
+        tex = tex[:pos_start] + DECISION_BOX_EXACT + tex[pos_end + len(r"\end{tcolorbox}"):]
+
+# 4. Numeración de secciones principales (excepto Tesis, Conclusión, Referencias)
+def convert_sec(m):
+    cmd = m.group(1)
     title = m.group(2)
-    # Check if this title should stay unnumbered
     for skip in ["Tesis de", "Conclusi", "Referencias", "Ap\u00e9ndice", "Ap\xc3", "Ap&"]:
         if skip in title:
             return m.group(0)
     return "\\" + cmd + "{" + title + "}"
 
-tex = re.sub(r'\\(section)\*\{([^}]+)\}', convert_sections, tex)
-tex = re.sub(r'\\(subsection)\*\{([^}]+)\}', convert_sections, tex)
+tex = re.sub(r'\\(section)\*\{([^}]+)\}', convert_sec, tex)
+tex = re.sub(r'\\(subsection)\*\{([^}]+)\}', convert_sec, tex)
 
-# 3. Insertar Table of Contents justo después de Tesis de Inversión y el Cuadro de Decisión
+# 5. Insertar Table of Contents justo después del bloque de Tesis e Portada
 TOC_BLOCK = r"""
 \clearpage
 \begingroup
@@ -67,7 +114,7 @@ tex = tex.replace(
     TOC_BLOCK + r"\section{\color{gsnavy}Descripción de la Compañía}"
 )
 
-# 4. Insertar el recuadro tcolorbox de Limitación Metodológica sobre Cópulas en la sección de Cópula de Clayton
+# 6. Recuadro tcolorbox de Cópula de Clayton
 COPULA_BOX = r"""
 \vspace{0.2cm}
 \begin{tcolorbox}[colback=lightgray!30, colframe=gsnavy, boxrule=0.8pt, title={\small\georgiahead \textbf{Limitación Metodológica: Selección de Cópula en la Valuación Estocástica}}, coltitle=white]
@@ -81,11 +128,11 @@ COPULA_BOX = r"""
 """
 
 tex = tex.replace(
-    r"\subsection*{\color{gsblue}Pruebas de Ajuste de Distribuciones (Goodness-of-Fit) y Cópula de Clayton}",
+    r"\subsection{\color{gsblue}Pruebas de Ajuste de Distribuciones (Goodness-of-Fit) y Cópula de Clayton}",
     r"\subsection{\color{gsblue}Pruebas de Ajuste de Distribuciones (Goodness-of-Fit) y Cópula de Clayton}" + "\n" + COPULA_BOX
 )
 
-# 5. Insertar Apéndice de Estados Financieros Auditados (EEFF) ANTES de Referencias
+# 7. Apéndice EEFF antes de Referencias
 APENDICE_EEFF = r"""
 \section*{\color{gsnavy}Apéndice: Estados Financieros Auditados FY2020--FY2025 (USD MM)}
 \label{sec:apendice-eeff}
@@ -148,8 +195,8 @@ tex = tex.replace(
     APENDICE_EEFF + "\n\\section*{Referencias Bibliográficas y Fuentes Académicas}"
 )
 
-# 6. Guardar archivo TeX
+# 8. Guardar archivo TeX
 with open(OUT_TEX, 'w', encoding='utf-8') as f:
     f.write(tex)
 
-print(f"[OK] {OUT_TEX} construido exitosamente.")
+print(f"[OK] {OUT_TEX} construido con Georgia font y Cuadro exacto.")
