@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-engine_original.py — Motor de valuacion de ALUAR bajo las formulas de la
+engine_valuacion.py — Motor de valuacion de ALUAR bajo las formulas de la
 plantilla 'TP Valuation Original con formulas originales.xlsx'.
 
 MARCO TEORICO (bibliografia obligatoria de la catedra)
