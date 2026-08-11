@@ -168,7 +168,7 @@
 \section{Descripción de la Compañía}
 
 \subsection{Perfil del Negocio}
-Aluar Aluminio Argentino S.A.I.C. es la única productora integrada de aluminio primario en Argentina. Fundada en 1974, la compañía opera su complejo industrial principal en Puerto Madryn, Provincia del Chubut, con una capacidad instalada de aproximadamente 460.000 toneladas anuales de aluminio primario. Su portafolio de productos incluye aluminio primario en lingotes, billetes (\textit{billets}), alambrón (\textit{wire rod}), chapas y placas, y extrusiones. Alrededor del 80\% de su producción se destina a mercados de exportación (Estados Unidos, Brasil, Japón y Europa), generando un flujo de ingresos mayoritariamente denominado en dólares estadounidenses.
+Aluar Aluminio Argentino S.A.I.C. es la única productora integrada de aluminio primario en Argentina. Fundada en 1974, la compañía opera su complejo industrial principal en Puerto Madryn, Provincia del Chubut, con una capacidad instalada de aproximadamente 460.000 toneladas anuales de aluminio primario tras alcanzar la Capacidad Plena en 2026 (ver línea de tiempo, Figura 1); la comparación internacional de la Figura 7 usa 440.000 Tn, la última cifra publicada por el IAI (2024/2025) antes de esa ampliación. Su portafolio de productos incluye aluminio primario en lingotes, billetes (\textit{billets}), alambrón (\textit{wire rod}), chapas y placas, y extrusiones. Alrededor del 80\% de su producción se destina a mercados de exportación (Estados Unidos, Brasil, Japón y Europa), generando un flujo de ingresos mayoritariamente denominado en dólares estadounidenses.
 
 \begin{center}
 \begin{minipage}{\linewidth}
@@ -897,7 +897,7 @@ A diferencia del Monte Carlo de la sección homónima (que perturba WACC, $g$ y 
 La convergencia casi exacta de la media estocástica hacia el target determinístico oficial (ARS 1.235,51, 100\% de coincidencia) confirma que el caso base no está sesgado respecto a la trayectoria esperada de largo plazo del LME que el propio modelo asume; la dispersión de la distribución es atribuible por completo a la volatilidad del commodity.
 
 \subsection{Pruebas de Ajuste de Distribuciones (Bondad de Ajuste) y Cópula de Clayton}
-Las pruebas K-S y A-D confirman el ajuste superior de la Student-t ($\nu=4,2$, AIC=$-12.450$) y de la Cópula de Clayton (AIC=$-501,40$, $\lambda_L=0,38$), bajo el marco general de cópulas de Sklar [8].
+Las pruebas K-S y A-D confirman el ajuste superior de la Student-t ($\nu=4,2$, AIC=$-12.450$) y de la Cópula de Clayton (AIC=$-501,40$, $\lambda_L=0,38$), bajo el marco general de cópulas de Sklar [8] --- estos dos valores de AIC absoluto no están persistidos en el motor (a diferencia del $\Delta$AIC=-88,9 de Clayton vs. Gaussiana de la Sección 16.4, que sí se recalcula en \texttt{graficos.py}), con la misma limitación de reproducibilidad señalada en la Sección 16.1.
 
 \begin{table}[H]
 \centering
@@ -951,7 +951,7 @@ El cuadrante superior derecho (alta probabilidad, alto impacto) concentra la vol
 
 \begin{table}[H]
 \centering
-\caption{\textbf{Criterios de Información y Bondad de Ajuste: Riesgo Soberano} {\small\color{gsgray} (Elaboración propia en base a modelo empírico — 01-Aug-2026.)}}
+\caption{\textbf{Criterios de Información y Bondad de Ajuste: Riesgo Soberano}\textsuperscript{b} {\small\color{gsgray} (Elaboración propia en base a modelo empírico — 01-Aug-2026.)}}
 \small
 \begin{tabular}{lccc}
 \toprule
@@ -961,9 +961,10 @@ AR(1) Lineal Oficial & 1.450,3 & -2.894,6 & -2.882,1 \\
 \textbf{CIR (MLE)} & \textbf{1.682,7} & \textbf{-3.359,4} & \textbf{-3.346,9} \\
 \bottomrule
 \end{tabular}
+{\footnotesize\textsuperscript{b} \textbf{Limitación de reproducibilidad.} La serie de EMBI+ efectivamente disponible en el motor (\texttt{m3\_macro/embi\_valores}) tiene 7 observaciones anuales, un tamaño muestral matemáticamente incompatible con las magnitudes de Log-Likelihood reportadas en esta tabla (del orden de $10^3$, propio de series diarias con cientos de observaciones). A diferencia del VaR/CVaR de Cornish-Fisher de la Sección 15.3 -- corregido en esta revisión tras confirmarse la misma falla de trazabilidad --, aquí no existe en el código una serie diaria de riesgo soberano sobre la cual recalcular estos criterios de información de forma honesta, y el informe no puede certificar su origen. Se mantiene la tabla como referencia de una comparación metodológica realizada fuera de este pipeline, pero el dictamen de dominancia del CIR sobre el AR(1) no debe leerse como estadísticamente probado por este documento.\par}
 \end{table}
 
-El AR(1) asume volatilidad constante (homocedasticidad) y permite tasas negativas; el CIR, al incorporar volatilidad proporcional al nivel ($\sigma\sqrt{r_t}$), domina en AIC/BIC (Tabla anterior) y captura mejor los saltos discretos propios de mercados emergentes. Ambos modelos convergen, no obstante, al mismo equilibrio de largo plazo ($\approx$422 pb), por lo que la elección entre uno u otro no altera la trayectoria determinística del modelo oficial.
+El AR(1) asume volatilidad constante (homocedasticidad) y permite tasas negativas; el CIR, al incorporar volatilidad proporcional al nivel ($\sigma\sqrt{r_t}$), en principio domina en AIC/BIC (Tabla anterior, ver limitación de reproducibilidad) y captura mejor los saltos discretos propios de mercados emergentes. Ambos modelos convergen, no obstante, al mismo equilibrio de largo plazo ($\approx$422 pb), por lo que la elección entre uno u otro no altera la trayectoria determinística del modelo oficial.
 
 \subsection{Prueba Analítica de la Condición de Feller en el proceso CIR}
 El proceso Cox-Ingersoll-Ross (CIR) exige el cumplimiento de la Condición de Feller para garantizar que la trayectoria de las tasas nunca alcance el cero absoluto, preservando la positividad estricta de la variable estocástica. La condición matemática se define como:

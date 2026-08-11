@@ -17832,5 +17832,17 @@
     "wacc_pct": 13.21,
     "target_ars": 237.0,
     "_fuente": "Cuadro Matriz Corporativa de Escenarios de Estres del informe (reporte_modelo_C.tex). El WACC (13,21%) se reproduce en graficos.py via Ke=Rf+Beta*ERP+Lambda*EMBI_max; el target_ars de este escenario depende ademas de una re-proyeccion del FCFF explicito bajo estres macro que hace engine_original.py y no queda expuesta en resultados_original.json, asi que se referencia aqui en vez de recalcularse (evita adivinar la metodologia y fabricar un numero distinto al que ya cita el resto del informe)."
+  },
+  "marco_escenarios_bear_base_bull": {
+    "bear_target_ars": 781.0,
+    "bear_wacc_pct": 9.0,
+    "bear_g_pct": 1.5,
+    "base_target_ars": 1235.51,
+    "bull_target_ars": 1481.0,
+    "bull_wacc_pct": 6.5,
+    "bull_g_pct": 2.2,
+    "valor_esperado_ponderado_ars": 1184.0,
+    "compresion_embi_400pb_target_ars_aprox": 1450.0,
+    "_fuente": "Cuadro 'Marco de Escenarios: Bear/Base/Bull' y parrafo de compresion EMBI<400pb del informe (reporte_modelo_C.tex, seccion Marco de Escenarios). Igual que stress_test_embi_max: cada escenario narrativo (LME, riesgo pais, CAPEX/RIGI) implica una re-proyeccion conjunta del FCFF que engine_original.py no expone como funcion parametrica en resultados_original.json -- WACC/g de cada escenario si son reproducibles (Ke=Rf+Beta*ERP+Lambda*EMBI), el target_ars resultante no. Se referencian aqui en vez de recalcularse. El bull_target_ars (1.481) es internamente consistente con su propio +19,8% vs. base citado en el informe (1.235,51*1,198=1.480,1, redondeo)."
   }
 }
