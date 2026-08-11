@@ -17827,5 +17827,10 @@
       }
     ],
     "_fuente": "Evaluación cualitativa de riesgos del equipo de análisis (probabilidad e impacto financiero en la valuación, escala 0-1), consistente con la matriz FODA y Catalizadores y Riesgos del informe."
+  },
+  "stress_test_embi_max": {
+    "wacc_pct": 13.21,
+    "target_ars": 237.0,
+    "_fuente": "Cuadro Matriz Corporativa de Escenarios de Estres del informe (reporte_modelo_C.tex). El WACC (13,21%) se reproduce en graficos.py via Ke=Rf+Beta*ERP+Lambda*EMBI_max; el target_ars de este escenario depende ademas de una re-proyeccion del FCFF explicito bajo estres macro que hace engine_original.py y no queda expuesta en resultados_original.json, asi que se referencia aqui en vez de recalcularse (evita adivinar la metodologia y fabricar un numero distinto al que ya cita el resto del informe)."
   }
 }

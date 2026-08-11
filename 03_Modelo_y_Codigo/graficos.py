@@ -699,32 +699,64 @@ def plot_figura_16(res, stat):
 
 
 def plot_figura_17(res, stat):
-    """Figura 17 del informe: WACC caso base vs. stress test EMBI+ al máximo histórico.
-    El escenario de estrés recalcula Ke con el mismo CAPM-Lambda del modelo (Ke = Rf + Beta*ERP +
-    lambda*EMBI+), llevando el EMBI+ a su máximo histórico REAL de la serie (m3_macro.embi_valores,
-    no un 2.400 pb tipeado)."""
+    """Figura 17 del informe: WACC caso base vs. stress test EMBI+ al máximo histórico, y su
+    impacto en el Precio Objetivo. El escenario de estrés recalcula Ke con el mismo CAPM-Lambda
+    del modelo (Ke = Rf + Beta*ERP + lambda*EMBI+), llevando el EMBI+ a su máximo histórico REAL
+    de la serie (m3_macro.embi_valores, no un 2.400 pb tipeado).
+
+    El panel de Precio Objetivo faltaba en una versión anterior (solo mostraba el WACC, sin la
+    consecuencia sobre la valuación -- que es el dato que le da sentido al stress test). El
+    target_ars bajo estrés depende de una re-proyección del FCFF explícito que hace
+    engine_original.py y no queda expuesta en resultados_original.json; se referencia el valor
+    ya citado en el Cuadro de Escenarios de Estrés del informe (static_inputs.json
+    ["stress_test_embi_max"], ver "_fuente" ahí) en vez de recalcularlo con una metodología de
+    descuento adivinada."""
     m6 = res["m6_costo_capital"]
+    m1 = res["m1_mercado"]
+    m7 = res["m7_dcf"]
     embi_max_pb = max(res["m3_macro"]["embi_valores"])   # pico histórico real de la serie (2022)
     embi_base_pb = m6["embi"] * 10000
+    spot = m1["alua_px_ars"]
 
     ke_stress = m6["rf"] + m6["beta_apalancado"] * m6["erp"] + m6["lambda_ar"] * (embi_max_pb / 10000)
     wacc_base = m6["wacc"] * 100
     wacc_stress = ke_stress * 100  # bajo estrés extremo el modelo usa Ke como proxy de la tasa de descuento total
 
-    fig, ax = scaffold(
-        f"WACC caso base ({wacc_base:.2f} %) vs. stress test EMBI+ {embi_max_pb:.0f} pb (WACC {wacc_stress:.2f} %)",
-        "Sensibilidad del costo de capital ante escenarios extremos de riesgo país",
-        "WACC Resultante (%)"
-    )
-    categories = [f"Caso Base EMBI+ ({embi_base_pb:.0f} pb)", f"Escenario Estrés EMBI+ ({embi_max_pb:.0f} pb)"]
-    waccs = [wacc_base, wacc_stress]
-    colors = [C["value"], C["risk"]]
-    bars = ax.bar(categories, waccs, color=colors, width=0.4)
-    for bar in bars:
-        h = bar.get_height()
-        ax.text(bar.get_x() + bar.get_width()/2, h + 0.3, f"{h:.2f}%", ha="center", fontsize=10, fontweight="bold")
-    ax.set_ylim(0, 16)
-    pct_y(ax, dec=1)
+    st = stat["stress_test_embi_max"]
+    target_base = m7["target_ars"]
+    target_stress = st["target_ars"]
+
+    fig = plt.figure(figsize=(11.0, 6.2))
+    apply_aluar_theme()
+    fig.text(0.09, TITLE_Y, f"WACC caso base ({wacc_base:.2f} %) vs. escenario de estrés EMBI+ {embi_max_pb:.0f} pb (WACC {wacc_stress:.2f} %)",
+             fontsize=SZ["title"], fontweight="bold", color=C["navy"], fontfamily=TITLE_FONT)
+    fig.text(0.09, SUB_Y, "Sensibilidad del WACC y del Precio Objetivo ante la re-ampliación del riesgo país",
+             fontsize=SZ["subtitle"], style="italic", color=C["muted"])
+    fig.text(0.94, SUB_Y, "% / ARS", ha="right", fontsize=SZ["subtitle"], style="italic", color=C["muted"])
+    fig.text(0.09, SRC_Y, FUENTE, fontsize=SZ["source"], color=C["muted"])
+
+    categories = [f"Caso Base\n(EMBI+ {embi_base_pb:.0f} pb)", f"Escenario Estrés\n(EMBI+ {embi_max_pb:.0f} pb)"]
+    colors = [C["navy"], C["risk"]]
+
+    ax1 = fig.add_subplot(121)
+    bars1 = ax1.bar(categories, [wacc_base, wacc_stress], color=colors, width=0.55)
+    for bar, v in zip(bars1, [wacc_base, wacc_stress]):
+        ax1.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.3, f"{v:.2f}%", ha="center", fontsize=10.5, fontweight="bold")
+    ax1.set_ylabel("WACC (%)", fontsize=SZ["axis"])
+    ax1.set_ylim(0, 16)
+    ax1.grid(axis="y", color=C["grid"], linewidth=0.8)
+
+    ax2 = fig.add_subplot(122)
+    bars2 = ax2.bar(categories, [target_base, target_stress], color=colors, width=0.55)
+    for bar, v in zip(bars2, [target_base, target_stress]):
+        ax2.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 20, f"ARS {v:,.0f}", ha="center", fontsize=10.5, fontweight="bold")
+    ax2.axhline(spot, color=C["muted"], linestyle="--", lw=1.2, label=f"Spot: ARS {spot:,.2f}")
+    ax2.set_ylabel("Precio Objetivo (ARS)", fontsize=SZ["axis"])
+    ax2.set_ylim(0, max(target_base, target_stress) * 1.2)
+    ax2.grid(axis="y", color=C["grid"], linewidth=0.8)
+    ax2.legend(frameon=False, fontsize=SZ["legend"], loc="upper right")
+
+    fig.subplots_adjust(left=0.08, right=0.96, top=0.80, bottom=0.13, wspace=0.28)
     return exportar(fig, "figura_17")
 
 
@@ -832,7 +864,7 @@ def plot_figura_20(res, stat, muestra):
 
 
 def plot_figura_21(res, stat):
-    """Figura 21 del informe: Reverse DCF: precio objetivo (ARS/acción) en función de la tasa de crecimiento perpetuo g."""
+    """Figura 21 del informe: DCF Inverso: precio objetivo (ARS/acción) en función de la tasa de crecimiento perpetuo g."""
     m7 = res["m7_dcf"]
     m1 = res["m1_mercado"]
     spot = m1["alua_px_ars"]
@@ -842,15 +874,25 @@ def plot_figura_21(res, stat):
 
     # Rango amplio (-3% a 4,5%) para asegurar que el cruce real con el spot quede DENTRO del rango
     # explorado: un g_range angosto que no alcance a cruzar el spot hace que np.interp devuelva el
-    # límite del rango en vez del cruce real (falso "g implícita = -1,00%" pegado al borde).
+    # límite del rango en vez del cruce real.
     g_range = np.linspace(-0.03, 0.045, 300)
     van_5y = m7["van_5y"]
     fcff_term = m7["fcff_terminal"]
     deuda = m7["deuda_neta"]
     ccl = m1["ccl"]
     acciones = m1["acciones_mm"]
+    factor_2030 = m7["factores_descuento"]["2030"]  # descuenta el valor terminal a valor presente
 
-    targets = np.array([((van_5y + (fcff_term * (1+g)) / (wacc - g) - deuda) / acciones) * ccl for g in g_range])
+    def _target(g):
+        # BUG real corregido: la versión anterior sumaba el valor terminal SIN descontarlo a
+        # valor presente (le faltaba dividir por factor_2030), lo que sobrevaluaba cada punto
+        # de la curva. Verificado contra target_ars real: con el descuento, target(g=2%) da
+        # exactamente ARS 1.235,51 (=res["m7_dcf"]["target_ars"]); sin él, daba ARS 1.604 --
+        # 30% de más -- y por eso la g implícita salía mal (parecía -1,15% en vez de la real).
+        vt = (fcff_term * (1 + g) / (wacc - g)) / factor_2030
+        return ((van_5y + vt - deuda) / acciones) * ccl
+
+    targets = np.array([_target(g) for g in g_range])
     # g implícita del mercado: donde el DCF Inverso iguala el precio spot real (interpolado, no tipeado).
     g_implicita = float(np.interp(spot, targets, g_range)) * 100
 
@@ -1013,30 +1055,47 @@ def plot_figura_26(res, stat):
     kappa = 1 - phi                         # velocidad de reversión (dt=1 mes)
     residuos = lme[1:] - (theta + phi * (lme[:-1] - theta))
     sigma = float(np.std(residuos, ddof=1))
+    # Deriva y volatilidad log-mensual reales de la serie, para el comparador MBG (sin reversión).
+    log_ret = np.diff(np.log(lme))
+    mu_mbg = float(np.mean(log_ret))
+    sigma_mbg = float(np.std(log_ret, ddof=1))
+    costo_marginal = float(max(stat["cost_curve"]["cash_cost"]))  # productor de mayor costo del panel real
 
     fig, ax = scaffold(
-        "Simulación estocástica de cotizaciones LME: proceso de Reversión a la Media (Ornstein-Uhlenbeck)",
-        f"Trayectorias simuladas hacia el nivel de reversión estimado (USD {theta:,.0f}/Tn)",
-        "Precio LME (USD/Tn)"
+        "Procesos Estocásticos de Commodities: MBG vs. Ornstein-Uhlenbeck (Reversión a la Media)",
+        f"El proceso OU acota el precio cerca de USD {theta:,.0f}/Tn; el MBG no tiene ancla y puede divergir sin límite",
+        "USD/Tn"
     )
     rng = np.random.default_rng(42)
     n_meses = 60
     t = np.arange(n_meses)
     x0 = lme[-1]
-    for _ in range(8):
+    for k in range(6):
         path = np.empty(n_meses)
         path[0] = x0
         for i in range(1, n_meses):
             path[i] = path[i-1] + kappa * (theta - path[i-1]) + sigma * rng.standard_normal()
-        ax.plot(t / 12, path, lw=1.1, alpha=0.7, color=C["blue"])
-    ax.axhline(theta, color=C["navy"], linestyle="--", lw=2, label=f"Media de Reversión (USD {theta:,.0f}/Tn)")
-    ax.set_xlabel("Horizonte (Años)", fontsize=SZ["axis"])
-    ax.legend(frameon=False, fontsize=SZ["legend"])
+        ax.plot(t / 12, path, lw=1.0, alpha=0.55, color=C["blue"],
+                label="Trayectoria OU Reversión" if k == 0 else None)
+    # Comparador MBG: mismo punto de partida, deriva/volatilidad log-normales reales, SIN reversión --
+    # ilustra por qué el informe descarta el MBG como modelo de precio de largo plazo para el LME.
+    mbg = np.empty(n_meses)
+    mbg[0] = x0
+    for i in range(1, n_meses):
+        mbg[i] = mbg[i-1] * np.exp((mu_mbg - 0.5*sigma_mbg**2) + sigma_mbg * rng.standard_normal())
+    ax.plot(t / 12, mbg, lw=1.6, linestyle="--", color=C["risk"], label="Movimiento Browniano Geométrico (MBG)")
+    ax.axhline(theta, color=C["navy"], linestyle="-", lw=2.2, label=f"Media de Reversión OU (USD {theta:,.0f}/Tn)")
+    ax.axhline(costo_marginal, color=C["muted"], linestyle=":", lw=1.4,
+               label=f"Nivel Marginal de Costos C1 Global (USD {costo_marginal:,.0f}/Tn)")
+    ax.set_xlabel("Año de Proyección", fontsize=SZ["axis"])
+    ax.set_xticks(range(0, 6))
+    ax.set_xticklabels([str(2026 + y) for y in range(0, 6)])
+    ax.legend(frameon=False, fontsize=SZ["legend"], loc="upper left")
     return exportar(fig, "figura_26")
 
 
 def plot_figura_27(res, stat, muestra):
-    """Figura 27 del informe: Distribución continua de Target Price mediante DCF Estocástico.
+    """Figura 27 del informe: Distribución continua del Precio Objetivo mediante DCF Estocástico.
     Densidad KDE de la muestra REAL de Monte Carlo (muestra_montecarlo.npy) -- no una Normal
     con media/desvío tipeados."""
     from scipy.stats import gaussian_kde
@@ -1049,7 +1108,7 @@ def plot_figura_27(res, stat, muestra):
     density = kde(x)
 
     fig, ax = scaffold(
-        "Distribución continua de Target Price mediante DCF Estocástico",
+        "Distribución continua del Precio Objetivo mediante DCF Estocástico",
         f"La media estocástica converge a ARS {float(np.mean(muestra)):,.2f}",
         "Densidad de Probabilidad"
     )
@@ -1092,10 +1151,17 @@ def plot_figura_28(res, stat):
 
 
 def plot_figura_29(res, stat):
-    """Figura 29 del informe: Simulación estocástica de Riesgo Soberano (CIR).
+    """Figura 29 del informe: Proceso CIR (Cox-Ingersoll-Ross) vs Modelo AR(1) de Riesgo Soberano.
     kappa/theta se estiman igual que en Figura 5 (fit_ar1 sobre m3_macro.embi_valores real);
     el proceso CIR usa volatilidad proporcional a sqrt(nivel) -- la diferencia real frente al
-    AR(1)/OU es esa dependencia del nivel, no una trayectoria con ruido fijo tipeado."""
+    AR(1)/OU es esa dependencia del nivel, no una trayectoria con ruido fijo tipeado.
+
+    Versión anterior: solo 6 trayectorias espagueti a 3 años, sin banda de confianza ni
+    comparación contra el AR(1) lineal -- y un solo path con volatilidad explosiva (sigma*sqrt
+    de niveles altos) podía estirar el eje Y hasta hacer ilegible el resto. Ahora se simulan 1.000
+    trayectorias a 10 años para calcular un cono P5-P95 real (fill_between), se grafica la
+    mediana CIR, UNA trayectoria de muestra (para mostrar cómo luce un camino individual) y el
+    AR(1) lineal de la Figura 5 como comparación directa entre ambos modelos."""
     m6 = res["m6_costo_capital"]
     embi_hist_pb = np.asarray(res["m3_macro"]["embi_valores"], dtype=float)
     theta, phi = fit_ar1(embi_hist_pb)
@@ -1105,22 +1171,30 @@ def plot_figura_29(res, stat):
     embi0 = m6["embi"] * 10000
 
     fig, ax = scaffold(
-        "Simulación estocástica de Riesgo Soberano: volatilidad dependiente del nivel (CIR)",
-        "Modelado estocástico del spread del EMBI+ (puntos básicos)",
-        "Riesgo País EMBI+ (pb)"
+        "Proceso CIR (Cox-Ingersoll-Ross) vs Modelo AR(1) de Riesgo Soberano",
+        f"El modelo CIR evita tasas negativas introduciendo volatilidad sqrt(R_t) y reversión a {theta:.0f} pb",
+        "EMBI+ (pb)"
     )
     rng = np.random.default_rng(7)
-    n = 36
-    for _ in range(6):
-        path = np.empty(n)
-        path[0] = embi0
-        for i in range(1, n):
-            nivel = max(path[i-1], 1.0)
-            path[i] = max(path[i-1] + kappa*(theta - path[i-1]) + sigma*np.sqrt(nivel)*rng.standard_normal(), 1.0)
-        ax.plot(np.arange(n)/12, path, lw=1.2, alpha=0.75, color=C["blue"])
-    ax.axhline(embi0, color=C["value"], linestyle="--", lw=1.8, label=f"Nivel Spot EMBI+ ({embi0:.0f} pb)")
-    ax.set_xlabel("Años Proyectados", fontsize=SZ["axis"])
-    ax.legend(frameon=False, fontsize=SZ["legend"])
+    n_meses, n_paths = 121, 1000
+    t = np.arange(n_meses)
+    paths = np.empty((n_paths, n_meses))
+    paths[:, 0] = embi0
+    for i in range(1, n_meses):
+        nivel = np.maximum(paths[:, i-1], 1.0)
+        paths[:, i] = np.maximum(
+            paths[:, i-1] + kappa*(theta - paths[:, i-1]) + sigma*np.sqrt(nivel)*rng.standard_normal(n_paths),
+            1.0)
+
+    p5, p50, p95 = np.percentile(paths, [5, 50, 95], axis=0)
+    ar1 = theta + (embi0 - theta) * phi ** (t / 12.0)  # mismo AR(1) de la Figura 5, extendido a 10 años
+
+    ax.fill_between(t/12, p5, p95, color=C["blue_lt"], alpha=0.35, zorder=1, label="Cono CIR P5-P95 (90%)")
+    ax.plot(t/12, p50, color=C["navy"], lw=2.4, zorder=3, label=f"Mediana CIR (Reversión a {theta:.0f} pb)")
+    ax.plot(t/12, paths[0], color=C["aluar"], lw=1.3, alpha=0.9, zorder=2, label="Trayectoria CIR Muestra")
+    ax.plot(t/12, ar1, color=C["risk"], lw=1.6, linestyle="--", zorder=2, label="Modelo AR(1) Lineal")
+    ax.set_xlabel("Años de Simulación", fontsize=SZ["axis"])
+    ax.legend(frameon=False, fontsize=SZ["legend"], loc="upper right")
     return exportar(fig, "figura_29")
 
 
