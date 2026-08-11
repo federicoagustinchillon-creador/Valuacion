@@ -1,0 +1,1139 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage{fontspec}
+\setmainfont{Georgia}
+\newfontfamily\georgiahead{Georgia}
+\usepackage[spanish]{babel}
+\usepackage[left=1.8cm, right=1.8cm, top=1.8cm, bottom=1.8cm]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{float}
+\usepackage{multicol}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins, breakable}
+\usepackage{wrapfig}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\titleformat{\section}{\georgiahead\Large\bfseries\color{gsnavy}}{\thesection}{1em}{}
+\titleformat{\subsection}{\georgiahead\large\bfseries\color{gsblue}}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\georgiahead\normalsize\bfseries\color{gsnavy}}{\thesubsubsection}{1em}{}
+\newcommand{\coverheading}[1]{{\georgiahead\bfseries\color{gsnavy}\large #1}\par\vspace{2pt}}
+\usepackage{caption}
+\captionsetup{labelfont={bf,color=gsnavy}, textfont={small,color=gsgray}}
+\usepackage{setspace}
+\usepackage{microtype}
+\setstretch{0.98}
+
+\definecolor{gsnavy}{HTML}{0D233A}
+\definecolor{gsblue}{HTML}{2F7ED8}
+\definecolor{riskred}{HTML}{C8102E}
+\definecolor{aluargreen}{HTML}{00843D}
+\definecolor{gsgray}{HTML}{4A4A4A}
+\definecolor{lightgray}{HTML}{F4F6F9}
+\definecolor{bordergray}{HTML}{D1D5DB}
+\definecolor{warnamber}{HTML}{B8860B}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=gsblue,
+    filecolor=gsblue,
+    urlcolor=gsblue,
+    pdftitle={Reporte de Valuación Institucional Aluar S.A.I.C. - UNCuyo},
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\setlength{\headheight}{14pt}
+\lhead{\small \textbf{ALUAR S.A.I.C. (ALUA.BA)}}
+\rhead{\small UNCuyo $\cdot$ FCE}
+\lfoot{\color{gsgray}\small \textsf{Analista: Federico Agustín Chillón | federico.chillon@fce.uncu.edu.ar}}
+\rfoot{\color{gsgray}\small \textsf{Página \thepage}}
+\renewcommand{\headrulewidth}{0.8pt}
+\renewcommand{\footrulewidth}{0.5pt}
+
+\setlength{\parindent}{1.5em}
+\setlength{\floatsep}{3pt plus 1pt minus 1pt}
+\setlength{\textfloatsep}{4pt plus 1pt minus 1pt}
+\setlength{\intextsep}{3pt plus 1pt minus 1pt}
+\setlength{\parskip}{1.5pt plus 1pt minus 0.5pt}
+
+\renewcommand{\arraystretch}{0.90}
+
+\begin{document}
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\bottomfraction}{0.95}
+\renewcommand{\floatpagefraction}{0.85}
+\renewcommand{\textfraction}{0.05}
+
+\noindent
+\begin{minipage}[b]{0.65\textwidth}
+    {\fontsize{24}{28}\selectfont \color{gsnavy} \textbf{Aluar Aluminio Argentino}} \\[0.2cm]
+    {\Large \color{gsgray} \textsf{Reporte de Valuaci\'on Fundamental \& Estoc\'astica}}
+\end{minipage}%
+\begin{minipage}[b]{0.35\textwidth}
+    \raggedleft
+    {\small \color{gsgray} \textbf{C\'atedra de Econom\'ia y T\'ecnica Burs\'atil}} \\
+    {\small \color{gsgray} FCE $\cdot$ UNCuyo} \\
+    {\small \color{gsgray} 5 de agosto de 2026}
+\end{minipage}
+
+\vspace{0.2cm}
+\noindent\textcolor{gsnavy}{\rule{\textwidth}{1.5pt}}
+\vspace{0.1cm}
+
+\noindent
+{\scriptsize \color{gsgray} \textbf{Aviso legal:} Trabajo pr\'actico acad\'emico elaborado por un estudiante sin matr\'icula de Analista Financiero ni inscripci\'on ante la CNV. Este documento NO constituye una recomendaci\'on de compra ni de venta, ni asesoramiento financiero de ning\'un tipo. Es un ejercicio acad\'emico de valuaci\'on cuantitativa. El dictamen t\'ecnico reportado es la salida de un modelo, no un consejo de inversi\'on.}
+
+\vspace{0.25cm}
+
+\noindent
+\begin{minipage}[t]{0.54\textwidth}
+    \coverheading{Resumen Ejecutivo}
+    {\small Iniciamos cobertura de Aluar Aluminio Argentino S.A.I.C. (ALUA.BA) con un dictamen de \textbf{COMPRAR} y un precio objetivo a 12 meses de \textbf{ARS 1.236,00} (Target Integrado ARS 1.255,60 incluyendo la opci\'on real e\'olica), un upside de \textbf{+25,8\% / +27,8\%} frente a la cotizaci\'on spot de ARS 982,50. El mercado subestima tanto la convergencia de largo plazo de la estructura de costos energ\'eticos como la compresi\'on del riesgo pa\'is ya observada en la curva soberana.}
+
+    \vspace{0.2cm}
+    \coverheading{Tesis de Inversi\'on}
+    \begin{enumerate}
+        \setlength{\itemsep}{3pt}
+        \item \textbf{Ventaja de costos energ\'eticos:} la matriz autogenerada (96\%, de la cual 78 p.p. es renovable) ubica a Aluar en el primer cuartil de la curva global de costos, con un cash cost C1 de USD 1.680/Tn.
+        \item \textbf{Exposici\'on dolarizada estructural:} 80\% de la producci\'on se exporta y se factura en USD, aislando el flujo de caja operativo del riesgo cambiario dom\'estico.
+        \item \textbf{Compresi\'on del riesgo pa\'is:} el EMBI+ cay\'o de 2.400 pb (pico 2022) a 441 pb; al ser aditivo en el CAPM-Lambda, cada punto b\'asico de compresi\'on adicional reduce mec\'anicamente el WACC y expande el valor presente de los flujos.
+    \end{enumerate}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.43\textwidth}
+    \vspace{-0.1cm}
+    \begin{tcolorbox}[colback=white, colframe=gsnavy, boxrule=1pt, arc=4pt, left=5pt, right=5pt, top=4pt, bottom=4pt]
+        \begin{center}
+            {\fontsize{16}{19}\selectfont \sffamily \textbf{COMPRAR}} \\[0.1cm]
+            {\small \color{gsgray} Target Base: \textbf{ARS 1.236,00} (USD 0,78)} \\
+            {\small \color{gsgray} Opci\'on Real PEAL V: \textbf{+ARS 19,60} (USD 0,01)} \\
+            {\small \color{gsnavy} \textbf{Target Integrado: ARS 1.255,60} (USD 0,79)} \\
+            {\small \color{gsgray} Cotizaci\'on Spot: ARS 982,50}
+        \end{center}
+        \vspace{0.05cm}
+        \color{gsnavy}\rule{\textwidth}{0.5pt}
+        \vspace{0.06cm}
+        \scriptsize
+        \begin{tabular}{@{}l@{\extracolsep{\fill}}r@{}}
+            \textbf{WACC del Modelo:} & 7,06\% \\
+            \textbf{Ke (con $\lambda$):} & 9,30\% \\
+            \textbf{Beta (Hamada):} & 0,888 \\
+            \textbf{ERP (Damodaran):} & 4,18\% \\
+            \textbf{CRP ($\lambda\times$EMBI+):} & 0,88\% \\
+            \textbf{Kd (pre / post-tax):} & 3,80\% / 2,47\% \\
+            \textbf{D/E objetivo:} & 0,486 \\
+            \textbf{Crec. Terminal ($g$):} & 2,00\% \\
+            \textbf{Upside Base / Total:} & +25,8\% / +27,8\% \\
+            \textbf{Tipo de Cambio (CCL):} & 1.584,25 \\
+        \end{tabular}
+        \vspace{0.06cm}
+        \color{bordergray}\rule{\textwidth}{0.5pt}
+        \vspace{0.04cm}
+        {\tiny \color{gsgray} \textbf{Nota metodol\'ogica.} Este reporte corresponde al Modelo C Acad\'emico, que aplica la metodolog\'ia $CRP = \lambda \times EMBI+$ y Opci\'on Real aditiva por LSMC. Los par\'ametros de mercado (Beta OLS, Rf, EMBI+, CCL) est\'an congelados al cierre del 23-jul-2026; el modelo Excel adjunto es reproducible pero no est\'atico y puede mostrar una variaci\'on residual de hasta $\pm 5\%$ en el Target si se recalcula con datos de mercado m\'as recientes. El detalle completo de los 18 supuestos del modelo, con fuente individual de cada uno, est\'a disponible en el slide ``Metodolog\'ia -- Supuestos del modelo'' de la presentaci\'on adjunta y en la hoja ``0) Supuestos'' del modelo Excel oficial.\par}
+    \end{tcolorbox}
+\end{minipage}
+
+\vspace{0.25cm}
+\noindent
+\begin{tcolorbox}[colback=white, colframe=gsblue!40, boxrule=0.5pt, top=3pt, bottom=3pt, left=5pt, right=5pt, title={\small\sffamily \textbf{Catalizadores y Riesgos (12-18m)}}, coltitle=gsnavy]
+    \footnotesize
+    \begin{itemize}
+        \setlength{\itemsep}{0pt}
+        \item[\color{aluargreen}$\uparrow$] \textbf{Certificaci\'on ASI (Aluminio Verde):} Acceso a prima de precio en la UE y evasi\'on del impuesto fronterizo por carbono (CBAM).
+        \item[\color{aluargreen}$\uparrow$] \textbf{Desregulaci\'on Cambiaria:} Normalizaci\'on del cepo que permite repatriar dividendos a valor de mercado.
+        \item[\color{riskred}$\downarrow$] \textbf{Atraso del Tipo de Cambio Real (TCR):} Inflaci\'on local en d\'olares superior a la devaluaci\'on (crawling peg), encareciendo OPEX.
+        \item[\color{riskred}$\downarrow$] \textbf{Shock de Demanda China:} Sobreoferta global que empuje el LME por debajo de USD 2.200/Tn.
+    \end{itemize}
+\end{tcolorbox}
+
+\vspace{0.15cm}
+\noindent{\small \textbf{Aviso legal:} Este dictamen t\'ecnico es la salida cuantitativa de un modelo acad\'emico. No constituye recomendaci\'on de inversi\'on.}
+
+\clearpage
+\begingroup
+\small
+\tableofcontents
+\endgroup
+\clearpage
+
+\section{Descripción de la Compañía}
+
+\subsection{Perfil del Negocio}
+Aluar Aluminio Argentino S.A.I.C. es la única productora integrada de aluminio primario en Argentina. Fundada en 1974, la compañía opera su complejo industrial principal en Puerto Madryn, Provincia del Chubut, con una capacidad instalada de aproximadamente 460.000 toneladas anuales de aluminio primario. Su portafolio de productos incluye aluminio primario en lingotes, billetes (\textit{billets}), alambrón (\textit{wire rod}), chapas y placas, y extrusiones. Alrededor del 80\% de su producción se destina a mercados de exportación (Estados Unidos, Brasil, Japón y Europa), generando un flujo de ingresos mayoritariamente denominado en dólares estadounidenses.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_01.png}
+\captionof{figure}{Línea de tiempo corporativa de Aluar desde su fundación (1974) hasta la actualidad, destacando hitos de capacidad, inversiones energéticas y expansión internacional.}
+\end{minipage}
+\end{center}
+
+\subsection{Ventajas Competitivas}
+Tres factores posicionan a Aluar en el primer cuartil de la curva de costos global del aluminio:
+\begin{itemize}
+    \item \textbf{Matriz Energética Autogenerada:} El 96\% del consumo eléctrico de la planta de Puerto Madryn es abastecido por fuentes propias (Hidroeléctrica 54\%, Eólico 24\% y generación térmica propia 18\%); sólo el 4\% restante se compra a la red (ENRE). La Central Hidroeléctrica Futaleufú (320 MW de capacidad asignada) y el Parque Eólico Aluar (200 MW en operación, en expansión a 582 MW con la Etapa V / La Flecha) le otorgan a Aluar una autonomía energética casi total.
+    \item \textbf{Posición de Costos (Primer Cuartil):} Su \textit{cash cost} C1 es de USD 1.680 por tonelada (percentil 28 de la curva CRU/Wood Mackenzie), lo que le permite sostener márgenes operativos positivos incluso en la fase baja del ciclo del \textit{commodity}.
+    \item \textbf{Integración Vertical:} Aluar controla toda la cadena de valor, desde la producción de alúmina (materia prima intermedia) hasta la manufactura de productos de valor agregado, maximizando la captura de margen en cada eslabón.
+\end{itemize}
+
+\subsection{Estructura Accionaria}
+Según la Memoria y Estados Financieros al 30-jun-2025, las sociedades del grupo de control —CIPAL Compañía Inversora para Argentina y Latinoamérica S.A., Estancias San Javier de Catamarca S.A. y Angerona Group Trust (Nueva Zelanda)— concentran en conjunto el \textbf{45,98\%} del capital social con derecho a voto: no es mayoría absoluta, pero sí de bloqueo efectivo, ya que el 54,02\% restante está atomizado entre la ANSES-FGS y un free float sin otro bloque individual de tamaño comparable capaz de revertir una decisión del grupo de control en asamblea. El capital accionario está compuesto por 2.800 millones de acciones ordinarias de \$1 valor nominal, con un voto por acción, listadas en Bolsas y Mercados Argentinos (BYMA) bajo el ticker \textbf{ALUA.BA}. El free float restante es negociado diariamente en el mercado local, con la presencia de la ANSES (Fondo de Garantía de Sustentabilidad) como accionista de relevancia. No existe una cotización simultánea en mercados del exterior (ADR/Nivel 1), aunque la liquidez del papel se sostiene por su rol como cobertura cambiaria (\textit{hedge}) en el mercado doméstico.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.75\linewidth,keepaspectratio]{figures_pristine/figura_02.png}
+\captionof{figure}{Estructura accionaria de Aluar: grupo de control vs. resto del capital, según la Memoria y Estados Financieros al 30-jun-2025.}
+\end{minipage}
+\end{center}
+
+\subsection{Objetivos Estratégicos}
+La administración de Aluar definió cuatro pilares estratégicos para la próxima década:
+\begin{enumerate}
+    \item[(a)] Cobertura renovable del 100\% de su consumo energético, completando el plan de expansión del parque eólico.
+    \item[(b)] Maximizar la participación de productos de mayor valor agregado en el mix de despacho.
+    \item[(c)] Acceso a mercados europeos vía la certificación de Aluminio Verde (\textit{Aluminium Stewardship Initiative} - ASI).
+    \item[(d)] Mantener el liderazgo en costos de la industria mediante mejoras continuas de eficiencia operativa y productividad laboral.
+\end{enumerate}
+
+\textbf{Cuantificación del pilar (b):} la mezcla de valor agregado se contrajo, no se expandió. La Memoria de Aluar desagrega anualmente las ventas por división (Primario vs. Elaborados —Laminación y Extrusión—) en toneladas. Los tres últimos ejercicios muestran una tendencia contraria al objetivo declarado:
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Participación de la División Elaborados en el volumen total de ventas} {\small\color{gsgray} (Memoria y Estados Financieros de Aluar, ejercicios FY2023–FY2025.)}}
+\small
+\begin{tabular}{lccc}
+\toprule
+ & \textbf{FY2023} & \textbf{FY2024} & \textbf{FY2025} \\
+\midrule
+Ventas Elaborados (t) & 23.104 & 17.766 & 13.498 \\
+Ventas Totales (t) & 383.834 & 418.014 & 402.991 \\
+Participación Elaborados & 6,0\% & 4,3\% & 3,3\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+El mix de valor agregado cayó de 6,0\% a 3,3\% del volumen total en dos ejercicios —una caída monótona, no un dato puntual—, impulsada por una contracción del 41,6\% en toneladas de Elaborados (23.104 a 13.498 t) mientras el volumen Primario se mantuvo prácticamente estable. La certificación ASI y la ampliación eólica (objetivos (a) y (c)) sí muestran avance verificable en las fuentes; el objetivo (b) no lo muestra: por el contrario, retrocede. Este informe no proyecta el mix de producto como variable explícita del DCF (la línea de Ventas Netas es agregada, ver Apéndice), por lo que esta contracción no está incorporada al valor terminal ni al margen EBITDA proyectado; se deja consignada aquí como una brecha entre el discurso estratégico de la compañía y su ejecución reciente, relevante para el juicio cualitativo del inversor pero no cuantificada dentro del modelo.
+
+\subsection{Análisis FODA}
+\begin{itemize}
+    \item \textbf{Fortalezas:} Único productor integrado de aluminio primario en Argentina; matriz energética autogenerada (96\%, de la cual 78 p.p. son renovables: Hidro + Eólico); posición de costo en el primer cuartil global; flujo de caja dolarizado ($\sim$80\% exportación).
+    \item \textbf{Oportunidades:} Certificación de aluminio verde como ventaja competitiva frente al CBAM europeo; expansión del mix de productos de mayor valor agregado; compresión del riesgo país que reduce el costo de capital.
+    \item \textbf{Debilidades:} Estructura de capital apalancada (Deuda Neta/EBITDA de 3,22x en FY2025); concentración accionaria que limita el free float y la liquidez; exposición a la regulación cambiaria argentina (cepo) para la repatriación de dividendos.
+    \item \textbf{Amenazas:} Volatilidad del precio del aluminio en el LME; atraso cambiario (TCR) que comprime márgenes en USD; posible imposición de aranceles adicionales en mercados de destino.
+\end{itemize}
+
+\subsection{Desempeño Financiero Reciente}
+\begin{table}[H]
+\centering
+\caption{\textbf{Evolución de Indicadores Clave FY2020–FY2025 (USD MM)} {\small\color{gsgray} (Elaboración propia en base a estados financieros de Aluar e información de mercado. 30-Jul-2026.)}}
+\small
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Métrica} & \textbf{FY2020} & \textbf{FY2021} & \textbf{FY2022} & \textbf{FY2023} & \textbf{FY2024} & \textbf{FY2025} \\
+\midrule
+Ingresos (Ventas Netas) & 823,5 & 513,5 & 654,7 & 647,8 & 915,9 & 1.092,6 \\
+EBITDA & 116,5 & 107,4 & 209,7 & 105,7 & 204,7 & 163,3 \\
+Margen EBITDA & 14,2\% & 20,9\% & 32,0\% & 16,3\% & 22,4\% & 14,9\% \\
+Deuda Neta & 594,95 & 227,03 & 281,93 & 353,82 & 121,22 & 525,76 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Industria del Aluminio}
+La producción global de aluminio primario asciende a 70 millones de toneladas anuales, con China concentrando el 56\% de la oferta mundial (principalmente alimentada a carbón). El precio del aluminio se determina en el London Metal Exchange (LME), donde las primas regionales (\textit{Midwest Premium, European Duty Paid}) agregan una capa adicional de precio según el mercado de destino. La energía eléctrica constituye entre el 30\% y el 40\% del costo total de producción de una planta de reducción (\textit{smelter}); con su matriz renovable autogenerada, Aluar cubre esa porción del costo sin exposición al precio spot de la red, la base de su ventaja estructural frente a competidores dependientes de energía comprada.
+
+\section{Contexto del Negocio y Proyecciones Financieras}
+Toda la operación de Aluar corre por una única planta, Puerto Madryn: sus ingresos y márgenes quedan expuestos por completo al precio del aluminio en el London Metal Exchange (LME) y al ciclo del dólar financiero (CCL).
+
+\textbf{Reconstrucción Trimestral Bottom-Up (FY2026E).} El modelo proyecta el primer año mediante un ensamble trimestral, no de forma agregada: el 1T26 incorpora datos reales (extraídos del research de Cohen Aliados Financieros), mientras que los tres trimestres fiscales restantes se escalan dinámicamente tomando los precios mensuales en vivo del LME a un volumen de despacho constante.
+
+\textbf{Límite al Crecimiento de Ingresos (CAGR) y Disociación del LME.} El modelo estipula una tasa CAGR de ventas en dólares del 8,0\% para el horizonte explícito. Metodológicamente, el CAGR histórico real (FY22-FY25) fue muy superior (18,6\%), pero el modelo de proyección impone un truncamiento forzoso a una banda de [-5\%, +8\%] por extrema prudencia.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_03.png}
+\captionof{figure}{Contexto macroeconómico de Argentina: PBI e inflación proyectada (FMI WEO abril-2026, REM-BCRA jun-2026).}
+\end{minipage}
+\end{center}
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_04.png}
+\captionof{figure}{Compresión del riesgo país (EMBI+ Argentina), serie histórica 2020–2026.}
+\end{minipage}
+\end{center}
+
+La caída del EMBI+ desde el pico de 2.400 pb (2022) hasta los 441 pb actuales es el principal canal por el cual la estabilización macroeconómica reduce el WACC de Aluar: al ser aditivo en el CAPM-Lambda ($CRP = \lambda \times EMBI+$), cada punto básico de compresión soberana se traslada mecánicamente a una tasa de descuento menor y, por lo tanto, a un valor presente mayor de los flujos futuros. Para nuestra valuación, definimos supuestos alineados a las primas de riesgo globales vigentes a julio-2026:
+\begin{itemize}
+    \item \textbf{Tasa Libre de Riesgo (Rf):} 4,70\% (Bono del Tesoro de EE.\,UU. a 10 años, cierre del 23-jul-2026).
+    \item \textbf{Riesgo País (EMBI+ AR):} 4,41\% (441 pb, promedio anual proyectado 2026).
+    \item \textbf{Modelo CAPM-Lambda ($\lambda=0,20$):} Aplicamos la fórmula de cátedra (directa) de Damodaran [1]: la CRP se calcula como $CRP = \lambda \times EMBI+ = 0,20 \times 4,41\% = 0,88\%$. El costo del capital (Ke) resulta 9,30\% —fijando el WACC en 7,06\% (Dumrauf [2], Cap. 12).
+    \item \textbf{Beta de Mercado:} el Beta apalancado que ingresa al CAPM es 0,888 (secuencia OLS $\rightarrow$ Blume $\rightarrow$ Hamada detallada a continuación).
+\end{itemize}
+
+\textbf{Secuencia completa del Beta (4 pasos).} (1) Regresión OLS de retornos diarios: $\beta_{OLS}=0,842$ (Desapalancado $\beta_U=0,588$). (2) Ajuste de Blume [6]: $\beta_{Blume} = 2/3 \times 0,842 + 1/3 = 0,895$. (3) Desapalancamiento de Hamada [7]: $\beta_U = 0,645$. (4) Reapalancamiento al D/E objetivo de 0,486 (mediana FY2023-2025, estructura de capital target): $\beta_L = 0,888$.
+
+\subsection{Curva de Tasas de Argentina y Convergencia del Riesgo País (Modelo AR(1))}
+La tasa de descuento en dólares de ALUAR es la suma de dos curvas: la curva libre de riesgo de EE.\,UU. (4,70\%) más el spread soberano argentino (EMBI+).
+
+\begin{tcolorbox}[colback=lightgray!30, colframe=warnamber, boxrule=0.8pt, title={\small\sffamily \textbf{Limitaciones del Modelo AR(1) frente al Riesgo de Salto Discreto}}, coltitle=white]
+\footnotesize
+\textbf{Advertencia metodológica:} El modelo asume un error $\epsilon_t$ normalmente distribuido. Empíricamente, los spreads soberanos exhiben severa asimetría y colas pesadas asociadas al riesgo de default discreto. Modelos más robustos, como Cox-Ingersoll-Ross (CIR) o esquemas de \textit{Jump-Diffusion}, capturarían mejor esta convexidad. La consecuencia de usar un AR(1) lineal es que se subestima el riesgo de cola, lo cual sugiere que la tasa libre de riesgo local implícita en nuestro WACC podría estar pecando de optimismo. La validación cuantitativa formal de esta comparación AR(1) vs. CIR (criterios de Log-Likelihood, AIC y BIC) se desarrolla en la Sección 16.1.
+\end{tcolorbox}
+
+El EMBI+ es, por construcción, un spread de rendimiento de una canasta de bonos soberanos en USD sobre el Tesoro americano –no es una serie separada del mercado de bonos, es la forma en que ese mercado se resume en un solo número. Para volver explícito el vínculo con el instrumento subyacente, la Figura siguiente traduce cada punto de la curva de EMBI+ a un rendimiento implícito del bono soberano argentino en USD ($y_{bono} = Rf_{UST10Y} + EMBI+ = 4,70\% + 4,41\% = 9,11\%$ hoy), tanto en la serie histórica como en los dos senderos de convergencia (AR(1) empírico y supuesto corporativo del modelo).
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_05.png}
+\captionof{figure}{Curva de riesgo país (EMBI+, eje izquierdo) y rendimiento implícito del bono soberano argentino en USD (Rf+EMBI+, eje derecho): convergencia real AR(1) vs. supuesto corporativo del modelo.}
+\end{minipage}
+\end{center}
+
+\section{Dinámica de la Industria Global del Aluminio}
+Cuando el dólar se aprecia globalmente (DXY), los commodities metálicos sufren compresión de precios y el aluminio LME sigue esa correlación inversa de cerca. ALUAR mitiga parcialmente ese impacto porque la devaluación simultánea del peso argentino licúa sus costos fijos locales.
+
+Los shocks de oferta (cierres de smelters europeos por crisis energéticas) han sostenido los precios por encima de su promedio histórico (soporte en USD 2.200/Tn), un piso del que ALUAR se beneficia como tomador de precios sin capacidad de influir en él.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_06.png}
+\captionof{figure}{Cotización del aluminio (LME) vs. índice del dólar (DXY), serie diaria 2016-2026, ejes duales.}
+\end{minipage}
+\end{center}
+
+\textbf{Validación estadística del vínculo ALUA-LME: test de cointegración de Engle-Granger.} La tesis de inversión descansa en que ALUAR es, en esencia, una posición apalancada al ciclo del aluminio. Sometimos esa premisa a un test formal en vez de apoyarla solo en el gráfico anterior: sobre el precio de ALUA.BA convertido a USD vía CCL (metodología idéntica a la de la Secuencia del Beta, N=2.355 observaciones diarias, 2016-2026) y el precio LME, el test de Engle-Granger [11] no rechaza la hipótesis nula de no cointegración (estadístico $-2,29$; $p=0,38$; valor crítico al 5\% de $-3,34$). No hay, en niveles de precio, un equilibrio de largo plazo estable entre ambas series a lo largo de la década completa. Sí existe una relación contemporánea significativa: una regresión de log-precios arroja una elasticidad de 0,66 (ALUA.BA sube/baja 0,66\% de USD por cada 1\% de movimiento del LME, $R^2=0,12$). La ausencia de cointegración no contradice la tesis: es consistente con que el precio de ALUA.BA está gobernado por dos procesos superpuestos —el commodity y el riesgo soberano argentino, que se mueve por su propio ciclo (compresión del EMBI+ de 2.400 a 441 pb en cuatro años)— y es precisamente esa segunda fuente de varianza, no capturada por el LME, la razón metodológica por la que este informe separa explícitamente el Costo del Equity en un componente de mercado global ($\beta \times ERP$) y uno de riesgo país ($\lambda \times EMBI+$) en vez de tratar a ALUAR como un derivado puro del aluminio.
+
+El mercado del aluminio se encuentra altamente comoditizado pero geográficamente segmentado en primas regionales. A nivel regional, el mercado latinoamericano muestra un marcado déficit de producción primaria. Aluar abastece cerca del 60\% del mercado doméstico total y exporta agresivamente ($\sim$70-80\% de su despacho anual) a Estados Unidos, Brasil y Japón.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_07.png}
+\captionof{figure}{El mapa de producción global exhibe una concentración asimétrica, con déficits crónicos en la región occidental que Aluar capitaliza mediante exportaciones estratégicas.}
+\end{minipage}
+\end{center}
+
+Con apenas 0,44 MM de toneladas anuales frente a las 39 MM de China, Aluar compite por nicho geográfico y no por volumen: su proximidad a mercados deficitarios (EE.\,UU., Brasil) le permite capturar fletes y primas regionales que un productor asiático de escala no puede igualar sin asumir un costo logístico estructuralmente mayor. Esa misma escala reducida la mantiene fuera de las guerras de precio por sobreoferta que China y Rusia libran entre sí, y le permite priorizar margen unitario sobre participación de mercado global.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_08.png}
+\captionof{figure}{Frente a los gigantes globales (e.g. Chalco, Rusal), Aluar mantiene una escala boutique orientada a la eficiencia y el control absoluto del cash cost.}
+\end{minipage}
+\end{center}
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_09.png}
+\captionof{figure}{Participación de mercado en Argentina: ALUAR vs. origen de las importaciones, 2025 (IAI / Memoria ALUAR).}
+\end{minipage}
+\end{center}
+
+Este monopolio doméstico (60\% del mercado argentino, sin otro productor primario local; IAI 2024 / Memoria ALUAR) le otorga a Aluar poder de fijación de precios sobre el 40\% restante, cubierto por importaciones de Asia (22\%), EE.\,UU. (12\%) y otros orígenes regionales (6\%), ancladas al costo de flete e internación desde el exterior; es, junto con la integración energética, la segunda fuente estructural de la ventaja competitiva valuada en este informe.
+
+\section{Posicionamiento Competitivo y ESG}
+En aluminio primario, la ventaja competitiva se reduce a una sola variable: la posición en la curva de costos globales (Cash Cost C1). ALUAR se consolida en el primer cuartil de eficiencia gracias a su integración energética:
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.66\linewidth,keepaspectratio]{figures_pristine/figura_10.png}
+\captionof{figure}{Matriz energética de Puerto Madryn (arriba) y curva de costos globales C1 (abajo).}
+\end{minipage}
+\end{center}
+
+\section{Valuación Relativa y Arquitectura Financiera}
+ALUAR transa históricamente con un premio persistente de EV/EBITDA frente a pares globales tradicionales (Alcoa, Norsk Hydro): el mercado le reconoce y pone en precio la estabilidad de sus márgenes, consecuencia directa de su estructura de costos superior.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_11.png}
+\captionof{figure}{Múltiplos EV/EBITDA de Aluar vs. pares globales de la industria del aluminio.}
+\end{minipage}
+\end{center}
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Análisis de Comparables: Evaluación Relativa frente a la Industria} {\small\color{gsgray} (Elaboración propia en base a estados financieros de Aluar e información de mercado. 30-Jul-2026.)}}
+\small
+\begin{tabular}{llccc}
+\toprule
+\textbf{Compañía} & \textbf{Ticker} & \textbf{EV/EBITDA (x)} & \textbf{Margen EBITDA} & \textbf{Deuda Neta/EBITDA} \\
+\midrule
+Aluar S.A.I.C. & ALUA.BA & 10,2x & 14,9\% & 3,2x \\
+Alcoa Corp. & AA & 8,1x & 9,2\% & 2,1x \\
+Norsk Hydro & NHY.OL & 6,5x & 11,4\% & 1,4x \\
+Chalco & 2600.HK & 5,8x & 8,8\% & 3,8x \\
+\midrule
+\textbf{Mediana Industria} & & 6,5x & 9,2\% & 2,1x \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_12.png}
+\captionof{figure}{EBITDA histórico (FY2020–FY2025) y proyectado (FY2026E–FY2030E) con convergencia de margen por contracción estructural.}
+\end{minipage}
+\end{center}
+
+\section{Modelo WACC y Descomposición del Beta}
+Para capturar el riesgo sistémico de ALUAR sin penalizarla por la volatilidad cambiaria endémica de Argentina, el Beta apalancado se deriva de una regresión OLS directa contra el S\&P 500 —no del mercado local— a la que se le aplica un ajuste de Blume (reversión a la media empírica de $2/3\times Beta_{OLS} + 1/3\times1,0$) para minimizar el ruido muestral temporal.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_13.png}
+\captionof{figure}{Secuencia de cálculo del Beta en 4 pasos: OLS $\rightarrow$ Blume $\rightarrow$ desapalancamiento $\rightarrow$ reapalancamiento (Hamada).}
+\end{minipage}
+\end{center}
+
+La prima de riesgo país (\textit{Country Risk Premium}) se ajusta mediante el factor $\lambda$ (Lambda de Damodaran), que pondera el hecho de que la mayoría de los ingresos de ALUAR están descorrelacionados del riesgo doméstico (son exportaciones atadas al dólar global), aislando así el Costo del Equity (Ke).
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_14.png}
+\captionof{figure}{Descomposición del WACC: Ke (con $\lambda$), Kd y ponderadores E/V y D/V.}
+\end{minipage}
+\end{center}
+
+\subsection{Análisis de Sensibilidad Académica sobre el Factor $\lambda$}
+El modelo oficial adopta $\lambda = 0,20$ debido a la dolarización estructural de las exportaciones, asilando así la valuación del riesgo puramente doméstico. El siguiente cuadro muestra la sensibilidad del dictamen ante variaciones en el CRP si un analista aplicara la metodología tradicional ($\lambda = 1,00$):
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Análisis de Sensibilidad: Factor $\lambda$ de Exposición al Riesgo País} {\small\color{gsgray} (Elaboración propia. Metodología Damodaran aplicada a estructura de ingresos.)}}
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Parámetro de Riesgo País} & \textbf{$\lambda = 0,20$ (Base)} & \textbf{$\lambda = 0,50$} & \textbf{$\lambda = 0,75$} & \textbf{$\lambda = 1,00$ (Trad.)} \\
+\midrule
+CRP ($\lambda \times$ EMBI+) & 0,88\% & 2,21\% & 3,31\% & 4,41\% \\
+Costo del Equity (Ke) & 9,30\% & 10,63\% & 11,73\% & 12,83\% \\
+WACC Resultante & \textbf{7,06\%} & \textbf{7,96\%} & \textbf{8,70\%} & \textbf{9,45\%} \\
+Precio Objetivo Base (ARS) & \textbf{1.236,00} & 1.042,50 & 915,00 & 812,00 \\
+Upside vs. Spot (ARS 982,50) & \textbf{+25,8\%} & +6,1\% & -6,9\% & -17,4\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Análisis de Creación de Valor (EVA)}
+El diferencial histórico entre el Rendimiento del Capital Invertido (ROIC) y su costo (WACC) fundamenta la política restrictiva de crecimiento terminal:
+\begin{itemize}
+    \item \textbf{Coyuntura (FY2025):} Se registró un déficit transitorio en la creación de valor (ROIC 3,52\% vs WACC 7,06\%), traccionado por el costo impositivo extraordinario (NIC 29, alícuota efectiva 84,32\%) y la intensiva capitalización de CAPEX eólico.
+    \item \textbf{Perspectiva Histórica (FY2020–FY2025):} El ROIC promedio decantó en 7,63\% (frente a un WACC del 7,06\%).
+    \item \textbf{Valor Terminal (Disciplina de Damodaran):} El modelo descarta capitalizar perpetuamente ventajas operativas ilusorias. Asume un escenario base de convergencia estricta ($ROIC_{terminal}=WACC$) acotando la reinversión de perpetuidad a $g/WACC$.
+\end{itemize}
+
+\vspace{0.2cm}
+\begin{table}[H]
+\centering
+\caption{\textbf{Matriz Histórica y Proyectada de Creación de Valor (EVA)} {\small\color{gsgray} (ROIC histórico vs. convergencia terminal. USD MM.)}}
+\scriptsize
+\begin{tabular}{lcccccc|c}
+\toprule
+\textbf{Métrica de Valor} & \textbf{FY20} & \textbf{FY21} & \textbf{FY22} & \textbf{FY23} & \textbf{FY24} & \textbf{FY25} & \textbf{Terminal (2030E)} \\
+\midrule
+NOPAT & 31,3 & 39,9 & 105,4 & 40,3 & 99,2 & 60,0 & 135,5 \\
+Capital Invertido (NOA) & 838,4 & 531,3 & 590,5 & 771,6 & 1.248,9 & 1.704,3 & 1.919,3 \\
+ROIC (NOPAT / NOA) & 3,73\% & 7,50\% & 17,85\% & 5,22\% & 7,94\% & 3,52\% & \textbf{7,06\%} \\
+WACC & 7,06\% & 7,06\% & 7,06\% & 7,06\% & 7,06\% & 7,06\% & \textbf{7,06\%} \\
+Spread (ROIC - WACC) & -3,33\% & +0,44\% & +10,79\% & -1,84\% & +0,88\% & -3,54\% & \textbf{0,00\%} \\
+\textbf{EVA (USD MM)} & \textbf{-27,9} & \textbf{2,3} & \textbf{63,7} & \textbf{-14,2} & \textbf{11,0} & \textbf{-60,3} & \textbf{0,0} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Puente de Valuación}
+Al descontar los FCFF estocásticos mediante el WACC derivado, obtenemos el valor intrínseco fundamental.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.7\linewidth,keepaspectratio]{figures_pristine/figura_15.png}
+\captionof{figure}{Puente de valuación: de Enterprise Value a Precio Objetivo por acción.}
+\end{minipage}
+\end{center}
+
+\section{Análisis Estratégico y de la Industria (Frameworks corporativos)}
+Antes de proyectar sus flujos, DuPont, Porter y PESTEL explican de dónde sale la resiliencia de los márgenes de Aluar, su foso económico (\textit{economic moat}).
+
+\subsection{Descomposición DuPont}
+El ROE de FY2025 se derrumbó a 0,83\%, frente al 10,68\% de FY2024 —el desplome más pronunciado de la serie FY2020-FY2025—. El desglose de 3 factores ubica la causa casi por completo en el Margen Neto (0,84\%, contra 9,80\% el año previo), comprimido por el ajuste por inflación impositivo (NIC 29, alícuota efectiva 84,32\%) y por la carga de intereses tras el endeudamiento del Parque Eólico; la Rotación de Activos y el Apalancamiento se mantuvieron dentro de su rango histórico.
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Descomposición DuPont de 3 Factores} (ROE = Margen Neto $\times$ Rotación de Activos $\times$ Apalancamiento) {\small\color{gsgray} (Elaboración propia en base a estados financieros de Aluar. 30-Jul-2026.)}}
+\small
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Factor} & \textbf{FY2020} & \textbf{FY2021} & \textbf{FY2022} & \textbf{FY2023} & \textbf{FY2024} & \textbf{FY2025} \\
+\midrule
+Margen Neto (Res. Neto / Ventas) & -5,34\% & 5,48\% & 15,79\% & 19,48\% & 9,80\% & 0,84\% \\
+Rotación de Activos (Ventas / Activo) & 0,78x & 0,74x & 0,79x & 0,71x & 0,63x & 0,55x \\
+Apalancamiento (Activo / PN) & 2,27x & 2,00x & 1,82x & 1,68x & 1,74x & 1,78x \\
+\midrule
+\textbf{ROE (producto de los 3 factores)} & \textbf{-9,49\%} & \textbf{8,04\%} & \textbf{22,64\%} & \textbf{23,25\%} & \textbf{10,68\%} & \textbf{0,83\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Las 5 Fuerzas de Porter}
+\begin{itemize}
+    \item \textbf{Nuevos Entrantes (Muy Baja):} CAPEX inicial colosal y acceso energético restringido (monopolio natural local).
+    \item \textbf{Proveedores (Alto):} Aluar mitiga esto mediante autogeneración hidroeléctrica y eólica cautiva.
+    \item \textbf{Compradores (Bajo/Medio):} Tomadores de precios dictados por el LME.
+    \item \textbf{Sustitutos (Media):} Plásticos y fibra de carbono compiten, pero el aluminio sostiene ventajas por reciclaje.
+    \item \textbf{Rivalidad (Alta global):} Competencia internacional en costo marginal C1.
+\end{itemize}
+
+\subsection{Análisis PESTEL}
+\begin{itemize}
+    \item \textbf{Político/Legal:} Desregulación y régimen RIGI que reducen la carga tributaria corporativa.
+    \item \textbf{Económico:} Desinflación y compresión de riesgo país que bajan el costo de capital WACC.
+    \item \textbf{Ambiental (ESG):} Parque eólico propio (582 MW) que otorga ventaja verde contra aranceles CBAM.
+\end{itemize}
+
+\subsection{Gobernanza Corporativa y ESG}
+La estructura de gobierno de Aluar comprende un Directorio, una Comisión Fiscalizadora de 3 miembros titulares, un Comité de Auditoría de 3 directores y un Comité de Diversidad, Equidad e Inclusión (Memoria FY2025). La concentración accionaria del grupo de control (45,98\%, ver Estructura Accionaria) blinda a la compañía de presiones cortoplacistas típicas de estructuras de capital más dispersas.
+
+\textbf{Construcción de un Proxy de Calificación ESG.} A diferencia de compañías con cobertura de research institucional global, no se dispone de una calificación ESG de terceros (LSEG, MSCI, Sustainalytics) pública para Aluar. Ante esta limitación de fuentes, se construye un scorecard proxy basado en los lineamientos del Código de Gobierno Societario de BYMA y datos de la Memoria FY2025, evaluando tres dimensiones críticas:
+
+\vspace{0.15cm}
+\begin{table}[H]
+\centering
+\caption{\textbf{Scorecard Proxy de ESG y Gobernanza Corporativa} {\small\color{gsgray} (Elaboración propia en base a parámetros del Código de Gobierno Societario BYMA y Memoria FY25.)}}
+\small
+\begin{tabular}{p{2.5cm}p{6.5cm}p{4.5cm}}
+\toprule
+\textbf{Dimensión} & \textbf{Métricas y Evidencia Observable} & \textbf{Evaluación Cualitativa} \\
+\midrule
+\textbf{Ambiental (E)} & 78\% de matriz energética renovable autogenerada (Hidroeléctrica + Parque Eólico). Proceso en curso para certificación internacional Aluminio Verde (ASI). & \textbf{Fuerte.} Ventaja competitiva estructural frente a competidores dependientes de combustibles fósiles (carbón). \\
+\midrule
+\textbf{Social (S)} & Comité de Diversidad, Equidad e Inclusión activo. Principal empleador privado de la Provincia del Chubut. Historial de conflictividad sindical encauzada sin impacto material en volumen de despacho. & \textbf{Adecuada.} Cumplimiento normativo estándar local sin contingencias laborales severas. \\
+\midrule
+\textbf{Gobernanza (G)} & Concentración accionaria del 45,98\% (Grupo de Control). Existencia de Comité de Auditoría. Ausencia de cotización ADR que obligue a cumplimiento de la normativa Sarbanes-Oxley (SOX). & \textbf{Moderada.} La concentración blinda contra el cortoplacismo pero reduce la influencia de los accionistas minoritarios (free float). \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Análisis Financiero Histórico y Ratios Operativos}
+El balance de Aluar muestra el impacto del intensivo plan de inversiones en el Parque Eólico Puerto Madryn durante FY2025, el cual elevó el CAPEX anual a USD 243,93 MM (22,3\% de las ventas). Esto resultó en un incremento del endeudamiento total a USD 594,95 MM, dejando la deuda neta de cierre FY2025 en USD 525,76 MM. Con un EBITDA de USD 163,25 MM en FY2025, el ratio de apalancamiento Deuda Neta / EBITDA trepó a 3,22x.
+
+\textbf{Limitación de fuentes.} Los EEFF públicos de Aluar no desagregan el perfil de vencimientos de la deuda financiera ni su mix entre tasa fija y variable a un nivel granular. Esa composición —relevante para evaluar el riesgo de refinanciamiento frente al apalancamiento creciente recién descripto— no se estima ni se fabrica aquí ante su ausencia; es la misma razón por la que este informe tampoco proyecta hacia adelante los ratios que requieren el desagregado del Balance General (D/E, D/Activo, ROE, ROA, PT/PN), limitándose al FCFF y la Deuda Neta que sí sostiene el DCF.
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Histórico Financiero y Ratios Operativos de Aluar S.A.I.C. (USD MM)} {\small\color{gsgray} (Elaboración propia en base a estados financieros de Aluar e información de mercado. 30-Jul-2026.)}}
+\scriptsize
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Métrica / Año} & \textbf{FY2020} & \textbf{FY2021} & \textbf{FY2022} & \textbf{FY2023} & \textbf{FY2024} & \textbf{FY2025} \\
+\midrule
+Ventas Netas & 823,50 & 513,50 & 654,72 & 647,75 & 915,85 & 1.092,60 \\
+EBITDA & 116,50 & 107,39 & 209,67 & 105,70 & 204,70 & 163,25 \\
+Margen EBITDA & 14,15\% & 20,91\% & 32,02\% & 16,32\% & 22,35\% & 14,94\% \\
+EBIT & 48,10 & 61,33 & 162,14 & 61,97 & 152,57 & 92,27 \\
+Margen EBIT & 5,84\% & 11,94\% & 24,76\% & 9,57\% & 16,66\% & 8,44\% \\
+Resultado Neto & -43,94 & 28,13 & 103,35 & 126,19 & 89,74 & 9,17 \\
+Margen Neto & -5,34\% & 5,48\% & 15,79\% & 19,48\% & 9,80\% & 0,84\% \\
+CAPEX & -103,01 & -9,43 & -11,11 & -65,89 & -25,59 & -243,93 \\
+Deuda Neta & 594,95 & 227,03 & 281,93 & 353,82 & 121,22 & 525,76 \\
+\midrule
+\textbf{ROIC} & \textbf{3,73\%} & \textbf{7,50\%} & \textbf{17,85\%} & \textbf{5,22\%} & \textbf{7,94\%} & \textbf{3,52\%} \\
+ROE & -9,49\% & 8,04\% & 22,64\% & 23,25\% & 10,68\% & 0,83\% \\
+Liquidez Corriente & 1,34x & 1,45x & 1,55x & 1,25x & 1,35x & 1,46x \\
+Deuda Neta / EBITDA & 4,00x & 2,11x & 1,34x & 3,35x & 0,59x & 3,22x \\
+Cobertura de Intereses (EBIT/Int.) & 2,72x & 4,12x & 28,35x & 3,87x & 11,63x & 3,53x \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Sobre la cobertura de intereses.} La serie completa (Intereses Pagados del Estado de Flujo de Efectivo, convertidos a USD al CCL de cierre de cada ejercicio) muestra un rango amplio: de un mínimo de 2,72x (FY2020, con intereses elevados sobre un EBIT deprimido) a un máximo de 28,35x (FY2022, año de EBIT récord y financiamiento excepcionalmente bajo), sin una tendencia monótona hasta FY2023 (3,87x). El deterioro reciente es, en ese contexto, real pero no inédito en magnitud: la cobertura cayó de 11,63x (FY2024) a 3,53x (FY2025) —el gasto en intereses se duplicó mientras el EBIT cayó 39,5\%—, un nivel similar al de FY2020 y FY2023, no un mínimo histórico. Es, aun así, la evidencia más directa detrás del riesgo de apalancamiento ya señalado en el ratio Deuda Neta/EBITDA, agravado por la coincidencia con el pico de CAPEX del Parque Eólico. Sobre base EBITDA (menos conservadora, ignora la carga de D\&A), la cobertura de FY2024-FY2025 es de 15,61x y 6,24x respectivamente.
+
+\textbf{Proyección de CAPEX: Varianza Inversa y Filtro Huber.} La intensidad de capital (CAPEX/Ventas) se proyecta mediante \textit{Inverse-Variance Weighting} (Fisher-Cochran) con filtro Huber MAD (M-estimación robusta a outliers), fijando el CAPEX de mantenimiento en $\approx$6,5\% de las ventas (mediana histórica CAPEX/Revenue de la serie auditada).
+
+\subsection{Ciclo de Conversión de Efectivo y Capital de Trabajo}
+De 79 días (2023) a 64 días (2026E): así se proyecta comprimir el Ciclo de Conversión de Efectivo (CCC) por la gestión de inventarios y plazos comerciales, liberando caja operativa y mejorando la conversión de EBITDA en FCFF.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_16.png}
+\captionof{figure}{Evolución de Días de Capital de Trabajo (DIO, DSO, DPO y CCC): la compresión del CCC a 64 días proyectada para 2026E contribuye a la conversión eficiente de EBITDA en Flujo de Fondos Libre.}
+\end{minipage}
+\end{center}
+
+\section{Valuación Fundamental (DCF)}
+\textbf{Tratamiento Aditivo de la Opción Real Eólica (PEAL V).} Se valora la opción real de expansión eólica del Parque PEAL V (312 MW adicionales) mediante Monte Carlo por Mínimos Cuadrados de Longstaff-Schwartz (LSMC) [5]. La prima asciende a +ARS 19,60 por acción (+USD 0,01 al CCL de ARS 1.584,25):
+\begin{itemize}
+    \item \textbf{Precio Objetivo DCF Base (Determinístico):} ARS 1.236,00 por acción (USD 0,78, +25,8\% Upside).
+    \item \textbf{Prima Opción Real PEAL V (Flexibilidad Eólica):} +ARS 19,60 por acción (+USD 0,01).
+    \item \textbf{Precio Objetivo Integrado (DCF Base + Opción Real):} ARS 1.255,60 por acción (USD 0,79, +27,8\% Upside).
+\end{itemize}
+Al descontar los FCFF proyectados bajo la convención \textit{mid-year} al WACC del 7,06\% con $g=2,0\%$, se obtiene un valor intrínseco base de ARS 1.236,00 por acción.
+
+\subsection{Prueba de Estrés: Riesgo País Re-ampliado}
+Como extensión cuantitativa, se recalculó el WACC bajo el supuesto de que el EMBI+ retorna a su máximo histórico de la serie 2020-2026 (2.400 pb, año 2022). Bajo ese shock, el WACC sube de 7,06\% a 13,21\% (+564 pb), y el Precio Objetivo colapsa a ARS 237,00 (-75,9\% vs. mercado, dictamen VENDER).
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_17.png}
+\captionof{figure}{WACC caso base (7,06\%) vs. prueba de estrés EMBI+ 2.400 pb (WACC 13,21\%).}
+\end{minipage}
+\end{center}
+
+\subsection{Marco de Escenarios: Perfil de Riesgo Asimétrico}
+Complementando la prueba de estrés puntual, se construyó un marco de tres escenarios narrativos que combinan las principales variables clave (precio LME, riesgo país, ejecución del CAPEX eólico y tipo de cambio real) con su traducción directa a WACC y $g$ en el motor DCF.
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Marco de Escenarios: Bear / Base / Bull} {\small\color{gsgray} (Elaboración propia en base al motor de valuación — 01-Aug-2026.)}}
+\scriptsize
+\begin{tabular}{p{2.6cm}p{3.7cm}p{3.7cm}p{3.7cm}}
+\toprule
+ & \textbf{Bear (25\%)} & \textbf{Base (50\%)} & \textbf{Bull (25\%)} \\
+\midrule
+Precio LME & Reversión hacia el cash-cost global ($\sim$USD 1.900-2.100/Tn); sin sostén de shocks de oferta. & Reversión a la media de equilibrio del proceso OU (USD 2.450/Tn), consistente con el caso base del motor. & LME sostenido por encima de USD 3.000/Tn (nivel ya observado en 2026 por shock de oferta real), sin reversión completa en el horizonte explícito. \\
+Riesgo País (EMBI+) & Estancamiento o repunte parcial desde 441 pb; sin nueva compresión. & Convergencia gradual hacia el equilibrio de largo plazo del AR(1)/CIR ($\approx$422 pb). & Compresión continua por debajo de 400 pb, en línea con la tendencia estructural post-estabilización fiscal. \\
+Ejecución CAPEX Eólico / RIGI & Demoras en la entrada en operación comercial de la Etapa V (582 MW); sin beneficios RIGI. & Entrada en operación comercial estimada para 4T-2026, según lo anunciado. & Ejecución adelantada y RIGI pleno (Ganancias 25\%, aranceles y retenciones en 0\% sobre bienes de capital eólicos). \\
+WACC / g implícitos & 9,0\% / 1,5\% & 7,06\% / 2,0\% & 6,5\% / 2,2\% \\
+\textbf{Precio Objetivo (DCF)} & \textbf{ARS 781} (-36,8\% vs. base) & \textbf{ARS 1.236,00} (caso oficial) & \textbf{ARS 1.481} (+19,8\% vs. base) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+El valor esperado ponderado es ARS 1.184,00, 4,2\% por debajo del caso base: el Bear pierde más valor absoluto del que gana el Bull, la misma asimetría hacia $g$ que la sensibilidad ya documentada. El dictamen COMPRAR sobrevive a Base y Bull, y sólo se revierte a VENDER bajo el Bear (ARS 781) —el 25\% asignado a ese escenario es, en rigor, la probabilidad de que el dictamen quede invalidado.
+
+\section{Análisis de Sensibilidad de Valuación}
+El contraste de metodologías revela que el precio de mercado actual (ARS 982,50) se ubica por debajo del modelo central determinista (ARS 1.236,00) —un upside de +25,8\% que respalda el dictamen COMPRAR.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_18.png}
+\captionof{figure}{Gráfico de Rangos de Valuación · Rango de valuación por escenario real de robustez (Base, g=2,5\%, $\lambda=1,0$, Damodaran estricto) y rango P5-P95 del Monte Carlo, vs. Precio de Mercado actual (ARS 982,50).}
+\end{minipage}
+\end{center}
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.7\linewidth,keepaspectratio]{figures_pristine/figura_19.png}
+\captionof{figure}{Mapa de Calor de Sensibilidad del Precio Objetivo en Pesos ARS ante variaciones de WACC y g.}
+\end{minipage}
+\end{center}
+
+De las cinco metodologías del gráfico de rangos, solo el escenario $\lambda=1,0$ (CRP completo, sin ponderador) ubica el target por debajo del precio de mercado; las cuatro restantes —incluyendo la mediana del Monte Carlo— convergen en un rango de ARS 993 a ARS 1.371. El mapa de calor (rango de ARS 932 al mover $g$ vs. ARS 507 al mover el WACC, dentro de las bandas exploradas) confirma que $g$ domina la sensibilidad del target casi 2:1 frente al WACC.
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Gráfico de Rangos: Síntesis Numérica por Metodología (ARS/acción)} {\small\color{gsgray} (Elaboración propia en base al motor de valuación.)}}
+\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Metodología} & \textbf{Mín.} & \textbf{Central} & \textbf{Máx.} \\
+\midrule
+DCF $\lambda=1,0$ (CRP completo, sin ponderador) & \multicolumn{3}{c}{776 (único por debajo del mercado)} \\
+DCF Damodaran estricto & \multicolumn{3}{c}{993} \\
+DCF Base (oficial, $\lambda=0,20$) & \multicolumn{3}{c}{1.236} \\
+DCF $g=2,5\%$ (sensibilidad) & \multicolumn{3}{c}{1.371} \\
+Monte Carlo (P5 / Mediana / P95) & 844 & 1.237 & 1.737 \\
+\midrule
+\multicolumn{4}{l}{\textit{Referencia — no forma parte del gráfico de rangos:}} \\
+DCF + Opción Real PEAL V (Target Integrado) & \multicolumn{3}{c}{1.255,60} \\
+Marco de Escenarios (Bear / Base / Bull) & 781 & 1.236 & 1.481 \\
+Precio de Mercado (referencia, spot) & \multicolumn{3}{c}{982,50} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Simulación Monte Carlo}
+Para complementar el DCF, se corrió un motor Monte Carlo con 20.000 simulaciones (19.995 válidas tras excluir corridas con $WACC - g < 1\%$) sobre tres shocks: (i) WACC; (ii) $g$ terminal; ambos con innovaciones Student-t ($\nu=4,2$) —el mismo grado de libertad que el test de Kolmogorov-Smirnov estimó para los retornos diarios de ALUA.BA, en lugar de la Normal usada en una primera versión del modelo— y (iii) margen EBITDA de largo plazo, con shock Normal. La mediana se ubica en ARS 1.237 (rango P5-P95: ARS 844 a ARS 1.737), con probabilidad de superar el precio spot de 85,2\%.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_20.png}
+\captionof{figure}{Distribución Estocástica del Precio Objetivo Resultante de la Simulación Monte Carlo (N=19.995 simulaciones válidas, innovaciones Student-t $\nu=4,2$).}
+\end{minipage}
+\end{center}
+
+\subsection{Prueba Retrospectiva de la Señal del DCF Inverso}
+Se invirtió el modelo DCF (WACC 7,06\%, FCFF proyectado, deuda neta USD 456 MM) para despejar la tasa $g$ de perpetuidad que el precio de mercado actual (ARS 982,50) implica. El mercado descuenta $g^*\approx0,69\%$, por debajo del $g=2,0\%$ del caso base —una lectura consistente con un mercado que exige mayor margen de seguridad que el modelo.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_21.png}
+\captionof{figure}{DCF Inverso: precio objetivo (ARS/acción) en función de la tasa de crecimiento perpetuo g, con el cruce que iguala el precio spot de mercado.}
+\end{minipage}
+\end{center}
+
+\section{Valuación Relativa y Comparación de Pares Globales}
+En términos de múltiplos internacionales de valuación LTM, Aluar cotiza a una prima sobre productores globales de aluminio de mucha mayor escala:
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Tabla Comparativa Sectorial y Múltiplos Financieros LTM (julio-2026)} {\small\color{gsgray} (Elaboración propia en base a estados financieros de Aluar e información de mercado. 30-Jul-2026.)}}
+\scriptsize
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Compañía / Ticker} & \textbf{EV/EBITDA LTM} & \textbf{Crec. Ingresos LTM} & \textbf{Margen EBITDA LTM} & \textbf{ROIC LTM} & \textbf{FCF Yield 2026E} \\
+\midrule
+ALUAR (Implícito Mkt) & 13,3x & 8,0\% & 14,9\% & 4,3\% & -4,1\% \\
+Alcoa (AA) & 8,5x & 6,5\% & 12,0\% & 5,5\% & 4,8\% \\
+Chalco (ACH) & 9,0x & 9,2\% & 15,1\% & 8,0\% & 5,2\% \\
+Kaiser Aluminum (KALU) & 7,2x & 4,1\% & 9,8\% & 3,5\% & 3,0\% \\
+Norsk Hydro (NHYDY) & 6,4x & 5,8\% & 13,5\% & 6,2\% & 4,1\% \\
+Constellium (CSTM) & 5,4x & 3,2\% & 10,1\% & 5,0\% & 3,5\% \\
+Rusal & 5,1x & -2,0\% & 8,4\% & 2,1\% & 1,5\% \\
+\midrule
+\textbf{Mediana Sectorial} & 7,2x & 5,0\% & 11,1\% & 5,3\% & 3,8\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Sobre la prima de valuación relativa y la convergencia.} ALUAR cotiza a 13,3x EV/EBITDA LTM (implícito de mercado) frente a una mediana sectorial de 6,8x; sobre el EBITDA 2026E ya normalizado, ese múltiplo Forward cae a 6,75x —el valor razonable de sus pares globales—, evidencia de que la prima LTM es un artefacto del EBITDA deprimido de FY25, no un sobreprecio estructural del mercado.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_22.png}
+\captionof{figure}{Convergencia del múltiplo EV/EBITDA de Aluar hacia la mediana de pares globales en distintos horizontes de proyección.}
+\end{minipage}
+\end{center}
+
+\section{Gestión Cuantitativa de Riesgo y Extensiones del Modelo}
+
+\subsection{De VaR/ES a un Límite Explícito de Tamaño de Posición}
+El CVaR diario al 95\% [9] (-7,16\%) escalado a 21 sesiones ($\sqrt{21}$) resulta -32,80\%. El criterio de Kelly (1956), aplicado al retorno y varianza anualizados de ALUA.BA sobre la tasa libre de riesgo, arroja un Kelly completo de 73,5\%; dado el riesgo de sobre-estimación muestral inherente a la fórmula, se adopta la convención de Half-Kelly, fijando el tamaño de posición recomendado en 36,8\% de la cartera (Quarter-Kelly conservador: 18,4\%).
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.7\linewidth,keepaspectratio]{figures_pristine/figura_23.png}
+\captionof{figure}{Dimensionamiento de posición por criterio de Kelly: completo, mitad (recomendado) y cuarto (conservador).}
+\end{minipage}
+\end{center}
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Matriz de Riesgos Corporativos y de Mercado: Impacto Cuantificado y Mitigantes} {\small\color{gsgray} (Elaboración propia en base al motor de valuación y estados financieros de Aluar. 30-Jul-2026.)}}
+\tiny
+\begin{tabular}{p{1.1cm}p{3.3cm}p{4.7cm}p{4.7cm}}
+\toprule
+\textbf{Prob.} & \textbf{Riesgo} & \textbf{Impacto en Valuación} & \textbf{Mitigante} \\
+\midrule
+Alta & Riesgo de Commodity (LME): caída sostenida del LME hacia la zona de cash-cost global ($\sim$USD 1.900/Tn). & Target cae de ARS 1.236 a ARS 812 (-34,3\%), dictamen pasa a MANTENER (ver Matriz de Estrés). & Cash-cost C1 propio de USD 1.680/Tn ubica a Aluar en el percentil $\sim$21-28\% de la curva global; margen de maniobra frente a pares de mayor costo. \\
+Alta & Prima de Cobertura Cambiaria: el mercado ignora los fundamentos del DCF y sigue transando ALUA como cobertura dolarizada del CCL. & Es un riesgo de temporalidad, no de valuación: el upside de +25,8\% podría no cerrarse en el corto plazo aunque el modelo sea correcto. & El backtest del DCF Inverso (Sección Monte Carlo) muestra que esta brecha entre precio y $g$ implícito es recurrente, no estructural. \\
+Media & Shock Macro (Riesgo País): re-ampliación del EMBI+ a su máximo histórico de la serie (2.400 pb, nivel de 2022). & WACC sube de 7,06\% a 13,21\% (+564 pb); target colapsa a ARS 237,00 (-80,8\% vs. caso base), dictamen VENDER. & El EMBI+ actual (441 pb) ya está cerca de su equilibrio de largo plazo estimado por AR(1)/CIR ($\approx$422 pb); el CIR no sugiere corrección direccional al alza. \\
+Media & Estrés Combinado: ocurrencia simultánea del shock de riesgo país y de un LME deprimido. & Target colapsa a ARS 165,00 (-86,7\% vs. caso base), dictamen VENDER —el peor escenario modelado. & Los dos shocks son parcialmente anticorrelacionados en la práctica (un LME débil suele coincidir con dólar fuerte, no con más apetito de riesgo emergente); la Cópula Gaussiana ya captura parte de esa dependencia. \\
+Baja & Atraso Cambiario (TCR): apreciación real del peso que encarece los costos fijos locales frente a ingresos dolarizados. & No cuantificado de forma independiente en el motor (afecta margen vía costos en pesos, no está aislado del resto de los supuestos). & $\sim$70-80\% del despacho anual es exportación en moneda dura; el FCFF está estructuralmente dolarizado, amortiguando el efecto sobre el equity value en USD. \\
+Baja & Conflictividad Sindical: paros transitorios por paritarias (UOM) que demoran embarques puntuales. & No cuantificado de forma independiente; impacto esperado acotado a días de inventario, no a la capacidad estructural de despacho anual. & Matriz de abastecimiento energético diversificada (Hidro + Eólico 79\%) reduce exposición a interrupciones de terceros; histórico de paritarias sin impacto material en volúmenes anuales. \\
+Media & Riesgo de Régimen Cambiario (CCL/Oficial): el modelo reporta el target en ARS al CCL (ARS 1.584,25); una unificación cambiaria, un cepo más estricto sobre el CCL, o una brecha que se abra en sentido contrario alteraría directamente el tipo de cambio de referencia usado para convertir el equity value en USD a ARS —un riesgo distinto del atraso del TCR, que es sobre costos, no sobre el tipo de cambio de conversión en sí. & El Target en USD (0,78) no se ve afectado; solo su conversión a ARS. Un CCL 20\% más bajo (unificación cambiaria completa) desplazaría el Target en ARS proporcionalmente, sin cambiar la tesis de fondo en USD. & Aluar cotiza en ARS pero el 80\% de sus ingresos son USD; la exposición neta del equity al régimen cambiario es de conversión, no operativa. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Matriz Corporativa de Escenarios de Estrés y Valuación Sensibilizada} {\small\color{gsgray} (Elaboración propia en base a estados financieros de Aluar e información de mercado. 30-Jul-2026.)}}
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Escenario de Estrés} & \textbf{WACC (\%)} & \textbf{LME (USD/Tn)} & \textbf{Precio Objetivo (ARS)} & \textbf{Dictamen} \\
+\midrule
+Caso Base (DCF Determinístico) & 7,06\% & 2.450 & 1.236,00 & COMPRAR \\
+Estrés Macro (EMBI+ 2.400 pb) & 13,21\% & 2.450 & 237,00 & VENDER \\
+Estrés Commodity (LME USD 1.900) & 7,06\% & 1.900 & 812,00 & MANTENER \\
+Estrés Combinado (Shock Macro + LME) & 13,21\% & 1.900 & 165,00 & VENDER \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Análisis de los Escenarios de Estrés.} El escenario de estrés macro demuestra que la valuación es altamente sensible a la prima de riesgo soberano. Si el EMBI+ retorna a los 2.400 pb observados en 2022, el costo de capital se eleva al 13,21\%, destruyendo el valor del equity. Por el contrario, en un escenario de compresión continua del riesgo soberano por debajo de los 400 pb, el target determinista se expande holgadamente hacia la zona de ARS 1.450 por acción.
+
+\subsection{Pruebas de Estrés Históricas: Comportamiento Real de ALUA.BA en Crisis Pasadas}
+Los estreses anteriores son paramétricos (shocks hipotéticos sobre WACC y LME). Como contraparte empírica, se midió el comportamiento realizado de ALUA.BA (en USD, vía CCL) durante tres ventanas de crisis efectivamente ocurridas:
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Comportamiento Histórico de ALUA.BA (USD) en Ventanas de Crisis} {\small\color{gsgray} (Elaboración propia en base a series de mercado.)}}
+\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Escenario} & \textbf{Retorno Acumulado} & \textbf{Volatilidad Anualizada} & \textbf{N obs.} \\
+\midrule
+Crisis Covid-19 (2020) & -44,73\% & 112,54\% & 50 \\
+Volatilidad Cambiaria (2022) & +12,44\% & 45,91\% & 103 \\
+Post Elecciones (2023) & +18,28\% & 105,36\% & 59 \\
+Shock LME Post-Pico (2022) & +13,61\% & 44,40\% & 200 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La lectura no es uniformemente negativa: solo la crisis de liquidez global de 2020 (Covid) generó una caída fuerte en dólares (-44,7\%), con una volatilidad anualizada de 112,5\% —más de 4 veces la volatilidad normal del activo—. Las tres ventanas de crisis doméstica argentina (volatilidad cambiaria 2022, post-elecciones 2023) muestran retornos positivos en dólares pese a la turbulencia, consistente con el rol de ALUA.BA como cobertura cambiaria ya señalado en la Matriz de Riesgos: en crisis locales, el mercado empuja hacia el activo exportador dolarizado, no lejos de él. La ventana de ``Lunes Negro'' (2019) se descarta de esta tabla por insuficiencia de datos (apenas 15 observaciones), un umbral muestral demasiado bajo para un estimador de volatilidad confiable.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_24.png}
+\captionof{figure}{Trayectoria estocástica del Beta Dinámico estimado por Filtro de Kalman (2016-2026): identifica el régimen de riesgo más reciente del activo.}
+\end{minipage}
+\end{center}
+
+El Filtro de Kalman permite observar cómo evolucionó el Beta de facto de Aluar período a período, en contraste con el Beta OLS estático (0,842) que resume toda la ventana de 10 años en un único número. La serie no converge de forma estable hacia el Beta de Hamada (0,888): tras el salto de volatilidad de 2020 y un régimen elevado durante 2021-2022, el Beta Kalman se instala en 2023-2026 en un nivel estructuralmente más bajo (0,764 al cierre de la ventana), por debajo tanto del Beta de Hamada como del OLS crudo. Esta divergencia reciente sugiere que la calibración estática del WACC —anclada en el promedio de 10 años— es, si acaso, conservadora: sobre-pondera el riesgo sistemático frente al régimen más actual del activo, por lo que el Ke y el precio objetivo resultante no están inflados por un beta desactualizado.
+
+\subsection{Comparación de Metodologías de VaR: por qué el modelo no se queda con Cornish-Fisher}
+Antes de adoptar EVT-GPD como métrica de cola, se contrastaron cuatro metodologías de Value at Risk sobre los retornos diarios de ALUA.BA en USD: Histórico, Normal (paramétrico), t-Student y Cornish-Fisher (que ajusta el VaR Normal por asimetría y curtosis empíricas).
+
+\begin{table}[H]
+\centering
+\caption{\textbf{VaR y CVaR Diario por Metodología (retornos USD, 1 día)} {\small\color{gsgray} (Elaboración propia en base a estados financieros de Aluar e información de mercado.)}}
+\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Método} & \textbf{VaR 90\%} & \textbf{VaR 95\%} & \textbf{VaR 99\%} \\
+\midrule
+Histórico & -3,47\% & -4,73\% & -8,20\% \\
+Normal (paramétrico) & -4,12\% & -5,31\% & -7,54\% \\
+t-Student ($\nu=4,46$) & -3,61\% & -4,99\% & -8,57\% \\
+Cornish-Fisher & -2,70\% & -5,22\% & -13,41\% \\
+CVaR / Expected Shortfall (paramétrico) & -5,67\% & -6,68\% & -8,65\% \\
+CVaR Cornish-Fisher & -4,70\% & -7,77\% & -20,37\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Al 90\% y 95\% de confianza, las cuatro metodologías convergen dentro de un rango razonable (VaR 95\% entre -4,7\% y -5,3\%). Al 99\%, Cornish-Fisher diverge fuertemente del resto (-13,41\% vs. un rango de -7,5\% a -8,6\% en las otras tres) y su CVaR asociado más que duplica al paramétrico (-20,37\% vs. -8,65\%). Esa inestabilidad en la cola no es un error de cálculo: es el comportamiento documentado de la expansión de Cornish-Fisher cuando la asimetría y curtosis muestrales son altas, un régimen en el que el polinomio de ajuste deja de ser monótono y puede sobre-corregir el cuantil (Jaschke, 2001 [10]). Es exactamente la razón por la que, para el Expected Shortfall al 99\% que sustenta el dimensionamiento de posición (sección anterior), este informe no reporta el número de Cornish-Fisher sino que recurre a EVT-GPD —una metodología diseñada específicamente para modelar la cola sin depender de momentos de orden superior de la distribución completa—, desarrollada a continuación.
+
+\subsection{Teoría de Valores Extremos (EVT) y Ajuste Pareto Generalizado (GPD)}
+Aplicamos la Teoría de Valores Extremos (EVT) mediante la Distribución Pareto Generalizada (GPD) para ajustar las pérdidas superiores al umbral del 95\%:
+\begin{equation}
+G_{\xi,\beta}(y) = 1 - \left(1 + \frac{\xi y}{\beta}\right)^{-1/\xi}
+\end{equation}
+donde $\xi=0,18$ y $\beta=0,042$, determinando un Expected Shortfall (ES 99\%) del -7,8\% diario.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_25.png}
+\captionof{figure}{Modelado de Cola Pesada por EVT-GPD: demostración empírica del Expected Shortfall (ES 99\%) frente a la subestimación de la curva normal estándar.}
+\end{minipage}
+\end{center}
+
+\subsection{Dinámica de Commodities: Movimiento Browniano Geométrico vs. Ornstein-Uhlenbeck}
+\begin{equation}
+dS_t = \kappa(\theta - \ln S_t)S_t dt + \sigma S_t dW_t \quad \text{(Ornstein-Uhlenbeck Log-Normal)}
+\end{equation}
+Rechazamos la hipótesis nula de raíz unitaria para el spread de commodities (ADF=$-3,84$, $p<0,01$), confirmando el proceso OU con $\theta=$ USD 2.814/Tn (recalculado sobre la serie mensual completa 2016--2026 de cache\_mercado.csv, no sobre el tramo 2021--2026 usado en una versión anterior) y $\kappa=0,80$.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_26.png}
+\captionof{figure}{Simulación estocástica de cotizaciones LME: el proceso de Reversión a la Media de Ornstein-Uhlenbeck simula la contención de precios por la curva C1.}
+\end{minipage}
+\end{center}
+
+\subsection{Valuación por DCF Estocástico: 10.000 Trayectorias de Flujos de Fondos}
+A diferencia del Monte Carlo de la sección homónima (que perturba WACC, $g$ y margen EBITDA por separado), este ejercicio propaga las 10.000 trayectorias del proceso OU de precios LME directamente a través del modelo DCF completo, generando una distribución continua del precio objetivo que incorpora la dinámica temporal del commodity en lugar de un shock estático de margen.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_27.png}
+\captionof{figure}{Distribución continua del Precio Objetivo mediante DCF Estocástico: la media estocástica converge a ARS 1.236,00.}
+\end{minipage}
+\end{center}
+
+La convergencia casi exacta de la media estocástica hacia el target determinístico oficial (ARS 1.236,00, 100\% de coincidencia) confirma que el caso base no está sesgado respecto a la trayectoria esperada de largo plazo del LME que el propio modelo asume; la dispersión de la distribución es atribuible por completo a la volatilidad del commodity.
+
+\subsection{Pruebas de Ajuste de Distribuciones (Bondad de Ajuste) y Cópula de Clayton}
+Las pruebas K-S y A-D confirman el ajuste superior de la Student-t ($\nu=4,2$, AIC=$-12.450$) y de la Cópula de Clayton (AIC=$-501,40$, $\lambda_L=0,38$), bajo el marco general de cópulas de Sklar [8].
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Matriz de Pruebas Estadísticas y Diagnóstico Econométrico} {\small\color{gsgray} (Elaboración propia en base a estados financieros de Aluar e información de mercado. 30-Jul-2026.)}}
+\tiny
+\begin{tabular}{lccp{4.3cm}}
+\toprule
+\textbf{Prueba Estadística} & \textbf{Estadístico t / $\chi^2$ / D} & \textbf{p-value} & \textbf{Conclusión de Diagnóstico} \\
+\midrule
+Augmented Dickey-Fuller (ADF) & -3,84 & <0,01 & Estacionariedad confirmada en retornos \\
+Phillips-Perron (PP) & -4,12 & <0,01 & Sin raíz unitaria en spreads LME-DXY \\
+Jarque-Bera (JB) & 4.391,7 & <0,001 & Rechazo de normalidad (Leptocurtosis) \\
+Kolmogorov-Smirnov Student-t vs Normal & D=0,018 vs 0,054 & <0,001 & Ajuste superior de Student-t ($\nu=4,2$) \\
+Cópula de Clayton (Dependencia Bajista) & AIC=-501,40 & <0,001 & Superior a Gaussiana ($\Delta AIC=-88,9$) \\
+ARCH-LM (Heterocedasticidad) & 48,2 & <0,001 & Efectos ARCH presentes (GARCH requerido) \\
+Ljung-Box Q(10) (Residuos GARCH) & Q=8,45 & 0,58 & Ruido blanco confirmado (Sin autocorrelación) \\
+Quandt-Andrews (Quiebre Estructural) & 1,14 & 0,42 & Estabilidad muestral en 10 años (Sin quiebre) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Nota de consistencia metodológica.} El test de Kolmogorov-Smirnov confirma que la Student-t ($\nu=4,2$) ajusta mejor la distribución empírica de retornos diarios de ALUA.BA que la Normal ($D=0,018$ vs $D=0,054$). El motor Monte Carlo de la Sección de Simulación fue actualizado para usar ese mismo $\nu$ en las innovaciones de WACC y $g$ (antes Normales), manteniendo el shock de margen EBITDA como Normal por estar fundamentado en el Teorema Central del Límite sobre una media histórica, no en una serie de retornos de mercado. El efecto de este cambio es modesto y coherente con lo esperado de una t con $\nu=4,2$ (colas moderadamente más pesadas, no extremas): la mediana se desplaza de ARS 1.234 a ARS 1.237, el P5 sube de ARS 839 a ARS 844, el P95 baja de ARS 1.756 a ARS 1.737, y la probabilidad de upside pasa de 84,3\% a 85,2\%.
+
+\subsection{Matriz Corporativa de Riesgos 2D: Impacto vs. Probabilidad (Mapa de Calor CFA)}
+Siguiendo el estándar de mapeo de riesgos del CFA Institute, se posicionan los mismos riesgos ya detallados con impacto y mitigante en la Matriz de Riesgos Corporativos (Sección de Gestión Cuantitativa de Riesgo) en un plano continuo de Probabilidad $\times$ Impacto, en lugar de las tres bandas discretas (Alta/Media/Baja) de la tabla.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_28.png}
+\captionof{figure}{Matriz Bidimensional de Riesgo Corporativo (Estándar CFA): cruce de Probabilidad vs Impacto Financiero en la valuación fundamental de Aluar.}
+\end{minipage}
+\end{center}
+
+El cuadrante superior derecho (alta probabilidad, alto impacto) concentra la volatilidad del LME y la prima de cobertura cambiaria, los dos riesgos ya identificados como de mayor severidad; brecha cambiaria y tarifas de energía, con impacto financiero acotado pero probabilidad no despreciable, se ubican en el cuadrante inferior derecho.
+
+\section{Modelización Estocástica y Validación Cuantitativa de Riesgo}
+
+\subsection{Validación de la Curva Soberana: AR(1) vs. Cox-Ingersoll-Ross (CIR)}
+\begin{equation}
+\Delta r_t = \kappa(\theta - r_t)\Delta t + \sigma\sqrt{r_t}dW_t.
+\end{equation}
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_29.png}
+\captionof{figure}{Simulación estocástica de Riesgo Soberano: la volatilidad dependiente del nivel (CIR) modela con mayor realismo los shocks argentinos que el AR(1).}
+\end{minipage}
+\end{center}
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Criterios de Información y Bondad de Ajuste: Riesgo Soberano} {\small\color{gsgray} (Elaboración propia en base a modelo empírico — 01-Aug-2026.)}}
+\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Modelo Estocástico} & \textbf{Log-Likelihood} & \textbf{AIC} & \textbf{BIC} \\
+\midrule
+AR(1) Lineal Oficial & 1.450,3 & -2.894,6 & -2.882,1 \\
+\textbf{CIR (MLE)} & \textbf{1.682,7} & \textbf{-3.359,4} & \textbf{-3.346,9} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+El AR(1) asume volatilidad constante (homocedasticidad) y permite tasas negativas; el CIR, al incorporar volatilidad proporcional al nivel ($\sigma\sqrt{r_t}$), domina en AIC/BIC (Tabla anterior) y captura mejor los saltos discretos propios de mercados emergentes. Ambos modelos convergen, no obstante, al mismo equilibrio de largo plazo ($\approx$422 pb), por lo que la elección entre uno u otro no altera la trayectoria determinística del modelo oficial.
+
+\subsection{Riesgo Sistémico Condicional: OLS vs. GARCH(1,1)}
+El OLS asume riesgo sistemático constante durante toda la ventana de 10 años; dada la recurrencia de clústeres de volatilidad en Argentina (PASO 2019, default, shocks cambiarios), se modelizó también la varianza condicional vía GARCH(1,1) (ARCH-LM confirma heterocedasticidad significativa en los residuos OLS, Tabla de Diagnóstico). El resultado es contraintuitivo: durante episodios de vuelo a la calidad el Beta condicional de Aluar cae en vez de subir, funcionando como refugio y aislando temporalmente al activo del ciclo global. El Beta estático oficial ($\beta_U=0,645$ desapalancado) es, frente a esto, un promedio a través de los ciclos —ni el mejor ni el peor momento del activo— y es el que se usa en el WACC de largo plazo.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_30.png}
+\captionof{figure}{Beta Dinámico (GARCH) vs. Estimación Estática Oficial. El OLS suaviza severamente el riesgo condicional durante regímenes de alta turbulencia.}
+\end{minipage}
+\end{center}
+
+\subsection{Motor Monte Carlo de Frontera: Cópula Gaussiana}
+El motor estocástico base (Sección de Simulación Monte Carlo) simula choques independientes entre WACC, $g$ y margen EBITDA; en la realidad económica un shock de devaluación dispara simultáneamente la inflación y el riesgo país, contrayendo la macro, por lo que el costo de capital y la generación de flujo exhiben dependencia inversa. Se implementó una Cópula Gaussiana sobre 10.000 senderos correlacionados para capturar esa asimetría: la matriz de correlación empírica desplaza la masa de probabilidad hacia la izquierda de la distribución frente al caso de choques independientes, un escenario más conservador que, aun así, mantiene la mediana por encima del precio de mercado.
+
+\begin{tcolorbox}[colback=lightgray!30, colframe=gsnavy, boxrule=0.8pt, title={\small\sffamily \textbf{Limitación metodológica: Gaussiana en vez de Clayton}}, coltitle=white]
+\footnotesize
+Este motor usa una cópula Gaussiana por tratabilidad (correlación entre 3 variables vía Cholesky). Sin embargo, la sección de Pruebas de Ajuste de Distribuciones de este mismo informe encuentra que la Cópula de Clayton ajusta mejor a la dependencia real entre variables financieras ($\Delta AIC=-88,9$ vs. Gaussiana), precisamente porque la Gaussiana —por construcción, según el teorema de Sklar [8]— tiene dependencia de cola nula, mientras que la Clayton captura dependencia de cola inferior ($\lambda_L=0,38$): los escenarios simultáneamente malos en WACC, $g$ y margen son más frecuentes en la realidad de lo que una Gaussiana permite. La consecuencia práctica es que el percentil bajista (P5) de este motor de frontera probablemente subestima el riesgo de cola conjunto, no lo sobrestima; el motor no se recalculó con Clayton multivariante por la complejidad adicional de estimar su parámetro de dependencia en 3 variables (la Clayton bivariada de la sección anterior no se extiende de forma directa), pero se deja consignada la dirección del sesgo.
+\end{tcolorbox}
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_31.png}
+\captionof{figure}{Distribución Predictiva del Precio Objetivo modelando la dependencia cruzada (Cópula Gaussiana).}
+\end{minipage}
+\end{center}
+
+\subsection{Sensibilidad Global y Descomposición de Varianza (Sobol)}
+\begin{table}[H]
+\centering
+\caption{\textbf{Índices de Sobol (Orden 1 y Total) sobre la Varianza del EV} {\small\color{gsgray} (Elaboración propia en base a modelo empírico — 01-Aug-2026.)}}
+\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Vector de Riesgo Sobol} & \textbf{$S_i$ (Directo)} & \textbf{$S_{Ti}$ (Total)} & \textbf{Efecto Interacción} \\
+\midrule
+Precio LME (Aluminio) & 0,421 & 0,510 & Fuerte \\
+Spread Soberano (EMBI) & 0,285 & 0,392 & Moderado \\
+Costo Energético (USD/MWh) & 0,112 & 0,165 & Débil \\
+Tipo de Cambio Real & 0,084 & 0,140 & Moderado \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Auditoría de Expectativas de Mercado: DCF Inverso Probabilístico}
+El precio de mercado actual (ARS 982,50) descuenta una $g_{implicita}=0,69\%$, por debajo del $g=2,00\%$ del modelo.
+
+\subsection{Simulación del Impacto del RIGI y Apertura Comercial}
+Bajo el escenario RIGI pleno (Ganancias al 25\%, aranceles 0\% en aerogeneradores Goldwind y retenciones 0\%), el NOPAT de régimen aumenta un +12,4\%, impulsando el Target Integrado a ARS 1.304,10 por acción.
+
+\section{Conclusión}
+El dictamen técnico de este modelo es \textbf{COMPRAR}, con un precio objetivo determinístico Base de ARS 1.236,00 (USD 0,78), una Opción Real PEAL V de +ARS 19,60 (USD 0,01) para un Target Integrado de ARS 1.255,60 (USD 0,79) y un rango estocástico P5-P95 de ARS 844 a ARS 1.737.
+
+\section*{Ap\'endice: Estados Financieros Auditados y Proyecciones de Flujo de Fondos (USD MM)}
+\label{sec:apendice-eeff-fcff}
+
+{\small Los estados financieros a continuaci\'on reproducen las cifras del ejercicio corriente de cada informe anual de Aluar S.A.I.C., auditado por Price Waterhouse \& Co. S.R.L., convertidas al tipo de cambio Contado con Liquidaci\'on (CCL) impl\'icito de cierre de junio de cada ejercicio (FY20: 77, FY21: 165, FY22: 263, FY23: 503, FY24: 1.350, FY25: 1.430 ARS/USD). Se sigue el criterio NIC 29 (IFRS) tomando la columna del ejercicio corriente de su propio informe anual auditado. A continuaci\'on de los tres libros contables auditados, se detalla la proyecci\'on del Free Cash Flow to the Firm (FCFF) para el per\'iodo expl\'icito FY2026E--FY2030E.}
+
+{\small \textbf{Nota de reconciliaci\'on de la tasa impositiva.} El NOPAT proyectado usa la al\'icuota estatutaria del 35\% (Ley 20.628, Art. 69) ---no la al\'icuota efectiva del 84,32\% observada en FY2025--- porque esta \'ultima es un artefacto contable de un \'unico ejercicio, causado por el ajuste por inflaci\'on de NIC 29 sobre una base imponible hist\'orica, y no una carga tributaria recurrente.}
+
+\vspace{0.15cm}
+\begin{table}[H]
+\centering
+\caption{\textbf{Cuadro de Reconciliación Impositiva FY2025}}
+\small
+\begin{tabular}{lcc}
+\toprule
+\textbf{Componente Tributario} & \textbf{Monto (USD MM)} & \textbf{\% sobre EBT} \\
+\midrule
+Resultado Antes de Impuestos (EBT) & 58,5 & 100,0\% \\
+Impuesto Teórico a Tasa Estatutaria (35\%) & (20,5) & 35,0\% \\
+Efecto del Ajuste por Inflación Impositivo (NIC 29) & (23,1) & 39,5\% \\
+Diferencias de Cambio no Deducibles y Otros & (5,7) & 9,8\% \\
+\midrule
+\textbf{Impuesto a las Ganancias Contabilizado} & \textbf{(49,3)} & \textbf{84,3\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vspace{0.15cm}
+\begin{table}[H]
+\centering
+\caption{\textbf{Estado de Resultados Consolidado Auditado (FY2020--FY2025, USD MM)}}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrr}
+\toprule
+\textbf{L\'inea de Cuenta} & \textbf{FY2020} & \textbf{FY2021} & \textbf{FY2022} & \textbf{FY2023} & \textbf{FY2024} & \textbf{FY2025} \\
+\midrule
+Ventas Netas (Revenue) & 823,5 & 513,5 & 654,7 & 647,8 & 915,9 & 1.092,6 \\
+Costo de Ventas & (711,2) & (414,4) & (448,3) & (536,0) & (744,0) & (930,5) \\
+\textbf{Ganancia Bruta} & \textbf{112,3} & \textbf{99,1} & \textbf{206,4} & \textbf{111,8} & \textbf{171,9} & \textbf{162,1} \\
+Gastos de Administraci\'on y Comercializaci\'on & (63,8) & (37,8) & (44,1) & (50,1) & (70,1) & (100,8) \\
+Otros Ingresos / Operativos Netos & (0,4) & 0,0 & (0,2) & 0,4 & 50,8 & 31,0 \\
+\textbf{EBITDA} & \textbf{116,5} & \textbf{110,2} & \textbf{208,8} & \textbf{103,5} & \textbf{204,7} & \textbf{163,3} \\
+Depreciaci\'on y Amortizaci\'on (D\&A) & (68,4) & (48,9) & (46,7) & (41,5) & (52,1) & (71,0) \\
+\textbf{EBIT (Resultado Operativo)} & \textbf{48,1} & \textbf{61,3} & \textbf{162,1} & \textbf{62,0} & \textbf{152,6} & \textbf{92,3} \\
+Resultado Financiero y Asociadas & (84,5) & 14,7 & 36,2 & 88,4 & 3,9 & (33,8) \\
+\textbf{Ganancia Antes de Impuestos (EBT)} & \textbf{(36,4)} & \textbf{76,0} & \textbf{198,3} & \textbf{150,3} & \textbf{156,5} & \textbf{58,5} \\
+Impuesto a las Ganancias & (7,5) & (47,9) & (82,8) & (11,3) & (66,7) & (49,3) \\
+\textbf{Resultado Neto del Ejercicio} & \textbf{(43,9)} & \textbf{28,1} & \textbf{115,5} & \textbf{139,0} & \textbf{89,7} & \textbf{9,2} \\
+\textbf{NOPAT (Resultado Operativo Neto de Impuestos)} & \textbf{31,3} & \textbf{39,9} & \textbf{105,4} & \textbf{40,3} & \textbf{99,2} & \textbf{60,0} \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\vspace{0.15cm}
+\begin{table}[H]
+\centering
+\caption{\textbf{Estado de Situaci\'on Patrimonial / Balance Consolidado Auditado (FY2020--FY2025, USD MM)}}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrr}
+\toprule
+\textbf{Rubro Patrimonial} & \textbf{FY2020} & \textbf{FY2021} & \textbf{FY2022} & \textbf{FY2023} & \textbf{FY2024} & \textbf{FY2025} \\
+\midrule
+Activo Corriente & 454,6 & 318,1 & 478,9 & 490,1 & 902,9 & 1.028,1 \\
+Activo No Corriente (inc. Bienes de Uso) & 597,4 & 379,9 & 353,6 & 422,3 & 556,6 & 940,9 \\
+\textbf{Total Activo} & \textbf{1.052,0} & \textbf{698,0} & \textbf{832,6} & \textbf{912,4} & \textbf{1.459,5} & \textbf{1.969,0} \\
+Pasivo Corriente & 240,1 & 84,2 & 163,8 & 167,8 & 183,2 & 420,5 \\
+Pasivo No Corriente & 348,7 & 263,9 & 212,2 & 201,9 & 435,9 & 439,2 \\
+\textbf{Total Pasivo} & \textbf{588,8} & \textbf{348,1} & \textbf{376,0} & \textbf{369,7} & \textbf{619,1} & \textbf{859,7} \\
+Deuda Financiera Total & 375,2 & 181,4 & 134,0 & 228,9 & 408,5 & 594,9 \\
+Caja, Bancos e Inversiones & 23,9 & 44,0 & 76,7 & 59,0 & 197,3 & 69,2 \\
+\textbf{Deuda Financiera Neta} & \textbf{351,3} & \textbf{137,4} & \textbf{57,3} & \textbf{169,9} & \textbf{211,2} & \textbf{525,8} \\
+\textbf{Patrimonio Neto} & \textbf{463,2} & \textbf{349,9} & \textbf{456,5} & \textbf{542,7} & \textbf{840,4} & \textbf{1.109,3} \\
+\textbf{Capital Invertido (NOA)} & \textbf{838,4} & \textbf{531,3} & \textbf{590,5} & \textbf{771,6} & \textbf{1.248,9} & \textbf{1.704,3} \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\vspace{0.15cm}
+\begin{table}[H]
+\centering
+\caption{\textbf{Estado de Flujos de Efectivo Consolidado Auditado (FY2020--FY2025, USD MM)}}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrr}
+\toprule
+\textbf{Flujo de Caja} & \textbf{FY2020} & \textbf{FY2021} & \textbf{FY2022} & \textbf{FY2023} & \textbf{FY2024} & \textbf{FY2025} \\
+\midrule
+Flujo de Caja Operativo (FCO) & 245,7 & 102,4 & 89,2 & 113,6 & 79,2 & 30,7 \\
+Inversiones en Bienes de Uso (CAPEX) & (103,0) & (9,4) & (11,1) & (65,9) & (25,6) & (243,9) \\
+Flujo de Caja de Inversi\'on (FCI) & (102,1) & (9,4) & (11,1) & (65,9) & (25,6) & (244,0) \\
+Flujo de Caja de Financiaci\'on (FCF) & (197,8) & (45,1) & (34,4) & (70,8) & 91,1 & 20,3 \\
+\textbf{Variaci\'on Neta de Efectivo} & \textbf{(54,2)} & \textbf{47,8} & \textbf{43,8} & \textbf{(23,1)} & \textbf{144,7} & \textbf{(193,0)} \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\vspace{0.15cm}
+\begin{table}[H]
+\centering
+\caption{\textbf{Proyecciones del Free Cash Flow to the Firm (FCFF, FY2026E--FY2030E, USD MM)}}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Cuenta / A\'no Fiscal} & \textbf{2026E} & \textbf{2027E} & \textbf{2028E} & \textbf{2029E} & \textbf{2030E} \\
+\midrule
+Ventas Netas (Revenue) & 1.591,4 & 1.543,0 & 1.494,6 & 1.446,3 & 1.397,9 \\
+EBITDA & 391,2 & 369,3 & 347,4 & 325,5 & 303,6 \\
+(-) Depreciaci\'on y Amortizaci\'on & (108,4) & (105,1) & (101,8) & (98,5) & (95,2) \\
+\textbf{EBIT} & \textbf{282,8} & \textbf{264,2} & \textbf{245,6} & \textbf{227,0} & \textbf{208,4} \\
+(-) Impuestos Operativos (35\% Estatutaria) & (99,0) & (92,5) & (86,0) & (79,4) & (72,9) \\
+\textbf{NOPAT} & \textbf{183,8} & \textbf{171,7} & \textbf{159,6} & \textbf{147,6} & \textbf{135,5} \\
+(+) D\&A (Reversi\'on) & 108,4 & 105,1 & 101,8 & 98,5 & 95,2 \\
+(-) CAPEX de Mantenimiento & (103,2) & (100,0) & (96,9) & (93,8) & (90,6) \\
+(-) Variaci\'on Capital de Trabajo ($\Delta$NWC) & (246,5) & 23,9 & 23,9 & 23,9 & 23,9 \\
+\textbf{FCFF Expl\'icito} & \textbf{-57,5} & \textbf{200,7} & \textbf{188,4} & \textbf{176,2} & \textbf{164,0} \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+{\small \textbf{Reconciliaci\'on FCFF Expl\'icito 2030E vs. Terminal Normalizado.} FCFF Expl\'icito 2030E: USD 164,0 MM (incluye CAPEX de mantenimiento de USD 90,6 MM y $\Delta$NWC = USD 23,9 MM). FCFF Terminal Normalizado ($g = 2,0\%$): USD 135,5 MM (asume estado estacionario donde CAPEX = D\&A y $\Delta$NWC = \$0, por lo que el FCFF terminal converge al NOPAT 2030E).}
+
+
+
+\section*{Referencias Bibliográficas y Fuentes Académicas}
+\begin{enumerate}
+    \item Damodaran, Aswath (2012). \textit{Investment Valuation}, 3rd Ed, Wiley.
+    \item Dumrauf, Guillermo L. (2013). \textit{Finanzas Corporativas}, 3ª Ed, Alfaomega.
+    \item Ross, S.A., Westerfield, R.W., Jaffe, J. (2019). \textit{Corporate Finance}, 12th Ed, McGraw-Hill.
+    \item Black, F., Scholes, M. (1973). ``The Pricing of Options'', \textit{Journal of Political Economy}, 81(3).
+    \item Longstaff, F.A., Schwartz, E.S. (2001). ``Valuing American Options by Simulation'', \textit{RFS}, 14(1).
+    \item Blume, M.E. (1975). ``Betas and Their Regression Tendencies'', \textit{Journal of Finance}, 30(3).
+    \item Hamada, R.S. (1972). ``Effect of Capital Structure on Systematic Risk'', \textit{Journal of Finance}, 27(2).
+    \item Sklar, A. (1959). ``Fonctions de Répartition à n Dimensions'', \textit{Publ. Inst. Stat. Univ. Paris}.
+    \item Rockafellar, R.T., Uryasev, S. (2000). ``Optimization of Conditional Value-at-Risk'', \textit{Journal of Risk}.
+    \item Jaschke, S.R. (2001). ``The Cornish-Fisher-Expansion in the Context of Delta-Gamma-Normal Approximations'', \textit{Journal of Risk}, 4(4).
+    \item Engle, R.F., Granger, C.W.J. (1987). ``Co-integration and Error Correction: Representation, Estimation and Testing'', \textit{Econometrica}, 55(2).
+    \item Aluar S.A.I.C. (2020–2025). \textit{Estados Financieros Auditados}, CNV \& BYMA.
+\end{enumerate}
+
+\textbf{Aviso Legal y Certificación del Analista.} Este informe fue elaborado por Federico Agustín Chillón como trabajo práctico final de la Cátedra de Economía y Técnica Bursátil (Facultad de Ciencias Económicas, Universidad Nacional de Cuyo), con fines exclusivamente académicos y de evaluación curricular. El autor \textbf{no posee matrícula de Analista Financiero} ni se encuentra inscripto como Agente Asesor Global de Inversión, Agente de Negociación, ni bajo ninguna otra categoría registrada ante la Comisión Nacional de Valores (CNV) u otro organismo regulador de los mercados de capitales. En consecuencia, este documento \textbf{no constituye ni debe interpretarse como informe de análisis profesional, recomendación de inversión, oferta, ni asesoramiento financiero, legal o impositivo} de ningún tipo, en los términos de la Ley de Mercado de Capitales N.\textsuperscript{o}~26.831 y sus normas reglamentarias. Todas las opiniones, estimaciones y proyecciones expresadas son de exclusiva responsabilidad académica del autor, pueden contener errores y están sujetas a los supuestos metodológicos explicitados en este documento; cualquier decisión de inversión basada en su contenido es de exclusiva responsabilidad del lector.
+
+\end{document}
