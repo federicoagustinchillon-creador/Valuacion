@@ -1071,7 +1071,8 @@ def plot_figura_25(res, stat):
     var99 = var_gpd(0.99)
     es99 = (var99 + scale - shape*u) / (1 - shape)
 
-    x = np.linspace(0, 25, 300)
+    xmax = max(20.0, float(losses.max()) * 1.35)
+    x = np.linspace(0, xmax, 300)
     x_tail = np.clip(x - u, 0, None)
     gpd_tail = (1/scale) * (1 + shape*x_tail/scale) ** (-1/shape - 1)
     gpd_fit = np.where(x >= u, gpd_tail * p_exceso, np.nan)
@@ -1087,7 +1088,7 @@ def plot_figura_25(res, stat):
     )
     
     # Histograma sobrio Slate
-    n_c, _, _ = ax.hist(losses, bins=50, range=(0, 25), density=True, color="#475569", alpha=0.35, edgecolor="white", linewidth=0.5, zorder=1, label="Pérdidas Históricas Reales (USD)")
+    n_c, _, _ = ax.hist(losses, bins=50, range=(0, xmax), density=True, color="#475569", alpha=0.35, edgecolor="white", linewidth=0.5, zorder=1, label="Pérdidas Históricas Reales (USD)")
     
     # Sombreado de Cola Extrema (x >= VaR 99%)
     ax.fill_between(x, 0, gpd_fit, where=(x >= var99), color="#FCA5A5", alpha=0.60, label="Zona de Pérdida Extrema (ES 99%)", zorder=2)
@@ -1124,7 +1125,7 @@ def plot_figura_25(res, stat):
 
     # EJES Y FORMATO PORCENTAJE
     ax.set_xlabel("Pérdida Diaria en USD (%)", fontsize=SZ["axis"])
-    ax.set_xlim(0, 25)
+    ax.set_xlim(0, xmax)
     ax.xaxis.set_major_formatter(mtick.PercentFormatter(xmax=100, decimals=0))
     ax.set_ylim(0, max_y * 1.25)
     ax.legend(frameon=False, fontsize=SZ["legend"], loc="upper left")
@@ -1313,8 +1314,10 @@ def plot_figura_29(res, stat):
 
 
 def plot_figura_30(res, stat):
-    """Figura 30 del informe: Comparativo Integrado Beta Dinámico Kalman vs. Beta Condicional GARCH(1,1).
-    UNIFICA AMBAS ESTIMACIONES EN DOS PANELES COMPARATIVOS DIRECTOS."""
+    """Figura 30 del informe: Beta Condicional GARCH(1,1) vs. Estimación Estática Oficial.
+    NOTA: el Filtro de Kalman ya tiene su propia figura dedicada (Figura 24) con análisis
+    específico -- esta figura NO lo repite; es exclusivamente la lectura GARCH, con banda
+    de confianza ±2σ_t (la 'nube') sobre el beta condicional suavizado."""
     from arch import arch_model
     m6 = res["m6_costo_capital"]
     cache = pd.read_csv(os.path.join(DIR, "cache_mercado.csv"), parse_dates=["Date"])
@@ -1322,51 +1325,38 @@ def plot_figura_30(res, stat):
     ret = (100 * np.log(px["alua_ars_adj"]).diff().dropna()).reset_index(drop=True)
     dates = px["Date"].iloc[-len(ret):].reset_index(drop=True)
 
-    # Beta GARCH(1,1)
     am = arch_model(ret, vol="GARCH", p=1, q=1, dist="t", rescale=False)
     garch_fit = am.fit(disp="off")
     sigma_alua_t = garch_fit.conditional_volatility
     sigma_alua_full = float(ret.std())
-    beta_dinamico_garch = m6["beta_ols"] * (sigma_alua_t / sigma_alua_full)
-    beta_s = pd.Series(np.asarray(beta_dinamico_garch), index=dates)
+    beta_dinamico = m6["beta_ols"] * (sigma_alua_t / sigma_alua_full)
+    beta_s = pd.Series(np.asarray(beta_dinamico), index=dates)
     beta_roll = beta_s.rolling(21, center=True, min_periods=5).mean()
+    beta_std = beta_s.rolling(21, center=True, min_periods=5).std()
 
-    # Beta Kalman
-    kb = pd.read_csv(os.path.join(DIR, "kalman_beta_series.csv"), parse_dates=["date"])
-    beta_kalman_last = float(kb["beta_kalman"].iloc[-1])
+    fig, ax = scaffold(
+        "Beta Dinámico Condicional: GARCH(1,1) vs. Estimación Estática Oficial",
+        "Beta suavizado (ventana 21 días) escalado por volatilidad condicional GARCH, con banda de confianza 95% (±2σ_t)",
+        "Beta (β)"
+    )
+    ax.fill_between(dates, beta_roll - 2 * beta_std, beta_roll + 2 * beta_std,
+                     color=C["blue_lt"], alpha=0.35, label="Banda de Confianza 95% (±2σ_t)")
+    ax.plot(dates, beta_roll, color=C["navy"], lw=1.3, label="Beta Dinámico GARCH(1,1)")
+    ax.axhline(m6["beta_ols"], color=C["navy"], linestyle="--", lw=1.5, label=f"Beta OLS Estático 10Y ({m6['beta_ols']:.3f})")
+    ax.axhline(m6["beta_apalancado"], color=C["value"], linestyle=":", lw=1.5, label=f"Beta Hamada ({m6['beta_apalancado']:.3f})")
 
-    fig = plt.figure(figsize=(11.0, 6.4))
-    apply_aluar_theme()
-    fig.text(0.09, TITLE_Y, "Comparativo del Beta Dinámico: Filtro de Kalman vs. GARCH(1,1)",
-             fontsize=SZ["title"], fontweight="bold", color=C["navy"], fontfamily=TITLE_FONT)
-    fig.text(0.09, SUB_Y, f"Convergencia del Beta estructural en el tiempo: Kalman ({beta_kalman_last:.3f}β) vs. GARCH Condicional",
-             fontsize=SZ["subtitle"], style="italic", color=C["slate"])
-    fig.text(0.94, SUB_Y, "Beta (β)", ha="right", fontsize=SZ["subtitle"], style="italic", color=C["slate"])
-    fig.text(0.09, SRC_Y, FUENTE, fontsize=SZ["source"], color=C["slate"])
+    mask_2020 = (dates.dt.year == 2020).values
+    beta_arr = np.asarray(beta_dinamico)
+    if mask_2020.any():
+        idx_local = np.nanargmax(np.where(mask_2020, beta_arr, -np.inf))
+        fecha_pico, valor_pico = dates.iloc[idx_local], beta_arr[idx_local]
+        ax.annotate(f"Shock COVID-2020\nPico: {valor_pico:.2f}β", xy=(fecha_pico, valor_pico),
+                    xytext=(fecha_pico, np.nanmax(beta_arr) * 1.12), ha="center", fontsize=8.5, fontweight="bold", color=C["navy"],
+                    arrowprops=dict(arrowstyle="->", color=C["navy"], lw=1.2),
+                    bbox=dict(boxstyle="round,pad=0.35", facecolor="#FFF9DB", edgecolor=C["aluar"], lw=1.1))
 
-    # Panel 1: Filtro de Kalman
-    ax1 = fig.add_subplot(211)
-    ax1.plot(kb["date"], kb["beta_kalman"], color=C["navy"], lw=1.8, label="Beta Dinámico (Filtro de Kalman Empírico)")
-    ax1.axhline(m6["beta_apalancado"], color=C["aluar"], linestyle="--", lw=1.4, label=f"Beta Hamada ({m6['beta_apalancado']:.3f}β)")
-    ax1.axhline(m6["beta_ols"], color=C["slate"], linestyle=":", lw=1.2, label=f"Beta OLS 10Y ({m6['beta_ols']:.3f}β)")
-    ax1.annotate(f"Kalman Cierre: {beta_kalman_last:.3f}β", xy=(kb["date"].iloc[-1], beta_kalman_last),
-                xytext=(-150, 18), textcoords="offset points", fontsize=8.5, fontweight="bold", color=C["navy"],
-                bbox=dict(boxstyle="round,pad=0.3", facecolor="white", edgecolor=C["navy"], lw=1.0))
-    ax1.set_ylabel("Beta Kalman", fontsize=8.5)
-    ax1.legend(frameon=False, fontsize=8.0, loc="upper left")
-    ax1.grid(axis="y", color=C["grid"], linewidth=0.8)
-
-    # Panel 2: GARCH(1,1)
-    ax2 = fig.add_subplot(212, sharex=ax1)
-    ax2.plot(dates, beta_roll, color=C["risk"], lw=1.6, label="Beta Condicional GARCH(1,1)")
-    ax2.axhline(m6["beta_ols"], color=C["navy"], linestyle="--", lw=1.4, label=f"Beta OLS Estático ({m6['beta_ols']:.3f}β)")
-    ax2.axhline(m6["beta_apalancado"], color=C["aluar"], linestyle=":", lw=1.2, label=f"Beta Hamada ({m6['beta_apalancado']:.3f}β)")
-    ax2.set_xlabel("Año", fontsize=SZ["axis"])
-    ax2.set_ylabel("Beta GARCH", fontsize=8.5)
-    ax2.legend(frameon=False, fontsize=8.0, loc="upper left")
-    ax2.grid(axis="y", color=C["grid"], linewidth=0.8)
-
-    fig.subplots_adjust(left=0.08, right=0.96, top=0.82, bottom=0.10, hspace=0.28)
+    ax.set_xlabel("Año", fontsize=SZ["axis"])
+    ax.legend(frameon=False, fontsize=SZ["legend"], loc="upper left")
     return exportar(fig, "figura_30")
 
 

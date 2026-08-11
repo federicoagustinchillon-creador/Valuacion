@@ -974,7 +974,7 @@ Sustituyendo estos valores en la inecuación:
 \end{equation}
 Dado que $0,07497 > 0,0144$, la Condición de Feller se cumple holgadamente. Esto valida analíticamente la robustez del modelo CIR seleccionado, asegurando que la volatilidad paramétrica no empujará el riesgo soberano al límite absorbente del cero, lo cual sería económicamente inconsistente para un mercado emergente.
 
-\subsection{Estimación Comparativa del Beta Dinámico: Filtro de Kalman vs. GARCH(1,1)}
+\subsection{Beta Dinámico Condicional: GARCH(1,1)}
 El OLS asume riesgo sistemático constante durante toda la ventana de 10 años; dada la recurrencia de clústeres de volatilidad en Argentina (PASO 2019, default, shocks cambiarios), se modelizó también la varianza condicional vía GARCH(1,1) (ARCH-LM confirma heterocedasticidad significativa en los residuos OLS, Tabla de Diagnóstico). El resultado muestra que durante episodios de volatilidad en el mercado local el Beta condicional de Aluar disminuye, reflejando su menor sensibilidad relativa frente a shocks sistémicos locales. El Beta estático oficial ($\beta_U=0,645$ desapalancado) es, frente a esto, un promedio a través de los ciclos y es el que se usa en el WACC de largo plazo.
 
 \begin{center}
@@ -990,7 +990,7 @@ El motor estocástico base (Sección de Simulación Monte Carlo) simula choques 
 
 \begin{tcolorbox}[colback=lightgray!30, colframe=gsnavy, boxrule=0.8pt, title={\small\sffamily \textbf{Implementación Nativa: Cópula de Clayton Asimétrica ($\lambda_L=0,38$)}}, coltitle=white]
 \footnotesize
-A diferencia de los modelos tradicionales que asumen Cópula Gaussiana con dependencia de cola nula, este informe implementa nativamente en la Figura 31 una \textbf{Cópula de Clayton No-Gaussiana} ($\theta=1,225$, $\Delta AIC=-88,9$ frente al caso Gaussiano). La Cópula de Clayton captura explícitamente la dependencia de cola inferior ($\lambda_L=0,38$), reflejando que los shocks macroeconómicos adversos (alto WACC, menor $g$ y contracción de márgenes) ocurren de forma simultánea en períodos de estrés financiero. Como resultado cuantitativo, el percentil bajista P5 se reajusta de ARS 844 a \textbf{ARS 812}, capturando con total precisión el verdadero riesgo de cola conjunta sin alterar la mediana del precio objetivo (ARS 1.237).
+A diferencia de los modelos tradicionales que asumen Cópula Gaussiana con dependencia de cola nula, este informe implementa nativamente en la Figura 31 una \textbf{Cópula de Clayton No-Gaussiana} ($\theta=1,225$, $\Delta AIC=-88,9$ frente al caso Gaussiano). La Cópula de Clayton captura explícitamente la dependencia de cola inferior ($\lambda_L=0,38$), reflejando que los shocks macroeconómicos adversos (alto WACC, menor $g$ y contracción de márgenes) ocurren de forma simultánea en períodos de estrés financiero. Como resultado cuantitativo, el percentil bajista P5 se reajusta de ARS 844 a \textbf{ARS 750}, capturando el riesgo de cola conjunta con mayor severidad que el caso Gaussiano, sin alterar sustancialmente la mediana del precio objetivo (ARS 1.240).
 \end{tcolorbox}
 
 \begin{center}
@@ -1017,9 +1017,6 @@ Tipo de Cambio Real & 0,084 & 0,140 & Moderado \\
 \bottomrule
 \end{tabular}
 \end{table}
-
-\subsection{Auditoría de Expectativas de Mercado: DCF Inverso Probabilístico}
-El precio de mercado actual (ARS 982,50) descuenta una $g_{implicita}=0,69\%$, por debajo del $g=2,00\%$ del modelo.
 
 \subsection{Simulación del Impacto del RIGI y Apertura Comercial}
 Bajo el escenario RIGI pleno (Ganancias al 25\%, aranceles 0\% en aerogeneradores Goldwind y retenciones 0\%), el NOPAT de régimen aumenta un +12,4\%, impulsando el Target Integrado a ARS 1.304,10 por acción.
