@@ -38,7 +38,7 @@ C = {
     "value": "#1B7F4B", "risk": "#B11226", "burgundy": "#8B0000", "aluar": "#E8833A",
     "panel": "#FFFFFF", "gold": "#D4A843", "teal": "#1A7A7A",
 }
-SZ = {"title": 13, "subtitle": 10, "axis": 9.5, "tick": 8.5,
+SZ = {"title": 14.5, "subtitle": 10.5, "axis": 9.5, "tick": 8.5,
       "legend": 8.5, "annot": 8, "source": 7.5}
 LW = {"thin": 0.8, "medium": 1.2, "bold": 1.8}
 
