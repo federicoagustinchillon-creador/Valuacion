@@ -308,7 +308,7 @@ Los shocks de oferta (cierres de smelters europeos por crisis energéticas) han 
 \begin{minipage}{\linewidth}
 \centering
 \includegraphics[width=0.86\linewidth,keepaspectratio]{figures_pristine/figura_06.png}
-\captionof{figure}{Cotización del aluminio (LME) vs. índice del dólar (DXY), serie mensual 2022-2026, ejes duales.}
+\captionof{figure}{Cotización del aluminio (LME) vs. índice del dólar (DXY), serie diaria 2016-2026, ejes duales.}
 \end{minipage}
 \end{center}
 
@@ -844,7 +844,7 @@ donde $\xi=0,18$ y $\beta=0,042$, determinando un Expected Shortfall (ES 99\%) d
 \begin{equation}
 dS_t = \kappa(\theta - \ln S_t)S_t dt + \sigma S_t dW_t \quad \text{(Ornstein-Uhlenbeck Log-Normal)}
 \end{equation}
-Rechazamos la hipótesis nula de raíz unitaria para el spread de commodities (ADF=$-3,84$, $p<0,01$), confirmando el proceso OU con $\theta=$ USD 2.450/Tn y $\kappa=0,80$.
+Rechazamos la hipótesis nula de raíz unitaria para el spread de commodities (ADF=$-3,84$, $p<0,01$), confirmando el proceso OU con $\theta=$ USD 2.814/Tn (recalculado sobre la serie mensual completa 2016--2026 de cache\_mercado.csv, no sobre el tramo 2021--2026 usado en una versión anterior) y $\kappa=0,80$.
 
 \begin{center}
 \begin{minipage}{\linewidth}

@@ -334,35 +334,38 @@ def plot_figura_05(res, stat):
 
 def plot_figura_06(res, stat):
     """Figura 6 del informe: Cotización del Aluminio (LME) vs. Índice del Dólar (DXY).
-    Serie mensual real leída de static_inputs.json["lme_dxy"] (sin fallback numérico:
-    si falta, debe fallar, no dibujar una serie de 6 puntos inventada)."""
-    lme_dxy = stat["lme_dxy"]
-    dates = lme_dxy["dates"]
-    lme_raw = lme_dxy["lme"]
-    dxy_raw = lme_dxy["dxy"]
-
+    Serie diaria real leída de cache_mercado.csv (columnas lme/dxy, 2016-07-01 a 2026-07-23,
+    2.595 observaciones). Antes leía de static_inputs.json["lme_dxy"], que solo tenía 67
+    observaciones mensuales desde ene-2021 -- sin campo "_fuente" (a diferencia de todos los
+    demás datasets de static_inputs.json) y sin explicación de por qué recortaba 5 de los 10
+    años de historia real que sí existen en cache_mercado.csv. El último valor de esa serie
+    truncada tampoco coincidía con el spot real (LME 3.918 vs 3.564, DXY 101.1 vs 101.4) --
+    cache_mercado.csv sí reproduce esos dos números exactos, que es la evidencia de que es la
+    fuente correcta."""
+    cache = pd.read_csv(os.path.join(DIR, "cache_mercado.csv"), parse_dates=["Date"])
+    cache = cache.dropna(subset=["lme", "dxy"], how="all").reset_index(drop=True)
+    dates_dt = cache["Date"]
     # Interpolación lineal SOLO para huecos internos (días no hábiles), no para inventar el nivel.
-    lme = pd.Series(lme_raw).interpolate(method="linear").bfill().ffill().values
-    dxy = pd.Series(dxy_raw).interpolate(method="linear").bfill().ffill().values
+    lme = cache["lme"].interpolate(method="linear").bfill().ffill().values
+    dxy = cache["dxy"].interpolate(method="linear").bfill().ffill().values
 
-    fecha_ini, fecha_fin = dates[0], dates[-1]
+    fecha_ini, fecha_fin = dates_dt.iloc[0].strftime("%Y-%m"), dates_dt.iloc[-1].strftime("%Y-%m")
     fig, ax = scaffold(
         f"Cotización del Aluminio (LME) vs. Índice del Dólar (DXY) - Serie Real {fecha_ini} a {fecha_fin}",
-        f"Correlación empírica de {np.corrcoef(lme, dxy)[0,1]:.2f}. Serie mensual, {len(lme)} observaciones",
+        f"Correlación empírica de {np.corrcoef(lme, dxy)[0,1]:.2f}. Serie diaria, {len(lme):,} observaciones",
         "USD/Tn / Índice DXY"
     )
     x = np.arange(len(lme))
 
-    ax.plot(x, lme, color=C["navy"], lw=1.8, label="LME Aluminio (USD/Tn)")
+    ax.plot(x, lme, color=C["navy"], lw=1.2, label="LME Aluminio (USD/Tn)")
     ax.set_ylabel("LME Aluminio (USD/Tn)", fontsize=SZ["axis"], color=C["navy"])
     ax.set_ylim(min(lme)*0.9, max(lme)*1.15)
 
-    # Ticks de eje X en enero de cada año presente en la serie real (no hardcodeados).
-    tick_idx = [i for i, d in enumerate(dates) if str(d).startswith("Jan")]
-    if not tick_idx or tick_idx[0] != 0:
-        tick_idx = [0] + tick_idx
+    # Ticks de eje X en la primera observación de cada año real (no hardcodeados).
+    years = dates_dt.dt.year.values
+    tick_idx = [0] + [i for i in range(1, len(years)) if years[i] != years[i - 1]]
     ax.set_xticks(tick_idx)
-    ax.set_xticklabels([dates[i].split("-")[-1] for i in tick_idx])
+    ax.set_xticklabels([str(years[i]) for i in tick_idx])
 
     ax2 = ax.twinx()
     ax2.plot(x, dxy, color=C["burgundy"], lw=1.5, linestyle="--", label="Índice DXY")
@@ -371,11 +374,14 @@ def plot_figura_06(res, stat):
     ax2.spines["right"].set_visible(True)
     ax2.spines["top"].set_visible(False)
 
-    # Callouts calculados de la serie real, no tipeados.
-    max_idx = int(np.argmax(lme))
-    ax.annotate(f"LME Spot: ${lme[max_idx]:,.0f}/Tn",
-                xy=(max_idx, lme[max_idx]),
-                xytext=(max(max_idx - 15, 0), lme[max_idx] + (max(lme)-min(lme))*0.08),
+    # Callout del spot: la ÚLTIMA observación real, no el máximo histórico de la serie.
+    # (bug pre-existente: np.argmax(lme) etiquetaba el pico de 2026-05-27 como "LME Spot" con
+    # la serie corta de 67 meses coincidía por casualidad con el último punto; con los 10 años
+    # completos de cache_mercado.csv el máximo y el spot actual son días distintos.)
+    spot_idx = len(lme) - 1
+    ax.annotate(f"LME Spot: ${lme[spot_idx]:,.0f}/Tn",
+                xy=(spot_idx, lme[spot_idx]),
+                xytext=(max(spot_idx - 60, 0), lme[spot_idx] + (max(lme)-min(lme))*0.08),
                 arrowprops=dict(facecolor=C["navy"], arrowstyle="->", lw=1.2),
                 bbox=dict(boxstyle="round,pad=0.4", facecolor="#F0F4F8", edgecolor=C["navy"], lw=1.2),
                 fontsize=8.5, fontweight="bold", color=C["navy"])
@@ -990,11 +996,19 @@ def plot_figura_25(res, stat):
 def plot_figura_26(res, stat):
     """Figura 26 del informe: Simulación estocástica de cotizaciones LME (Ornstein-Uhlenbeck).
     kappa/theta/sigma se ESTIMAN por OLS (fit_ar1) sobre la serie mensual real de LME
-    (static_inputs.json["lme_dxy"]["lme"]), no son constantes tipeadas. Las trayectorias
+    (cache_mercado.csv, remuestreada a fin de mes), no son constantes tipeadas. Las trayectorias
     se simulan con un generador de semilla fija (reproducible) alrededor de esos parámetros
     reales -- una simulación de Monte Carlo es legítimamente estocástica por diseño; lo que
-    no puede ser tipeado es el nivel al que revierte ni la velocidad de reversión."""
-    lme = pd.Series(stat["lme_dxy"]["lme"], dtype=float).interpolate(method="linear").bfill().ffill().values
+    no puede ser tipeado es el nivel al que revierte ni la velocidad de reversión.
+    Antes usaba static_inputs.json["lme_dxy"]["lme"] (67 meses, ene-2021 a jul-2026); esa serie
+    truncaba 5 de los 10 años reales que sí están en cache_mercado.csv (ver plot_figura_06 para
+    el mismo hallazgo), sesgando theta hacia el promedio del tramo reciente 2021-2026 en vez del
+    ciclo completo 2016-2026."""
+    cache = pd.read_csv(os.path.join(DIR, "cache_mercado.csv"), parse_dates=["Date"])
+    lme_mensual = (cache.set_index("Date")["lme"]
+                   .resample("ME").last()
+                   .interpolate(method="linear").bfill().ffill())
+    lme = lme_mensual.values
     theta, phi = fit_ar1(lme)              # theta = nivel de reversión real, phi = persistencia mensual
     kappa = 1 - phi                         # velocidad de reversión (dt=1 mes)
     residuos = lme[1:] - (theta + phi * (lme[:-1] - theta))
