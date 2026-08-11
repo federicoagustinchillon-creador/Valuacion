@@ -1373,7 +1373,12 @@
   "ou_kappa": 0.25212608406305065,
   "ou_theta": 2.377743952011118,
   "ou_sigma": 0.49578280695384164,
-  "ou_half_life_dias": 692.8005491785002
+  "ou_half_life_dias": 692.8005491785002,
+  "var_cornish_fisher_90": -0.026978229731548117,
+  "z_cornish_fisher_90": -0.8492334252519266,
+  "cvar_cornish_fisher_90": -0.07119742128250758,
+  "cvar_cornish_fisher_95": -0.10484897397944226,
+  "cvar_cornish_fisher_99": -0.20346181661555462
  },
  "robustez": {
   "base": {
