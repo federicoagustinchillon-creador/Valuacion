@@ -112,6 +112,7 @@
     \vspace{-0.1cm}
     \begin{tcolorbox}[colback=white, colframe=gsnavy, boxrule=1pt, arc=4pt, left=5pt, right=5pt, top=4pt, bottom=4pt]
         \begin{center}
+            {\scriptsize \color{gsgray} Dictamen del modelo (no es recomendaci\'on personal)} \\[0.05cm]
             {\fontsize{16}{19}\selectfont \sffamily \textbf{COMPRAR}} \\[0.1cm]
             {\small \color{gsgray} Target Base: \textbf{ARS 1.235,51} (USD 0,78)} \\
             {\small \color{gsgray} Opci\'on Real PEAL V: \textbf{+ARS 19,60} (USD 0,01)} \\
@@ -134,12 +135,12 @@
             \textbf{Upside Base / Total:} & +25,8\% / +27,8\% \\
             \textbf{Tipo de Cambio (CCL):} & 1.584,25 \\
         \end{tabular}
-        \vspace{0.06cm}
-        \color{bordergray}\rule{\textwidth}{0.5pt}
-        \vspace{0.04cm}
-        {\tiny \color{gsgray} \textbf{Nota metodol\'ogica.} Este reporte corresponde al Modelo C Acad\'emico, que aplica la metodolog\'ia $CRP = \lambda \times EMBI+$ y Opci\'on Real aditiva por LSMC. Los par\'ametros de mercado (Beta OLS, Rf, EMBI+, CCL) est\'an congelados al cierre del 23-jul-2026; el modelo Excel adjunto es reproducible pero no est\'atico y puede mostrar una variaci\'on residual de hasta $\pm 5\%$ en el Target si se recalcula con datos de mercado m\'as recientes. El detalle completo de los 18 supuestos del modelo, con fuente individual de cada uno, est\'a disponible en el slide ``Metodolog\'ia -- Supuestos del modelo'' de la presentaci\'on adjunta y en la hoja ``0) Supuestos'' del modelo Excel oficial.\par}
     \end{tcolorbox}
 \end{minipage}
+
+\vspace{0.15cm}
+\noindent
+{\tiny \color{gsgray} \textbf{Nota metodol\'ogica.} Este reporte corresponde al Modelo C Acad\'emico, que aplica la metodolog\'ia $CRP = \lambda \times EMBI+$ y Opci\'on Real aditiva por LSMC. Los par\'ametros de mercado (Beta OLS, Rf, EMBI+, CCL) est\'an congelados al cierre del 23-jul-2026; el modelo Excel adjunto es reproducible pero no est\'atico y puede mostrar una variaci\'on residual de hasta $\pm 5\%$ en el Target si se recalcula con datos de mercado m\'as recientes. El detalle completo de los 18 supuestos del modelo, con fuente individual de cada uno, est\'a disponible en el slide ``Metodolog\'ia -- Supuestos del modelo'' de la presentaci\'on adjunta y en la hoja ``0) Supuestos'' del modelo Excel oficial.\par}
 
 \vspace{0.25cm}
 \noindent
@@ -409,6 +410,8 @@ Para capturar el riesgo sistémico de ALUAR sin penalizarla por la volatilidad c
 
 La prima de riesgo país (\textit{Country Risk Premium}) se ajusta mediante el factor $\lambda$ (Lambda de Damodaran), que pondera el hecho de que la mayoría de los ingresos de ALUAR están descorrelacionados del riesgo doméstico (son exportaciones atadas al dólar global), aislando así el Costo del Equity (Ke).
 
+El WACC no es solo la tasa de descuento del DCF: es también la vara de creación de valor del modelo. Cuando el ROIC (Rendimiento del Capital Invertido) de la compañía supera el WACC, cada dólar reinvertido crea valor económico (EVA positivo); cuando el ROIC cae por debajo, la reinversión lo destruye aunque el resultado contable sea positivo. Esta relación $ROIC$ vs. $WACC$ es la que disciplina la proyección del valor terminal de este modelo (convergencia forzada a $ROIC_{terminal}=WACC$ en la perpetuidad, ver Sección de Análisis de Creación de Valor) y explica por qué el FY2025 —con ROIC de 3,52\% muy por debajo del WACC de 7,06\%— no se proyecta hacia adelante sin corrección: perpetuar esa brecha implicaría capitalizar una destrucción de valor estructural que el propio historial FY2020-FY2025 no sostiene (spread promedio de +0,57 p.p., no negativo).
+
 \begin{center}
 \begin{minipage}{\linewidth}
 \centering
@@ -436,6 +439,8 @@ Upside vs. Spot (ARS 982,50) & \textbf{+25,8\%} & +6,1\% & -6,9\% & -17,4\% \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\textbf{El caso para un $\lambda$ estructuralmente mayor.} La justificación de $\lambda=0,20$ descansa en la dolarización del \textit{ingreso} ($\sim$80\% exportado en moneda dura), pero $\lambda$ debería en rigor capturar la exposición de la compañía al riesgo país \textit{en su conjunto}, no solo del lado de los ingresos. Del lado de los costos, Aluar sigue expuesta al ciclo doméstico: la Matriz de Riesgos de este informe ya señala que una apreciación real del peso (atraso cambiario) encarece los costos fijos locales frente a ingresos dolarizados, y ese canal —mano de obra, logística doméstica y el 4\% de energía comprada a la red que no cubre la matriz autogenerada— no está aislado ni cuantificado de forma independiente en el motor DCF (ver Matriz de Riesgos, fila de Atraso Cambiario). En la dirección contraria, la devaluación simultánea del peso que suele acompañar un shock de riesgo país \textit{licúa} esos mismos costos fijos en dólares (Sección de Correlación LME-DXY), lo que amortigua parcialmente el argumento a favor de un $\lambda$ mayor. El resultado neto de ambos efectos no está modelado explícitamente; el $\lambda=0,20$ oficial debe leerse, por lo tanto, como una aproximación deliberadamente conservadora del lado de los ingresos que no captura el ciclo del costo local en ninguna dirección —ni para encarecerlo bajo atraso cambiario, ni para abaratarlo bajo devaluación—, y no como una medición integral de la exposición de la compañía al riesgo argentino.
 
 \section{Análisis de Creación de Valor (EVA)}
 El diferencial histórico entre el Rendimiento del Capital Invertido (ROIC) y su costo (WACC) fundamenta la política restrictiva de crecimiento terminal:
@@ -655,19 +660,21 @@ De las cinco metodologías del gráfico de rangos, solo el escenario $\lambda=1,
 \toprule
 \textbf{Metodología} & \textbf{Mín.} & \textbf{Central} & \textbf{Máx.} \\
 \midrule
-DCF $\lambda=1,0$ (CRP completo, sin ponderador) & \multicolumn{3}{c}{776 (único por debajo del mercado)} \\
-DCF Damodaran estricto & \multicolumn{3}{c}{993} \\
-DCF Base (oficial, $\lambda=0,20$) & \multicolumn{3}{c}{1.236} \\
-DCF $g=2,5\%$ (sensibilidad) & \multicolumn{3}{c}{1.371} \\
+DCF $\lambda=1,0$ (CRP completo, sin ponderador)\textsuperscript{a} & -- & 776 & -- \\
+DCF Damodaran estricto & -- & 993 & -- \\
+DCF Base (oficial, $\lambda=0,20$) & -- & 1.236 & -- \\
+DCF $g=2,5\%$ (sensibilidad) & -- & 1.371 & -- \\
 Monte Carlo (P5 / Mediana / P95) & 844 & 1.237 & 1.737 \\
 \midrule
 \multicolumn{4}{l}{\textit{Referencia — no forma parte del gráfico de rangos:}} \\
-DCF + Opción Real PEAL V (Target Integrado) & \multicolumn{3}{c}{1.255,11} \\
+DCF + Opción Real PEAL V (Target Integrado) & -- & 1.255,11 & -- \\
 Marco de Escenarios (Bear / Base / Bull) & 781 & 1.236 & 1.481 \\
-Precio de Mercado (referencia, spot) & \multicolumn{3}{c}{982,50} \\
+Precio de Mercado (referencia, spot) & -- & 982,50 & -- \\
 \bottomrule
 \end{tabular}
 \end{table}
+\vspace{-0.15cm}
+\noindent{\footnotesize\textsuperscript{a} Única metodología de las cinco que ubica el target por debajo del precio de mercado (ARS 982,50).\par}
 
 \section{Simulación Monte Carlo}
 Para complementar el DCF, se corrió un motor Monte Carlo con 20.000 simulaciones (19.995 válidas tras excluir corridas con $WACC - g < 1\%$) sobre tres shocks: (i) WACC; (ii) $g$ terminal; ambos con innovaciones Student-t ($\nu=4,2$) —el mismo grado de libertad que el test de Kolmogorov-Smirnov estimó para los retornos diarios de ALUA.BA, en lugar de la Normal usada en una primera versión del modelo— y (iii) margen EBITDA de largo plazo, con shock Normal. La mediana se ubica en ARS 1.237 (rango P5-P95: ARS 844 a ARS 1.737), con probabilidad de superar el precio spot de 85,2\%.
@@ -914,7 +921,7 @@ Quandt-Andrews (Quiebre Estructural) & 1,14 & 0,42 & Estabilidad muestral en 10 
 
 \textbf{Nota de consistencia metodológica.} El test de Kolmogorov-Smirnov confirma que la Student-t ($\nu=4,2$) ajusta mejor la distribución empírica de retornos diarios de ALUA.BA que la Normal ($D=0,018$ vs $D=0,054$). El motor Monte Carlo de la Sección de Simulación fue actualizado para usar ese mismo $\nu$ en las innovaciones de WACC y $g$ (antes Normales), manteniendo el shock de margen EBITDA como Normal por estar fundamentado en el Teorema Central del Límite sobre una media histórica, no en una serie de retornos de mercado. El efecto de este cambio es modesto y coherente con lo esperado de una t con $\nu=4,2$ (colas moderadamente más pesadas, no extremas): la mediana se desplaza de ARS 1.234 a ARS 1.237, el P5 sube de ARS 839 a ARS 844, el P95 baja de ARS 1.756 a ARS 1.737, y la probabilidad de upside pasa de 84,3\% a 85,2\%.
 
-\subsection{Matriz de Riesgos 2D: Impacto vs. Probabilidad (Mapa de Calor CFA)}
+\subsection{Matriz de Riesgos 2D: Impacto vs. Probabilidad}
 Siguiendo el estándar de mapeo de riesgos del CFA Institute, se posicionan los mismos riesgos ya detallados con impacto y mitigante en la Matriz de Riesgos Corporativos (Sección de Gestión Cuantitativa de Riesgo) en un plano continuo de Probabilidad $\times$ Impacto, en lugar de las tres bandas discretas (Alta/Media/Baja) de la tabla.
 
 \begin{center}

@@ -301,9 +301,11 @@ def plot_figura_05(res, stat):
 
     for i, yr in enumerate(years):
         ax.annotate(f"{embi_ar1[i]:,.0f} pb", (yr, embi_ar1[i]), textcoords="offset points",
-                    xytext=(0, 9), ha="center", fontsize=8, fontweight="bold", color=C["navy"])
+                    xytext=(0, 12), ha="center", fontsize=8, fontweight="bold", color=C["navy"],
+                    bbox=dict(boxstyle="round,pad=0.12", facecolor="white", edgecolor="none", alpha=0.85))
         ax2.annotate(f"{yield_ar1[i]:.2f}%", (yr, yield_ar1[i]), textcoords="offset points",
-                     xytext=(0, -14), ha="center", fontsize=8, fontweight="bold", color=C["aluar"])
+                     xytext=(0, -18), ha="center", fontsize=8, fontweight="bold", color=C["aluar"],
+                     bbox=dict(boxstyle="round,pad=0.12", facecolor="white", edgecolor="none", alpha=0.85))
 
     ax.set_xlabel("Años de Proyección (2026E-2030E)", fontsize=SZ["axis"])
     ax.set_ylabel("EMBI+ (pb)", fontsize=SZ["axis"], color=C["navy"])
@@ -397,9 +399,11 @@ def plot_figura_07(res, stat):
         ax.text(w + max(prod)*0.015, bar.get_y() + bar.get_height()/2, f"{w:.2f} MM Tn ({shares[i]:.1f}%)",
                 va="center", fontsize=8.5, fontweight="bold", color=C["ink"])
     
-    # Cuadro explicativo
-    ax.annotate("ALUAR destaca por su integración 100% autogenerada\na pesar de su escala relativa (0.46 MM Tn)",
-                xy=(prod[0], 0), xytext=(max(prod)*0.45, 1.2),
+    # Cuadro explicativo -- la flecha apunta MAS ALLA del final de la etiqueta de dato
+    # "X.XX MM Tn (Y%)" de la barra Argentina (no a la barra en si ni a mitad de camino),
+    # para no atravesar ese texto con la linea de la flecha.
+    ax.annotate(f"ALUAR destaca por su integración 100% autogenerada\na pesar de su escala relativa ({prod[0]:.2f} MM Tn)",
+                xy=(max(prod) * 0.16, 0), xytext=(max(prod)*0.45, 1.2),
                 arrowprops=dict(facecolor=C["aluar"], arrowstyle="->", lw=1.2),
                 bbox=dict(boxstyle="round,pad=0.4", facecolor="white", edgecolor=C["aluar"], lw=1.2),
                 fontsize=8.5, fontweight="bold", color=C["aluar"])
@@ -895,13 +899,34 @@ def plot_figura_20(res, stat, muestra):
         "Densidad"
     )
     lo, hi = np.percentile(muestra, [0.5, 99.5])
+    p5, p95 = np.percentile(muestra, [5, 95])
     ax.hist(muestra, bins=60, range=(lo, hi), density=True, color=C["slate"], edgecolor="white", alpha=0.7)
     kde = gaussian_kde(muestra)
     x_kde = np.linspace(lo, hi, 300)
     ax.plot(x_kde, kde(x_kde), color=C["navy"], lw=2, label="Distribución estimada")
     ax.axvline(mediana, color=C["value"], lw=2, label=f"Mediana: ARS {mediana:,.0f}")
     ax.axvline(spot, color=C["risk"], lw=1.8, linestyle="--", label=f"Spot: ARS {spot:,.0f}")
+    ax.axvline(p5, color=C["blue_lt"], lw=1.3, linestyle=":", zorder=2)
+    ax.axvline(p95, color=C["blue_lt"], lw=1.3, linestyle=":", zorder=2)
+
+    max_d = kde(x_kde).max()
+    ax.annotate(f"Mediana\nARS {mediana:,.0f}", xy=(mediana, max_d * 0.98), xytext=(mediana, max_d * 1.14),
+                ha="center", fontsize=8.5, fontweight="bold", color=C["value"],
+                arrowprops=dict(arrowstyle="->", color=C["value"], lw=1.2),
+                bbox=dict(boxstyle="round,pad=0.3", facecolor="white", edgecolor=C["value"], lw=1.0))
+    ax.annotate(f"Spot\nARS {spot:,.0f}", xy=(spot, kde(spot)[0] if hasattr(kde(spot), "__len__") else float(kde([spot])[0])),
+                xytext=(spot, max_d * 0.55), ha="center", fontsize=8.5, fontweight="bold", color=C["risk"],
+                arrowprops=dict(arrowstyle="->", color=C["risk"], lw=1.2),
+                bbox=dict(boxstyle="round,pad=0.3", facecolor="white", edgecolor=C["risk"], lw=1.0))
+    ax.annotate(f"P5\nARS {p5:,.0f}", xy=(p5, 0), xytext=(p5, max_d * 0.22), ha="center",
+                fontsize=7.5, fontweight="bold", color=C["slate"],
+                bbox=dict(boxstyle="round,pad=0.25", facecolor="white", edgecolor=C["blue_lt"], lw=0.9))
+    ax.annotate(f"P95\nARS {p95:,.0f}", xy=(p95, 0), xytext=(p95, max_d * 0.22), ha="center",
+                fontsize=7.5, fontweight="bold", color=C["slate"],
+                bbox=dict(boxstyle="round,pad=0.25", facecolor="white", edgecolor=C["blue_lt"], lw=0.9))
+
     ax.set_xlim(lo, hi)
+    ax.set_ylim(0, max_d * 1.30)
     ax.set_xlabel("ARS / acción", fontsize=SZ["axis"])
     ax.legend(frameon=False, fontsize=SZ["legend"])
     return exportar(fig, "figura_20")
@@ -1071,7 +1096,7 @@ def plot_figura_25(res, stat):
     var99 = var_gpd(0.99)
     es99 = (var99 + scale - shape*u) / (1 - shape)
 
-    xmax = max(20.0, float(losses.max()) * 1.35)
+    xmax = max(20.0, float(losses.max()) * 1.12)
     x = np.linspace(0, xmax, 300)
     x_tail = np.clip(x - u, 0, None)
     gpd_tail = (1/scale) * (1 + shape*x_tail/scale) ** (-1/shape - 1)
