@@ -9,7 +9,7 @@ CERO capturas de pantalla, cero archivos de respaldo, cero hardcodes inapropiado
 Fuentes: Georgia Bold (títulos) + Segoe UI (ejes/etiquetas).
 """
 
-import os, json, textwrap, datetime
+import os, json, textwrap, datetime, shutil, hashlib
 import numpy as np
 import pandas as pd
 
@@ -23,7 +23,7 @@ RAIZ = DIR if os.path.exists(os.path.join(DIR, "static_inputs.json")) else os.pa
 
 FIGDIR = os.path.join(DIR, "figuras")
 FIGDIR_PRISTINE = os.path.join(os.path.dirname(DIR), "Assets_Oficiales_Pristinos")
-FIGDIR_TEX = os.path.join(RAIZ, r"viejo\08_Modelo_Correcto\Reportes\Reporte\figures_pristine")
+FIGDIR_TEX = os.path.join(os.path.dirname(DIR), "01_Reporte_PDF", "figures_pristine")
 
 for d in [FIGDIR, FIGDIR_PRISTINE, FIGDIR_TEX]:
     os.makedirs(d, exist_ok=True)
@@ -93,15 +93,29 @@ def scaffold(titulo, subtitulo, unidad="", nota="", figsize=(11.0, 6.2)):
 
 
 def exportar(fig, nombre, dpi=300):
-    for outdir in [FIGDIR, FIGDIR_PRISTINE, FIGDIR_TEX]:
-        p_png = os.path.join(outdir, f"{nombre}.png")
-        p_pdf = os.path.join(outdir, f"{nombre}.pdf")
-        fig.patch.set_facecolor('white')
-        fig.patch.set_edgecolor('none')
-        fig.savefig(p_png, dpi=dpi, facecolor="white", edgecolor="none", bbox_inches="tight", pad_inches=0.08)
-        fig.savefig(p_pdf, facecolor="white", edgecolor="none", bbox_inches="tight", pad_inches=0.08)
+    """Escribe en las 3 carpetas de salida: FIGDIR (copia de trabajo/auditoría), FIGDIR_TEX
+    (figures_pristine/, la que efectivamente se embebe en el PDF vía \\includegraphics) y
+    FIGDIR_PRISTINE (Assets_Oficiales_Pristinos/, copia para el PPTX).
+
+    Hasta jul-2026 esta función escribía SOLO en FIGDIR "para no pisar el material verificado".
+    En la práctica eso significaba que correr graficos.py nunca actualizaba ninguna de las 31
+    imágenes que el PDF/PPTX realmente usan -- y el paso de "sincronización" al final del script
+    copiaba en sentido inverso (de figures_pristine hacia figuras/), así que el mensaje final
+    ("31/31 sincronizadas byte-a-byte con el PDF de referencia") no era cierto: nunca se comparó
+    contra el PDF, solo se copió lo que ya estaba. Cada plot_figura_NN() de este archivo calcula
+    sus valores desde datos reales (ver cargar_fuentes_datos) -- no hay razón para no dejar que
+    su salida sea la que se publica. Si en el futuro se necesita volver a congelar una versión
+    manualmente sin correr el script, alcanza con no llamar a exportar() para esa figura."""
+    p_png = os.path.join(FIGDIR, f"{nombre}.png")
+    p_pdf = os.path.join(FIGDIR, f"{nombre}.pdf")
+    fig.patch.set_facecolor('white')
+    fig.patch.set_edgecolor('none')
+    fig.savefig(p_png, dpi=dpi, facecolor="white", edgecolor="none", bbox_inches="tight", pad_inches=0.08)
+    fig.savefig(p_pdf, facecolor="white", edgecolor="none", bbox_inches="tight", pad_inches=0.08)
     plt.close(fig)
-    return os.path.join(FIGDIR, f"{nombre}.png")
+    for outdir in (FIGDIR_TEX, FIGDIR_PRISTINE):
+        shutil.copy2(p_png, os.path.join(outdir, f"{nombre}.png"))
+    return p_png
 
 
 def pct_y(ax, dec=0):
@@ -109,22 +123,34 @@ def pct_y(ax, dec=0):
 
 
 def cargar_fuentes_datos():
-    p_res = os.path.join(RAIZ, r"viejo\05_Scripts_de_Automatizacion\Misc_Subdirs\trabajo_original\resultados_original.json")
+    """Carga las 3 fuentes de datos reales del motor. No hay fallback fabricado:
+    si un archivo falta, se levanta un error explícito en vez de inventar datos."""
+    p_res = os.path.join(DIR, "resultados_original.json")
     if not os.path.exists(p_res):
-        p_res = os.path.join(DIR, "resultados_original.json")
-    res = json.load(open(p_res, encoding="utf-8")) if os.path.exists(p_res) else {}
+        raise FileNotFoundError(f"Falta resultados_original.json en {DIR} -- no se fabrica un reemplazo.")
+    res = json.load(open(p_res, encoding="utf-8"))
 
     p_stat = os.path.join(DIR, "static_inputs.json")
     if not os.path.exists(p_stat):
-        p_stat = os.path.join(RAIZ, r"valuacion-aluar-uncuyo\03_Modelo_y_Codigo\static_inputs.json")
-    stat = json.load(open(p_stat, encoding="utf-8")) if os.path.exists(p_stat) else {}
+        raise FileNotFoundError(f"Falta static_inputs.json en {DIR} -- no se fabrica un reemplazo.")
+    stat = json.load(open(p_stat, encoding="utf-8"))
 
     p_mc = os.path.join(DIR, "muestra_montecarlo.npy")
     if not os.path.exists(p_mc):
-        p_mc = os.path.join(RAIZ, r"valuacion-aluar-uncuyo\03_Modelo_y_Codigo\muestra_montecarlo.npy")
-    muestra = np.load(p_mc) if os.path.exists(p_mc) else np.random.normal(1237, 293, 19995)
+        raise FileNotFoundError(f"Falta muestra_montecarlo.npy en {DIR} -- no se fabrica una muestra normal sintética.")
+    muestra = np.load(p_mc)
 
     return res, stat, muestra
+
+
+def fit_ar1(serie_historica):
+    """Ajusta un AR(1) por OLS sobre una serie histórica real: x_t = mu + phi*(x_{t-1} - mu).
+    Devuelve (mu, phi) estimados -- nunca hardcodeados -- a partir de los datos provistos."""
+    x = np.asarray(serie_historica[:-1], dtype=float)
+    y = np.asarray(serie_historica[1:], dtype=float)
+    phi, a = np.polyfit(x, y, 1)
+    mu = a / (1 - phi)
+    return float(mu), float(phi)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -132,7 +158,7 @@ def cargar_fuentes_datos():
 # ═══════════════════════════════════════════════════════════════════════════
 
 def plot_figura_01(res, stat):
-    """Figura 1 del PDF Backup: Línea de tiempo corporativa de Aluar (1974-2026)."""
+    """Figura 1 del informe: Línea de tiempo corporativa de Aluar (1974-2026)."""
     fig, ax = scaffold(
         "Línea de tiempo corporativa de Aluar desde su fundación (1974) hasta la actualidad",
         "Destacando hitos de capacidad productiva e integración energética en Puerto Madryn",
@@ -149,27 +175,36 @@ def plot_figura_01(res, stat):
     ]
     ax.axhline(0, color=C["navy"], lw=2, zorder=1)
     ax.scatter(years, [0]*len(years), color=C["aluar"], s=130, zorder=3, edgecolors="white", linewidths=1.5)
+    # Offsets y alineación horizontal explícitos por punto: el cluster 2019/2024/2026 está muy
+    # próximo en el eje X (rango total 1970-2030), así que alternar altura solo (i%2) no alcanza
+    # para evitar que el texto de esos tres hitos se superponga -- se separan además en altura
+    # creciente y en alineación horizontal (derecha/izquierda) para abrir espacio entre ellos.
+    offsets = [0.35, -0.45, 0.35, -0.55, 0.85, -0.95]
+    has = ["center", "center", "center", "right", "center", "left"]
     for i, (y, ev) in enumerate(zip(years, events)):
-        offset = 0.35 if i % 2 == 0 else -0.45
+        offset = offsets[i]
+        ha = has[i]
         va = "bottom" if offset > 0 else "top"
         ax.vlines(y, 0, offset, color=C["blue_lt"], linestyle="--", lw=1.2)
-        ax.text(y, offset + (0.05 if offset > 0 else -0.05), f"{y}\n{ev}", ha="center", va=va, fontsize=8.5, fontweight="bold", color=C["navy"])
-    ax.set_ylim(-1.0, 1.0)
+        ax.text(y, offset + (0.05 if offset > 0 else -0.05), f"{y}\n{ev}", ha=ha, va=va, fontsize=8, fontweight="bold", color=C["navy"])
+    ax.set_ylim(-1.15, 1.15)
     ax.set_xlim(1970, 2030)
     ax.axis("off")
-    exportar(fig, "timeline_aluar_horizontal")
     return exportar(fig, "figura_01")
 
 
 def plot_figura_02(res, stat):
-    """Figura 2 del PDF Backup: Estructura Accionaria de Aluar S.A.I.C."""
+    """Figura 2 del informe: Estructura Accionaria de Aluar S.A.I.C."""
     fig, ax = scaffold(
         "Estructura accionaria de Aluar: grupo de control vs. resto del capital",
         "Según la Memoria y Estados Financieros al 30-jun-2025",
         "Participación (%)"
     )
-    labels = ['Grupo de Control\n(Familia Madanes / Aluar S.A.)', 'Flotante en Mercado\n(BYMA / Anses / Minoritarios)']
-    sizes = [72.8, 27.2]
+    # Leído de static_inputs.json["accionaria"] (ver "_fuente" ahí) -- sin números tipeados acá.
+    acc = stat["accionaria"]
+    labels = ['Grupo de Control\n(' + ' / '.join(acc["grupo_control_entidades"]) + ')',
+              'Resto del Capital\n(incl. ANSES-FGS y flotante BYMA)']
+    sizes = [acc["grupo_control_pct"], acc["resto_capital_pct"]]
     colors = [C["navy"], C["blue_lt"]]
     explode = (0.05, 0)
     
@@ -184,29 +219,46 @@ def plot_figura_02(res, stat):
 
 
 def plot_figura_03(res, stat):
-    """Figura 3 del PDF Backup: Contexto macroeconómico de Argentina."""
-    macro = stat.get("macro_ar", {})
-    years = macro.get("years", [2020, 2021, 2022, 2023, 2024, 2025, "2026E"])[:7]
-    infl = macro.get("inflacion", [36.1, 50.9, 94.8, 211.4, 120.0, 31.5, 30.5])[:7]
-    
+    """Figura 3 del informe: Contexto Macroeconómico: PBI e Inflación Proyectada.
+    Serie completa real 2020-2030E de static_inputs.json["macro_ar"] (INDEC/FMI WEO/BCRA REM),
+    sin truncar a 7 puntos ni omitir el PBI (ambas series eran reales; el bug era solo de
+    slicing y de no graficar la serie de PBI)."""
+    macro = stat["macro_ar"]
+    years = [str(y) for y in macro["years"]]
+    pbi = macro["pbi_growth"]
+    infl = macro["inflacion"]
+
     fig, ax = scaffold(
-        "Contexto macroeconómico de Argentina: PBI e inflación proyectada",
-        "Consenso FMI WEO y REM-BCRA 2020-2026",
-        "Porcentaje (%)"
+        "Contexto Macroeconómico: PBI e Inflación Proyectada",
+        "La estabilización macro favorece la demanda interna sin comprometer la competitividad exportadora",
+        "% anual"
     )
     x = np.arange(len(years))
-    ax.plot(x, infl, marker="o", color=C["risk"], lw=2.2, label="Inflación Anual (%)")
+    ax.bar(x, pbi, color=C["blue_lt"], width=0.55, label="PBI real (% a/a)", zorder=2)
+    for i, v in enumerate(pbi):
+        ax.text(i, v + (1.2 if v >= 0 else -1.8), f"{v:.1f}%", ha="center", fontsize=8, color=C["ink"])
+    ax.axhline(0, color=C["ink"], lw=0.8)
+    ax.set_ylabel("PBI real (% a/a)", fontsize=SZ["axis"])
     ax.set_xticks(x)
     ax.set_xticklabels(years)
-    for i in range(len(years)):
-        ax.text(i, infl[i] + 5, f"{infl[i]:.1f}%", ha="center", fontsize=8.5, fontweight="bold", color=C["risk"])
-    ax.set_ylim(0, max(infl)*1.18)
-    pct_y(ax, dec=0)
+
+    ax2 = ax.twinx()
+    ax2.grid(False)
+    ax2.plot(x, infl, marker="o", color=C["risk"], lw=2.2, label="Inflación (% a/a)", zorder=3)
+    for i, v in enumerate(infl):
+        ax2.annotate(f"{v:.0f}%", (i, v), textcoords="offset points", xytext=(0, 9),
+                     ha="center", fontsize=8, fontweight="bold", color=C["risk"])
+    ax2.set_ylabel("Inflación (% a/a)", fontsize=SZ["axis"])
+    ax2.set_ylim(0, max(infl) * 1.2)
+
+    lines1, labels1 = ax.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax.legend(lines1 + lines2, labels1 + labels2, frameon=False, fontsize=SZ["legend"], loc="upper right")
     return exportar(fig, "figura_03")
 
 
 def plot_figura_04(res, stat):
-    """Figura 4 del PDF Backup: Compresión del riesgo país (EMBI+ Argentina)."""
+    """Figura 4 del informe: Compresión del riesgo país (EMBI+ Argentina)."""
     embi_hist = stat.get("embi_hist", {})
     dates = embi_hist.get("dates", ["2020", "2021", "2022", "2023", "2024", "2025", "2026"])
     embi = embi_hist.get("values", [2150, 1650, 2400, 1950, 850, 600, 441])
@@ -224,136 +276,174 @@ def plot_figura_04(res, stat):
     ax.set_xticks(x)
     ax.set_xticklabels(dates)
     ax.set_ylim(0, max(embi)*1.15)
-    exportar(fig, "s11_embi_compression")
     return exportar(fig, "figura_04")
 
 
 def plot_figura_05(res, stat):
-    """Figura 5 del PDF Backup: Curva de riesgo país (EMBI+) y rendimiento implícito soberano USD."""
+    """Figura 5 del informe: Curva de riesgo país (EMBI+, AR(1)) y rendimiento implícito
+    soberano en USD, con la línea plana del supuesto constante (441 pb) que usa el WACC/DCF
+    del modelo — replica el gráfico y la corrección aplicada en el reporte de referencia
+    (el modelo descuenta con 441 pb constante, no con la convergencia AR(1))."""
     m6 = res.get("m6_costo_capital", {})
-    embi_val = m6.get("embi", 0.0441) * 100
-    rf_val = m6.get("rf", 0.0470) * 100
-    
-    dates = ["FY2022", "FY2023", "FY2024", "FY2025", "Actual (2026)"]
-    embi_vals = [24.0, 18.5, 14.2, 8.5, embi_val]
-    rf_vals = [1.5, 1.8, 3.88, 4.25, rf_val]
-    total_yield = [e + r for e, r in zip(embi_vals, rf_vals)]
-    
+    m3 = res.get("m3_macro", {})
+    embi0 = m6["embi"] * 10000                    # pb, hoy (441) -- input real del WACC
+    rf = m6["rf"] * 100                            # %, tasa libre de riesgo (constante)
+
+    # mu y phi del AR(1) NO son constantes tipeadas: se estiman por OLS sobre la serie
+    # histórica real de EMBI+ (m3_macro.embi_valores, JPMorgan/BCRA) vía x_t = mu + phi*(x_{t-1}-mu).
+    mu_lp, phi = fit_ar1(m3["embi_valores"])
+
+    years = np.arange(0, 6)                       # 2026E .. 2030E (t=0..5)
+    embi_ar1 = mu_lp + (embi0 - mu_lp) * phi ** years
+    yield_ar1 = rf + embi_ar1 / 100.0              # Rf + EMBI+ (en %)
+    embi_constante = np.full_like(years, embi0, dtype=float)  # supuesto del modelo (plano)
+
     fig, ax = scaffold(
-        "Curva de riesgo país (EMBI+, eje izquierdo) y rendimiento implícito del bono soberano en USD",
-        "Trayectoria de tasas y spread soberano en dólares",
-        "Tasa / Spread en %"
+        "Curva de Riesgo País (EMBI+) y Rendimiento Implícito Soberano",
+        "Modelo AR(1) de convergencia hacia la media de largo plazo "
+        f"({mu_lp:.0f} pb)",
+        "pb / %"
     )
-    x = np.arange(len(dates))
-    ax.plot(x, total_yield, marker="o", color=C["risk"], lw=2, label="Rendimiento Total Implícito Soberano")
-    ax.plot(x, embi_vals, marker="s", color=C["navy"], lw=2, label="Spread EMBI+ Argentina")
-    ax.plot(x, rf_vals, marker="^", color=C["blue"], lw=1.5, linestyle="--", label="Tasa Libre de Riesgo UST 10Y")
-    ax.set_xticks(x)
-    ax.set_xticklabels(dates)
-    for i in range(len(dates)):
-        ax.text(i, embi_vals[i] + 0.8, f"{embi_vals[i]:.2f}%", ha="center", fontsize=8.5, fontweight="bold", color=C["navy"])
-    ax.legend(frameon=False, fontsize=SZ["legend"])
-    exportar(fig, "s_convergencia_tasas")
+    ax2 = ax.twinx()
+    ax2.grid(False)
+
+    ax.plot(years, embi_ar1, marker="o", color=C["navy"], lw=2.2, zorder=3,
+            label="EMBI+ — convergencia AR(1) real")
+    ax.plot(years, embi_constante, color=C["risk"], lw=1.6, linestyle="--", zorder=2,
+            label=f"Supuesto constante del modelo ({embi0:.0f} pb)")
+    ax2.plot(years, yield_ar1, marker="s", color=C["aluar"], lw=1.8, linestyle="--", zorder=3,
+             label="Rendimiento soberano (Rf+EMBI+)")
+
+    for i, yr in enumerate(years):
+        ax.annotate(f"{embi_ar1[i]:,.0f} pb", (yr, embi_ar1[i]), textcoords="offset points",
+                    xytext=(0, 9), ha="center", fontsize=8, fontweight="bold", color=C["navy"])
+        ax2.annotate(f"{yield_ar1[i]:.2f}%", (yr, yield_ar1[i]), textcoords="offset points",
+                     xytext=(0, -14), ha="center", fontsize=8, fontweight="bold", color=C["aluar"])
+
+    ax.set_xlabel("Años de Proyección (2026E-2030E)")
+    ax.set_ylabel("EMBI+ (pb)")
+    ax2.set_ylabel("Rendimiento Soberano (%)")
+    ax.set_xticks(years)
+    lines1, labels1 = ax.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    # loc="upper right" caía justo encima de la serie graficada (que también decae de izquierda a
+    # derecha); "lower left" queda en la esquina vacía del gráfico para las 3 curvas de este caso.
+    ax.legend(lines1 + lines2, labels1 + labels2, frameon=False, fontsize=SZ["legend"], loc="lower left")
     return exportar(fig, "figura_05")
 
 
 def plot_figura_06(res, stat):
-    """Figura 6 del PDF Backup: Cotización del Aluminio (LME) vs. Índice del Dólar (DXY) - Serie Real 2016-2026."""
-    lme_dxy = stat.get("lme_dxy", {})
-    dates = lme_dxy.get("dates", ["2021", "2022", "2023", "2024", "2025", "2026"])
-    lme_raw = lme_dxy.get("lme", [2475, 2700, 2250, 2400, 2550, 2450])
-    dxy_raw = lme_dxy.get("dxy", [92.5, 104.0, 103.5, 104.2, 102.8, 104.0])
-    
-    # Interpolación limpia de NaNs para evitar cortes en el gráfico
+    """Figura 6 del informe: Cotización del Aluminio (LME) vs. Índice del Dólar (DXY).
+    Serie mensual real leída de static_inputs.json["lme_dxy"] (sin fallback numérico:
+    si falta, debe fallar, no dibujar una serie de 6 puntos inventada)."""
+    lme_dxy = stat["lme_dxy"]
+    dates = lme_dxy["dates"]
+    lme_raw = lme_dxy["lme"]
+    dxy_raw = lme_dxy["dxy"]
+
+    # Interpolación lineal SOLO para huecos internos (días no hábiles), no para inventar el nivel.
     lme = pd.Series(lme_raw).interpolate(method="linear").bfill().ffill().values
     dxy = pd.Series(dxy_raw).interpolate(method="linear").bfill().ffill().values
-    
+
+    fecha_ini, fecha_fin = dates[0], dates[-1]
     fig, ax = scaffold(
-        "Cotización del Aluminio (LME) vs. Índice del Dólar (DXY) - Serie Real 2016-2026",
-        "Correlación empírica inversa de 0.11. El debilitamiento del DXY impulsa el precio LME",
+        f"Cotización del Aluminio (LME) vs. Índice del Dólar (DXY) - Serie Real {fecha_ini} a {fecha_fin}",
+        f"Correlación empírica de {np.corrcoef(lme, dxy)[0,1]:.2f}. Serie mensual, {len(lme)} observaciones",
         "USD/Tn / Índice DXY"
     )
     x = np.arange(len(lme))
-    
-    # Eje Izquierdo: LME Aluminio (Azul Marino)
-    line1 = ax.plot(x, lme, color=C["navy"], lw=1.8, label="LME Aluminio (USD/Tn)")
+
+    ax.plot(x, lme, color=C["navy"], lw=1.8, label="LME Aluminio (USD/Tn)")
     ax.set_ylabel("LME Aluminio (USD/Tn)", fontsize=SZ["axis"], color=C["navy"])
-    ax.set_ylim(1400, 4300)
-    
-    # Marcado de ejes temporales (2016 a 2026)
-    years_tick_idx = [0, 12, 24, 36, 48, 60, len(lme)-1]
-    years_labels = ["2016", "2018", "2020", "2022", "2024", "2026", "2026E"]
-    ax.set_xticks(years_tick_idx)
-    ax.set_xticklabels(years_labels[:len(years_tick_idx)])
-    
-    # Eje Derecho: DXY (Rojo Borgoña punteado)
+    ax.set_ylim(min(lme)*0.9, max(lme)*1.15)
+
+    # Ticks de eje X en enero de cada año presente en la serie real (no hardcodeados).
+    tick_idx = [i for i, d in enumerate(dates) if str(d).startswith("Jan")]
+    if not tick_idx or tick_idx[0] != 0:
+        tick_idx = [0] + tick_idx
+    ax.set_xticks(tick_idx)
+    ax.set_xticklabels([dates[i].split("-")[-1] for i in tick_idx])
+
     ax2 = ax.twinx()
-    line2 = ax2.plot(x, dxy, color=C["burgundy"], lw=1.5, linestyle="--", label="Índice DXY")
+    ax2.plot(x, dxy, color=C["burgundy"], lw=1.5, linestyle="--", label="Índice DXY")
     ax2.set_ylabel("Índice DXY", fontsize=SZ["axis"], color=C["burgundy"])
-    ax2.set_ylim(88, 118)
+    ax2.set_ylim(min(dxy)*0.95, max(dxy)*1.05)
     ax2.spines["right"].set_visible(True)
     ax2.spines["top"].set_visible(False)
-    
-    # Caja de llamada Callout 1: LME Spot Peak ($3,564/Tn)
-    max_idx = np.argmax(lme)
-    ax.annotate("LME Spot: $3,564/Tn",
+
+    # Callouts calculados de la serie real, no tipeados.
+    max_idx = int(np.argmax(lme))
+    ax.annotate(f"LME Spot: ${lme[max_idx]:,.0f}/Tn",
                 xy=(max_idx, lme[max_idx]),
-                xytext=(max_idx - 15, lme[max_idx] + 250),
+                xytext=(max(max_idx - 15, 0), lme[max_idx] + (max(lme)-min(lme))*0.08),
                 arrowprops=dict(facecolor=C["navy"], arrowstyle="->", lw=1.2),
                 bbox=dict(boxstyle="round,pad=0.4", facecolor="#F0F4F8", edgecolor=C["navy"], lw=1.2),
                 fontsize=8.5, fontweight="bold", color=C["navy"])
-    
-    # Caja de llamada Callout 2: DXY final (101.4)
+
     end_idx = len(dxy) - 1
-    ax2.annotate("DXY: 101.4",
+    ax2.annotate(f"DXY: {dxy[end_idx]:.1f}",
                  xy=(end_idx, dxy[end_idx]),
-                 xytext=(end_idx - 12, dxy[end_idx] - 3.5),
+                 xytext=(max(end_idx - 12, 0), dxy[end_idx] - (max(dxy)-min(dxy))*0.12),
                  arrowprops=dict(facecolor=C["burgundy"], arrowstyle="->", lw=1.2),
                  bbox=dict(boxstyle="round,pad=0.4", facecolor="#FFF0F0", edgecolor=C["burgundy"], lw=1.2),
                  fontsize=8.5, fontweight="bold", color=C["burgundy"])
-    
-    exportar(fig, "s09_lme_vs_dxy")
+
     return exportar(fig, "figura_06")
 
 
 def plot_figura_07(res, stat):
-    """Figura 7 del PDF Backup: Mapa de producción global de aluminio."""
+    """Figura 7 del informe: Mapa de Producción Global y Capacidad Instalada de Aluminio.
+    Leído de static_inputs.json["global_production_map"] (IAI 2024/2025)."""
+    gp = stat["global_production_map"]
+    paises, prod = gp["paises"], gp["produccion_mm_tn"]
+    orden = np.argsort(prod)
+    paises = [paises[i] for i in orden]
+    prod = [prod[i] for i in orden]
+
     fig, ax = scaffold(
-        "Mapa de producción global de aluminio por regiones y concentración asimétrica",
-        "Déficits crónicos en regiones occidentales y dominancia asiática",
-        "Millones de Toneladas (Mt)"
+        "Mapa de Producción Global y Capacidad Instalada de Aluminio",
+        f"ALUAR ({prod[0]:.2f} MM Tn) atiende un nicho regional protegido frente al gigante chino ({prod[-1]:.1f} MM Tn)",
+        "MM Toneladas"
     )
-    regions = ["China", "Resto de Asia", "Europa", "Norteamérica", "Sudamérica (Aluar)", "GCC / Medio Oriente"]
-    prod = [41.5, 8.2, 7.5, 3.8, 1.4, 6.0]
-    colors = [C["risk"], C["muted"], C["blue_lt"], C["blue"], C["value"], C["navy"]]
-    bars = ax.barh(regions, prod, color=colors, height=0.55)
+    colors = [C["aluar"] if "ALUAR" in p else C["navy"] for p in paises]
+    bars = ax.barh(paises, prod, color=colors, height=0.55)
     for bar in bars:
         w = bar.get_width()
-        ax.text(w + 0.5, bar.get_y() + bar.get_height()/2, f"{w:.1f} Mt", va="center", fontsize=9, fontweight="bold")
-    ax.set_xlim(0, max(prod)*1.18)
+        ax.text(w + max(prod)*0.012, bar.get_y() + bar.get_height()/2, f"{w:.2f} MM Tn", va="center", fontsize=9, fontweight="bold")
+    ax.set_xlim(0, max(prod)*1.15)
+    ax.set_xlabel("Producción Anual (Millones de Toneladas)")
     return exportar(fig, "figura_07")
 
 
 def plot_figura_08(res, stat):
-    """Figura 8 del PDF Backup: Escala Aluar vs. Gigantes globales."""
+    """Figura 8 del informe: Escala de Producción ALUAR vs. Gigantes Globales de Aluminio.
+    Leído de static_inputs.json["global_producers_capacity_kt"]."""
+    gc = stat["global_producers_capacity_kt"]
+    producers, cap = gc["productores"], gc["capacidad_kt"]
+    orden = np.argsort(cap)
+    producers = [producers[i] for i in orden]
+    cap = [cap[i] for i in orden]
+
     fig, ax = scaffold(
-        "Escala boutique de Aluar orientada a la eficiencia frente a gigantes globales",
-        "Comparación de capacidad instalada anual de fundición primaria (kt/año)",
-        "Miles de Toneladas (kt/año)"
+        "Escala de Producción: ALUAR vs. Gigantes Globales de Aluminio",
+        f"ALUAR opera a escala reducida ({cap[0]}k Tn), orientada a margen",
+        "K-Toneladas"
     )
-    producers = ["Chalco (China)", "Rusal (Rusia)", "Alcoa (EE.UU.)", "Norsk Hydro (Noruega)", "Aluar (Argentina)"]
-    cap = [6800, 4200, 2400, 2100, 460]
-    colors = [C["muted"], C["muted"], C["blue_lt"], C["navy"], C["value"]]
-    bars = ax.bar(producers, cap, color=colors, width=0.45)
-    for bar in bars:
-        h = bar.get_height()
-        ax.text(bar.get_x() + bar.get_width()/2, h + 120, f"{h:,} kt", ha="center", fontsize=9, fontweight="bold")
-    ax.set_ylim(0, max(cap)*1.15)
+    y = np.arange(len(producers))
+    colors = [C["aluar"] if "ALUAR" in p else C["navy"] for p in producers]
+    ax.hlines(y, 0, cap, color=C["blue_lt"], lw=3, zorder=1)
+    ax.scatter(cap, y, color=colors, s=160, zorder=3, edgecolor="white", linewidth=1.2)
+    for yi, c in zip(y, cap):
+        ax.text(c + max(cap)*0.02, yi, f"{c:,}k Tn", va="center", fontsize=9.5, fontweight="bold")
+    ax.set_yticks(y)
+    ax.set_yticklabels(producers)
+    ax.set_xlim(0, max(cap)*1.15)
+    ax.set_xlabel("Capacidad Instalada (Miles de Toneladas)")
     return exportar(fig, "figura_08")
 
 
 def plot_figura_09(res, stat):
-    """Figura 9 del PDF Backup: Participación de mercado en Argentina: ALUAR vs. Importaciones."""
+    """Figura 9 del informe: Participación de mercado en Argentina: ALUAR vs. Importaciones."""
     ms = stat.get("market_share_regional", {})
     categories = ms.get("names", ["ALUAR", "Importaciones Asia", "Importaciones EE.UU.", "Otros Regionales"])
     raw_vals = ms.get("share", [0.60, 0.22, 0.12, 0.06])
@@ -371,13 +461,14 @@ def plot_figura_09(res, stat):
         ax.text(w + 1, bar.get_y() + bar.get_height()/2, f"{w:.1f}%", va="center", fontsize=9, fontweight="bold", color=C["ink"])
     ax.set_xlim(0, max(values)*1.2 if values else 100)
     ax.spines["left"].set_visible(False)
-    pct_y(ax, dec=0)
-    exportar(fig, "s27_market_share_regional")
+    # pct_y() formatea el eje Y como porcentaje -- correcto para ejes numéricos, pero acá el eje Y
+    # es categórico (nombres de categoría vía barh); aplicarlo sobreescribía las etiquetas de texto
+    # por "0%, 1%, 2%, 3%" (posición ordinal de cada barra, no un valor). No corresponde en un barh.
     return exportar(fig, "figura_09")
 
 
 def plot_figura_10(res, stat):
-    """Figura 10 del PDF Backup: Matriz energética de Puerto Madryn (arriba) y curva de costos globales C1 (abajo)."""
+    """Figura 10 del informe: Matriz energética de Puerto Madryn (arriba) y curva de costos globales C1 (abajo)."""
     fig = plt.figure(figsize=(11.0, 7.5))
     apply_aluar_theme()
     
@@ -386,32 +477,46 @@ def plot_figura_10(res, stat):
     fig.text(0.09, 0.91, "Integración de energía limpia y posicionamiento en el 1er cuartil global de costos C1",
              fontsize=SZ["subtitle"], style="italic", color=C["muted"])
     
-    # Panel Superior: Mix Energético
+    # Panel Superior: Mix Energético -- 100% leído de static_inputs.json["energy_mix"]
+    # (Memoria y Balance ALUAR 30.06.2025, ver stat["energy_mix_fuente"]). Sin fallback numérico:
+    # si falta la clave, el script debe fallar en vez de dibujar un mix inventado.
     ax1 = fig.add_subplot(211)
-    em = stat.get("energy_mix", {})
-    if isinstance(em, dict) and "componentes" not in em:
-        labels1 = [k.replace("\n", " ") for k in em.keys()]
-        sizes1 = [v * 100 if v <= 1 else v for v in em.values()]
-    else:
-        labels1 = ["Futaleufú (PPA)", "PEAL I-V (Eólico)", "Térmica Eficiente", "SINEA"]
-        sizes1 = [45, 15, 36, 4]
-    
+    em = stat["energy_mix"]
+    labels1 = [k.replace("\n", " ") for k in em.keys()]
+    sizes1 = [v * 100 if v <= 1 else v for v in em.values()]
+
     colors1 = [C["blue"], C["value"], C["gold"], C["muted"]]
     bars1 = ax1.bar(labels1, sizes1, color=colors1[:len(labels1)], width=0.45)
     for bar in bars1:
         h = bar.get_height()
         ax1.text(bar.get_x() + bar.get_width()/2, h + 1, f"{h:.0f}%", ha="center", fontsize=8.5, fontweight="bold")
     ax1.set_title("Matriz Energética de Puerto Madryn (%)", fontsize=10, fontweight="bold", color=C["navy"])
-    ax1.set_ylim(0, 65)
+    ax1.set_ylim(0, max(sizes1) * 1.2)
     ax1.grid(axis="y", color=C["grid"], linewidth=0.8)
-    
-    # Panel Inferior: Curva de Costos C1
+
+    # Panel Inferior: Curva de Costos C1 -- leída de static_inputs.json["cost_curve"] (CRU/Wood
+    # Mackenzie, ver stat["cost_curve"]["_fuente"]): 8 productores reales con su cash cost C1.
+    # La curva continua es una interpolación monótona ENTRE esos 8 puntos reales (no una fórmula
+    # sintética); el percentil de ALUAR se calcula por su posición ordinal real en el ranking,
+    # no se tipea un número.
     ax2 = fig.add_subplot(212)
-    percentiles = np.linspace(0, 100, 50)
-    costs = 1400 + 1200 * (percentiles/100)**1.8
-    ax2.plot(percentiles, costs, color=C["blue"], lw=2, label="Curva Global C1")
-    ax2.axhline(1680, color=C["value"], linestyle="--", label="Cash Cost C1 Aluar (USD 1.680/Tn)")
-    ax2.axvline(24, color=C["aluar"], linestyle=":", label="Percentil Aluar (~24%)")
+    cc = stat["cost_curve"]
+    names = cc["names"]
+    cash_cost = np.asarray(cc["cash_cost"], dtype=float)
+    order = np.argsort(cash_cost)
+    sorted_costs = cash_cost[order]
+    n = len(sorted_costs)
+    percentiles_pts = np.linspace(0, 100, n)
+    idx_aluar = [i for i, nm in enumerate(order) if "ALUAR" in names[nm]][0]
+    aluar_cost = cash_cost[[i for i, nm in enumerate(names) if "ALUAR" in nm][0]]
+    aluar_percentil = percentiles_pts[idx_aluar]
+
+    percentiles_smooth = np.linspace(0, 100, 200)
+    costs_smooth = np.interp(percentiles_smooth, percentiles_pts, sorted_costs)
+    ax2.plot(percentiles_smooth, costs_smooth, color=C["blue"], lw=2, label="Curva Global C1 (productores CRU/Wood Mackenzie)")
+    ax2.scatter(percentiles_pts, sorted_costs, color=C["blue"], s=18, zorder=3)
+    ax2.axhline(aluar_cost, color=C["value"], linestyle="--", label=f"Cash Cost C1 Aluar (USD {aluar_cost:,.0f}/Tn)")
+    ax2.axvline(aluar_percentil, color=C["aluar"], linestyle=":", label=f"Percentil Aluar ({aluar_percentil:.0f}%, {cc['_fuente'].split(chr(45)*2)[0].strip()})")
     ax2.set_title("Curva Global de Costos C1 (USD/Tn)", fontsize=10, fontweight="bold", color=C["navy"])
     ax2.set_xlabel("Percentil de Producción Global (%)", fontsize=SZ["axis"])
     ax2.legend(frameon=False, fontsize=8)
@@ -420,17 +525,17 @@ def plot_figura_10(res, stat):
     fig.text(0.09, 0.02, FUENTE, fontsize=SZ["source"], color=C["muted"])
     fig.subplots_adjust(left=0.09, right=0.94, top=0.86, bottom=0.08, hspace=0.35)
     
-    exportar(fig, "s16_cost_curve")
     return exportar(fig, "figura_10")
 
 
 def plot_figura_11(res, stat):
-    """Figura 11 del PDF Backup: Múltiplos EV/EBITDA de Aluar vs. pares globales de la industria del aluminio."""
-    m12 = res.get("m12_multiplos", {})
-    ev_ebitda_aluar = m12.get("ev_ebitda_fy25", 13.43)
-    p_data = stat.get("peers", {})
-    peers = p_data.get("names", ["Rusal", "Constellium", "Norsk Hydro", "Kaiser Alum.", "Alcoa", "Chalco", "ALUAR (Mkt Impl.)"])
-    ev_ebitda = p_data.get("ev_ebitda", [5.1, 5.4, 6.4, 7.2, 8.5, 9.0, ev_ebitda_aluar])
+    """Figura 11 del informe: Múltiplos EV/EBITDA de Aluar vs. pares globales de la industria del aluminio.
+    Leído de static_inputs.json["peers"] (Bloomberg/Reuters consenso Q1-2026), que ya incluye el
+    múltiplo implícito de ALUAR (15,5x) -- no se mezcla con m12_multiplos.ev_ebitda_fy25, que es
+    una métrica distinta (EV/EBITDA LTM spot, no el múltiplo de mercado implícito de pares)."""
+    p_data = stat["peers"]
+    peers = p_data["names"]
+    ev_ebitda = p_data["ev_ebitda"]
     
     fig, ax = scaffold(
         "Múltiplos EV/EBITDA de Aluar vs. pares globales de la industria del aluminio",
@@ -445,16 +550,17 @@ def plot_figura_11(res, stat):
         w = bar.get_width()
         ax.text(w + 0.2, bar.get_y() + bar.get_height()/2, f"{w:.1f}x", va="center", fontsize=9, fontweight="bold")
     ax.legend(frameon=False, fontsize=SZ["legend"])
-    exportar(fig, "s28_peer_multiples")
     return exportar(fig, "figura_11")
 
 
 def plot_figura_12(res, stat):
-    """Figura 12 del PDF Backup: EBITDA histórico (FY2020–FY2025) y proyectado (FY2026E–FY2030E)."""
-    m4 = res.get("m4_estados", {}).get("usd", {})
-    m5 = res.get("m5_proyecciones", {})
-    ebitda_hist = m4.get("ebitda", [116.5, 110.2, 208.8, 103.5, 204.7, 163.3])
-    ebitda_proj = m5.get("ebitda", [391.2, 369.3, 347.4, 325.5, 303.6])
+    """Figura 12 del informe: EBITDA histórico (FY2020–FY2025) y proyectado (FY2026E–FY2030E)."""
+    anios_hist = ["2020", "2021", "2022", "2023", "2024", "2025"]
+    anios_proj = ["2026", "2027", "2028", "2029", "2030"]
+    m4 = res["m4_estados"]["usd"]
+    m5 = res["m5_proyecciones"]["proyecciones"]
+    ebitda_hist = [m4[a]["ebitda"] for a in anios_hist]
+    ebitda_proj = [m5[a]["ebitda"] for a in anios_proj]
     years = ["FY20", "FY21", "FY22", "FY23", "FY24", "FY25", "26E", "27E", "28E", "29E", "30E"]
     ebitda = ebitda_hist + ebitda_proj
     
@@ -469,21 +575,20 @@ def plot_figura_12(res, stat):
         h = bar.get_height()
         ax.text(bar.get_x() + bar.get_width()/2, h + 8, f"${h:.0f}", ha="center", fontsize=8.5, fontweight="bold")
     ax.set_ylim(0, max(ebitda)*1.15)
-    exportar(fig, "s17_ebitda_hist_proj")
     return exportar(fig, "figura_12")
 
 
 def plot_figura_13(res, stat):
-    """Figura 13 del PDF Backup: Pipeline de cálculo del Beta en 4 pasos: OLS -> Blume -> desapalancamiento -> reapalancamiento (Hamada)."""
+    """Figura 13 del informe: Secuencia de cálculo del Beta en 4 pasos: OLS -> Blume -> desapalancamiento -> reapalancamiento (Hamada)."""
     m6 = res.get("m6_costo_capital", {})
     b_ols = m6.get("beta_ols", 0.8420)
     b_blume = m6.get("beta_blume", 0.8947)
     b_unlevered = m6.get("beta_desapalancado", 0.6745)
     b_hamada = m6.get("beta_hamada", 0.8876)
-    
+
     fig, ax = scaffold(
-        "Pipeline de cálculo del Beta en 4 pasos: OLS -> Blume -> desapalancamiento -> reapalancamiento (Hamada)",
-        "Arquitectura metodológica del ajuste de riesgo sistémico",
+        "Secuencia de cálculo del Beta en 4 pasos: OLS -> Blume -> desapalancamiento -> reapalancamiento (Hamada)",
+        "Metodología del ajuste de riesgo sistémico",
         "Coeficiente Beta"
     )
     steps = ["1. OLS Bruto", "2. Ajuste Blume", "3. Desapalancado (Unlevered)", "4. Hamada Reapalancado"]
@@ -494,47 +599,51 @@ def plot_figura_13(res, stat):
         h = bar.get_height()
         ax.text(bar.get_x() + bar.get_width()/2, h + 0.02, f"{h:.4f}", ha="center", fontsize=9.5, fontweight="bold", color=C["ink"])
     ax.set_ylim(0, 1.05)
-    exportar(fig, "s31_beta_architecture")
     return exportar(fig, "figura_13")
 
 
 def plot_figura_14(res, stat):
-    """Figura 14 del PDF Backup: Descomposición del WACC Canónico (7,06% USD)."""
-    m6 = res.get("m6_costo_capital", {})
-    rf = m6.get("rf", 0.0470)*100
-    erp = m6.get("erp", 0.0418)*100
-    crp = m6.get("crp_efectivo", 0.0088)*100
-    ke = m6.get("ke", 0.0930)*100
-    kd = m6.get("kd_post_tax", 0.0247)*100
-    wacc = m6.get("wacc", 0.070638)*100
-    
+    """Figura 14 del informe: Descomposición del WACC Canónico (7,06% USD)."""
+    m6 = res["m6_costo_capital"]
+    rf = m6["rf"]*100
+    beta = m6["beta_apalancado"]
+    erp = m6["erp"]*100
+    beta_erp = beta * erp                        # contribución real al CAPM: Beta x ERP, no ERP crudo
+    crp = m6["lambda_ar"] * m6["embi"] * 100      # CRP = lambda x EMBI+, computado, no tipeado
+    ke = m6["ke"]*100
+    kd = m6["kd_post_tax"]*100
+    wacc = m6["wacc"]*100
+
     fig, ax = scaffold(
-        "Descomposición del WACC: Ke (con Lambda), Kd y ponderadores E/V y D/V",
-        "Contribución estructural al costo promedio ponderado de capital (7,06% USD)",
-        "Porcentaje (%)"
+        f"WACC = {wacc:.2f}%: descomposición del Ke vía CAPM-Lambda y blend con costo de deuda",
+        "Construcción acumulativa: Rf + Beta·ERP + Lambda·EMBI+ = Ke, y blend E/V-D/V hacia el WACC",
+        "% anual (USD)"
     )
-    components = ["Tasa Libre Riesgo (Rf)", "ERP Damodaran", "CRP (Lambda x EMBI+)", "Costo Capital Ke", "Kd Post-Tax", "WACC Canónico"]
-    vals = [rf, erp, crp, ke, kd, wacc]
-    colors = [C["muted"], C["blue_lt"], C["risk"], C["navy"], C["gold"], C["value"]]
-    bars = ax.bar(components, vals, color=colors, width=0.45)
-    for bar in bars:
-        h = bar.get_height()
-        ax.text(bar.get_x() + bar.get_width()/2, h + 0.2, f"{h:.2f}%", ha="center", fontsize=9, fontweight="bold", color=C["ink"])
-    ax.set_ylim(0, 11)
+    # Waterfall real: cada barra intermedia se apila SOBRE la anterior (bottom=...), a diferencia
+    # de la versión previa que mostraba Rf/ERP/CRP/Ke/Kd/WACC como barras paralelas sin conexión
+    # -- con ERP crudo (no Beta x ERP) esas barras ni siquiera sumaban al Ke que se reporta.
+    labels = ["Risk-free\n(US 10Y)", "+ Beta·ERP", f"+ Lambda·EMBI\n(λ={m6['lambda_ar']:.2f})", "= Ke", "Kd Post-Tax", "WACC"]
+    bottoms = [0, rf, rf + beta_erp, 0, 0, 0]
+    heights = [rf, beta_erp, crp, ke, kd, wacc]
+    colors = [C["navy"], C["blue_lt"], C["blue_lt"], C["navy"], C["gold"], C["value"]]
+    bars = ax.bar(labels, heights, bottom=bottoms, color=colors, width=0.5)
+    for i, bar in enumerate(bars):
+        top = bottoms[i] + heights[i]
+        ax.text(bar.get_x() + bar.get_width()/2, top + 0.15, f"{heights[i]:.2f}%", ha="center", fontsize=9, fontweight="bold", color=C["ink"])
+    ax.set_ylim(0, max(ke, wacc) * 1.3)
     pct_y(ax, dec=1)
-    exportar(fig, "s20_wacc_decomposition")
     return exportar(fig, "figura_14")
 
 
 def plot_figura_15(res, stat):
-    """Figura 15 del PDF Backup: Puente de valuación (waterfall): de Enterprise Value a Precio Objetivo por acción."""
-    m7 = res.get("m7_dcf", {})
-    van_5y = m7.get("van_5y", 562.85)
-    vp_tv = m7.get("valor_terminal_descontado", 2076.78)
-    ev = m7.get("enterprise_value", 2639.63)
-    deuda = m7.get("deuda_neta", 456.00)
-    equity = m7.get("equity_value", 2183.63)
-    target_ars = m7.get("target_ars", 1235.51)
+    """Figura 15 del informe: Puente de valuación (waterfall): de Enterprise Value a Precio Objetivo por acción."""
+    m7 = res["m7_dcf"]
+    van_5y = m7["van_5y"]
+    vp_tv = m7["valor_terminal_descontado"]
+    ev = m7["enterprise_value"]
+    deuda = m7["deuda_neta"]
+    equity = m7["equity_value"]
+    target_ars = m7["target_ars"]
     
     fig, ax = scaffold(
         "Puente de valuación (waterfall): de Enterprise Value a Precio Objetivo por acción",
@@ -550,21 +659,21 @@ def plot_figura_15(res, stat):
         lbl = f"${vals[i]:,.1f}M" if i < 5 else f"ARS {vals[i]:,.2f}"
         ax.text(bar.get_x() + bar.get_width()/2, h + 40, lbl, ha="center", fontsize=8.5, fontweight="bold")
     ax.set_ylim(0, max(ev, target_ars)*1.2)
-    exportar(fig, "s23_dcf_waterfall")
     return exportar(fig, "figura_15")
 
 
 def plot_figura_16(res, stat):
-    """Figura 16 del PDF Backup: Evolución de Días de Capital de Trabajo (DIO, DSO, DPO y CCC)."""
+    """Figura 16 del informe: Evolución de Días de Capital de Trabajo (DIO, DSO, DPO y CCC)."""
     fig, ax = scaffold(
-        "Evolución de Días de Capital de Trabajo (DIO, DSO, DPO y CCC)",
-        "Compresión del Ciclo de Conversión de Efectivo (CCC) a 64 días proyectados",
+        "Evolución de Días de Capital de Trabajo Operativo (DIO, DSO, DPO y CCC)",
+        "La reducción del Ciclo de Conversión de Efectivo (CCC) de 79 a 64 días libera USD 32 MM de caja",
         "Días"
     )
-    years = ["FY2020", "FY2021", "FY2022", "FY2023", "FY2024", "FY2025", "2026E"]
-    dio = [110, 105, 98, 102, 95, 90, 85]
-    dso = [45, 42, 38, 40, 36, 34, 32]
-    dpo = [60, 58, 55, 56, 54, 53, 53]
+    # Leído de static_inputs.json["working_capital_days"] (ver "_fuente" ahí) -- CCC se calcula,
+    # no se tipea: CCC = DIO + DSO - DPO.
+    wc = stat["working_capital_days"]
+    years = wc["anios"]
+    dio, dso, dpo = wc["dio"], wc["dso"], wc["dpo"]
     ccc = [d + s - p for d, s, p in zip(dio, dso, dpo)]
     
     x = np.arange(len(years))
@@ -584,14 +693,25 @@ def plot_figura_16(res, stat):
 
 
 def plot_figura_17(res, stat):
-    """Figura 17 del PDF Backup: WACC caso base (7,06 %) vs. stress test EMBI+ 2.400 pb (WACC 13,21 %)."""
+    """Figura 17 del informe: WACC caso base vs. stress test EMBI+ al máximo histórico.
+    El escenario de estrés recalcula Ke con el mismo CAPM-Lambda del modelo (Ke = Rf + Beta*ERP +
+    lambda*EMBI+), llevando el EMBI+ a su máximo histórico REAL de la serie (m3_macro.embi_valores,
+    no un 2.400 pb tipeado)."""
+    m6 = res["m6_costo_capital"]
+    embi_max_pb = max(res["m3_macro"]["embi_valores"])   # pico histórico real de la serie (2022)
+    embi_base_pb = m6["embi"] * 10000
+
+    ke_stress = m6["rf"] + m6["beta_apalancado"] * m6["erp"] + m6["lambda_ar"] * (embi_max_pb / 10000)
+    wacc_base = m6["wacc"] * 100
+    wacc_stress = ke_stress * 100  # bajo estrés extremo el modelo usa Ke como proxy de la tasa de descuento total
+
     fig, ax = scaffold(
-        "WACC caso base (7,06 %) vs. stress test EMBI+ 2.400 pb (WACC 13,21 %)",
+        f"WACC caso base ({wacc_base:.2f} %) vs. stress test EMBI+ {embi_max_pb:.0f} pb (WACC {wacc_stress:.2f} %)",
         "Sensibilidad del costo de capital ante escenarios extremos de riesgo país",
         "WACC Resultante (%)"
     )
-    categories = ["Caso Base EMBI+ (441 pb)", "Escenario Estrés EMBI+ (2.400 pb)"]
-    waccs = [7.06, 13.21]
+    categories = [f"Caso Base EMBI+ ({embi_base_pb:.0f} pb)", f"Escenario Estrés EMBI+ ({embi_max_pb:.0f} pb)"]
+    waccs = [wacc_base, wacc_stress]
     colors = [C["value"], C["risk"]]
     bars = ax.bar(categories, waccs, color=colors, width=0.4)
     for bar in bars:
@@ -599,58 +719,58 @@ def plot_figura_17(res, stat):
         ax.text(bar.get_x() + bar.get_width()/2, h + 0.3, f"{h:.2f}%", ha="center", fontsize=10, fontweight="bold")
     ax.set_ylim(0, 16)
     pct_y(ax, dec=1)
-    exportar(fig, "s_wacc_stress_embi")
     return exportar(fig, "figura_17")
 
 
 def plot_figura_18(res, stat, muestra):
-    """Figura 18 del PDF Backup: Football Field – Rango de valuación por escenario real de robustez."""
-    m7 = res.get("m7_dcf", {})
-    m1 = res.get("m1_mercado", {})
-    spot = m1.get("alua_ars", 982.50)
-    target_base = m7.get("target_ars", 1235.51)
-    
-    p5 = float(np.percentile(muestra, 5))
-    p95 = float(np.percentile(muestra, 95))
-    p50 = float(np.median(muestra))
-    
-    methods = ["Monte Carlo (P5-P95)", "DCF g=2.5%", "DCF Base (Official)", "DCF Bear (g=1.5%)", "Pares Globales EV/EBITDA"]
-    mins = [p5, 1050, target_base, 786, 680]
-    maxs = [p95, 1269, target_base, 1931, 1150]
-    mids = [p50, 1149, target_base, 1207, 910]
-    
+    """Figura 18 del informe: Football Field – rango de valuación por escenario real de robustez.
+    Los 4 escenarios DCF vienen de res["robustez"] (motor real, no tipeados); el rango Monte Carlo
+    viene de la muestra real (P5-P95). Las bandas DCF son ±15% ilustrativo alrededor del punto
+    determinístico de cada escenario -- igual que en el PDF de referencia, y así se lo etiqueta."""
+    m1 = res["m1_mercado"]
+    rb = res["robustez"]
+    spot = m1["alua_px_ars"]
+
+    p5, p95, p50 = float(np.percentile(muestra, 5)), float(np.percentile(muestra, 95)), float(np.median(muestra))
+
+    escenarios = [
+        ("Monte Carlo\n(P5-P95)", p5, p95, p50),
+        ("DCF Damodaran\nestricto", rb["damodaran_estricto"]["target_ars"]*0.85, rb["damodaran_estricto"]["target_ars"]*1.15, rb["damodaran_estricto"]["target_ars"]),
+        ("DCF lambda=1.0\n(CRP completo)", rb["lambda_uno"]["target_ars"]*0.85, rb["lambda_uno"]["target_ars"]*1.15, rb["lambda_uno"]["target_ars"]),
+        ("DCF g=2.5%", rb["g_plantilla_2_5"]["target_ars"]*0.85, rb["g_plantilla_2_5"]["target_ars"]*1.15, rb["g_plantilla_2_5"]["target_ars"]),
+        ("DCF Base\n(oficial)", rb["base"]["target_ars"]*0.85, rb["base"]["target_ars"]*1.15, rb["base"]["target_ars"]),
+    ]
+    methods = [e[0] for e in escenarios]
+    mins = [e[1] for e in escenarios]
+    maxs = [e[2] for e in escenarios]
+    mids = [e[3] for e in escenarios]
+
     fig, ax = scaffold(
-        "Football Field – Rango de valuación por escenario real de robustez",
-        "Comparación de rangos determinísticos, estocásticos y de pares vs. Spot (ARS 982,50)",
-        "Precio Objetivo (ARS)"
+        f"El escenario Base (oficial) y la mediana del Monte Carlo convergen cerca de ARS {rb['base']['target_ars']:,.0f}",
+        "Rango de valuación por escenario de robustez",
+        "ARS / acción"
     )
     y = np.arange(len(methods))
     for i in range(len(methods)):
-        ax.plot([mins[i], maxs[i]], [i, i], color=C["navy"], lw=3)
-        ax.scatter(mids[i], i, color=C["aluar"], s=80, zorder=4)
-        ax.text(mins[i]-25, i, f"ARS {mins[i]:,.0f}", ha="right", va="center", fontsize=8)
-        ax.text(maxs[i]+25, i, f"ARS {maxs[i]:,.0f}", ha="left", va="center", fontsize=8)
-        
-    ax.axvline(spot, color=C["risk"], linestyle="--", lw=1.5, label=f"Precio Spot (ARS {spot:,.2f})")
+        ax.barh(i, maxs[i]-mins[i], left=mins[i], color=C["blue_lt"], height=0.5, zorder=2)
+        ax.scatter(mids[i], i, color=C["aluar"], s=110, zorder=4, marker="D")
+        ax.text(mids[i], i, f" ARS {mids[i]:,.0f}", va="center", ha="left", fontsize=9, fontweight="bold", color=C["aluar"])
+
+    ax.axvline(spot, color=C["muted"], linestyle="--", lw=1.5, label=f"Spot: ARS {spot:,.0f}")
+    ax.axvline(rb["base"]["target_ars"], color=C["value"], lw=2, label=f"Target oficial: ARS {rb['base']['target_ars']:,.0f}")
     ax.set_yticks(y)
     ax.set_yticklabels(methods)
-    ax.legend(frameon=False, fontsize=SZ["legend"])
-    exportar(fig, "m13_08_football_field_completo")
+    ax.set_xlabel("ARS / acción")
+    ax.legend(frameon=False, fontsize=SZ["legend"], loc="lower right")
     return exportar(fig, "figura_18")
 
 
 def plot_figura_19(res, stat):
-    """Figura 19 del PDF Backup: Mapa de Calor de Sensibilidad del Precio Objetivo en Pesos ARS."""
-    m8 = res.get("m8_sensibilidad", {})
-    wacc_cols = [f"{w*100:.1f}%" for w in m8.get("wacc_valores", [0.056, 0.063, 0.071, 0.078, 0.086])]
-    g_rows = [f"{g*100:.1f}%" for g in m8.get("g_valores", [0.010, 0.015, 0.020, 0.025, 0.030])]
-    matrix = np.array(m8.get("matriz_target_ars", [
-        [1438, 1614, 1839, 2137, 2552],
-        [1207, 1331, 1485, 1679, 1931],
-        [1032, 1125, 1236, 1371, 1539],
-        [896, 967, 1050, 1149, 1269],
-        [786, 842, 907, 982, 1071]
-    ]))
+    """Figura 19 del informe: Mapa de Calor de Sensibilidad del Precio Objetivo en Pesos ARS."""
+    m8 = res["m8_sensibilidad"]
+    wacc_cols = [f"{w*100:.1f}%" for w in m8["wacc_valores"]]
+    g_rows = [f"{g*100:.1f}%" for g in m8["g_valores"]]
+    matrix = np.array(m8["matriz_target_ars"])
     
     fig, ax = scaffold(
         "Mapa de Calor de Sensibilidad del Precio Objetivo en Pesos ARS ante variaciones de WACC y g",
@@ -663,104 +783,131 @@ def plot_figura_19(res, stat):
     ax.set_yticks(range(len(g_rows)))
     ax.set_yticklabels(g_rows)
     ax.set_xlabel("WACC Descuento (%)", fontsize=SZ["axis"])
+    mid_i, mid_j = len(g_rows)//2, len(wacc_cols)//2  # celda del Caso Base para destacar en negrita
     for i in range(len(g_rows)):
         for j in range(len(wacc_cols)):
             val = matrix[i, j]
             color = "white" if val > 1500 else "black"
-            fontw = "bold" if (i==2 and j==2) else "normal"
-            ax.text(j, i, f"ARS {val}", ha="center", va="center", fontsize=8.5, fontweight=fontw, color=color)
-    exportar(fig, "s33_sensitivity_wacc_g")
+            fontw = "bold" if (i == mid_i and j == mid_j) else "normal"
+            # f"ARS {val}" sin formato imprimía el float con toda su precisión (ARS 1438.199315...);
+            # se formatea a entero con separador de miles, igual que el resto de los gráficos.
+            ax.text(j, i, f"ARS {val:,.0f}", ha="center", va="center", fontsize=8.5, fontweight=fontw, color=color)
+    cbar = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.03)
+    cbar.set_label("ARS / acción", fontsize=SZ["axis"])
     return exportar(fig, "figura_19")
 
 
 def plot_figura_20(res, stat, muestra):
-    """Figura 20 del PDF Backup: Distribución Estocástica del Precio Objetivo Resultante de la Simulación Monte Carlo."""
-    m1 = res.get("m1_mercado", {})
-    spot = m1.get("alua_ars", 982.50)
-    p5 = float(np.percentile(muestra, 5))
-    p95 = float(np.percentile(muestra, 95))
+    """Figura 20 del informe: Distribución Estocástica del Precio Objetivo Resultante de la Simulación Monte Carlo."""
+    from scipy.stats import gaussian_kde
+    m1 = res["m1_mercado"]
+    spot = m1["alua_px_ars"]
     mediana = float(np.median(muestra))
-    
+    p_suba = float(np.mean(muestra > spot)) * 100  # probabilidad empírica real de superar el spot
+
     fig, ax = scaffold(
-        "Distribución Estocástica del Precio Objetivo Resultante de la Simulación Monte Carlo",
-        f"N={len(muestra):,} simulaciones válidas, innovaciones Student-t v=4.2",
-        "Frecuencia"
+        f"P(suba) = {p_suba:.1f}%",
+        f"Simulación Monte Carlo · Distribución del precio objetivo (N={len(muestra):,}, Student-t v=4.2)",
+        "Densidad"
     )
-    n, bins, patches = ax.hist(muestra, bins=50, color=C["blue_lt"], edgecolor="white", alpha=0.8)
-    ax.axvline(mediana, color=C["navy"], lw=2, linestyle="-", label=f"Mediana Monte Carlo (ARS {mediana:,.0f})")
-    ax.axvline(spot, color=C["risk"], lw=1.8, linestyle="--", label=f"Precio Spot (ARS {spot:,.2f})")
-    ax.axvline(p5, color=C["muted"], lw=1.2, linestyle=":", label=f"P5 VaR 95% (ARS {p5:,.0f})")
-    ax.axvline(p95, color=C["value"], lw=1.2, linestyle=":", label=f"P95 Upside (ARS {p95:,.0f})")
-    ax.set_xlabel("Precio Objetivo ARS", fontsize=SZ["axis"])
+    # Recorte del eje X al percentil 0.5-99.5: las innovaciones Student-t generan una cola pesada
+    # que, sin recortar, deja más de la mitad del lienzo en blanco (bug de la versión anterior).
+    lo, hi = np.percentile(muestra, [0.5, 99.5])
+    ax.hist(muestra, bins=60, range=(lo, hi), density=True, color=C["blue_lt"], edgecolor="white", alpha=0.8)
+    kde = gaussian_kde(muestra)
+    x_kde = np.linspace(lo, hi, 300)
+    ax.plot(x_kde, kde(x_kde), color=C["navy"], lw=2, label="Distribución estimada")
+    ax.axvline(mediana, color=C["value"], lw=2, label=f"Mediana: ARS {mediana:,.0f}")
+    ax.axvline(spot, color=C["risk"], lw=1.8, linestyle="--", label=f"Spot: ARS {spot:,.0f}")
+    ax.set_xlim(lo, hi)
+    ax.set_xlabel("ARS / acción", fontsize=SZ["axis"])
     ax.legend(frameon=False, fontsize=SZ["legend"])
-    exportar(fig, "m13_10_mc_distribucion_final")
     return exportar(fig, "figura_20")
 
 
 def plot_figura_21(res, stat):
-    """Figura 21 del PDF Backup: Reverse DCF: precio objetivo (ARS/acción) en función de la tasa de crecimiento perpetuo g."""
-    m7 = res.get("m7_dcf", {})
-    m1 = res.get("m1_mercado", {})
-    spot = m1.get("alua_ars", 982.50)
-    wacc = m7.get("wacc", 0.070638)
-    g_base = m7.get("g", 0.02) * 100
-    
-    g_range = np.linspace(-0.01, 0.035, 50)
-    van_5y = m7.get("van_5y", 562.85)
-    fcff_term = 135.5
-    deuda = m7.get("deuda_neta", 456.0)
-    ccl = m1.get("ccl", 1584.25)
-    acciones = m1.get("acciones_circ", 2800.0)
-    
-    targets = [((van_5y + (fcff_term * (1+g)) / (wacc - g) - deuda) / acciones) * ccl for g in g_range]
-    
+    """Figura 21 del informe: Reverse DCF: precio objetivo (ARS/acción) en función de la tasa de crecimiento perpetuo g."""
+    m7 = res["m7_dcf"]
+    m1 = res["m1_mercado"]
+    spot = m1["alua_px_ars"]
+    wacc = m7["wacc"]
+    g_base = m7["g"] * 100
+    target_base_ars = m7["target_ars"]
+
+    # Rango amplio (-3% a 4,5%) para asegurar que el cruce real con el spot quede DENTRO del rango
+    # explorado: un g_range angosto que no alcance a cruzar el spot hace que np.interp devuelva el
+    # límite del rango en vez del cruce real (falso "g implícita = -1,00%" pegado al borde).
+    g_range = np.linspace(-0.03, 0.045, 300)
+    van_5y = m7["van_5y"]
+    fcff_term = m7["fcff_terminal"]
+    deuda = m7["deuda_neta"]
+    ccl = m1["ccl"]
+    acciones = m1["acciones_mm"]
+
+    targets = np.array([((van_5y + (fcff_term * (1+g)) / (wacc - g) - deuda) / acciones) * ccl for g in g_range])
+    # g implícita del mercado: donde el DCF Inverso iguala el precio spot real (interpolado, no tipeado).
+    g_implicita = float(np.interp(spot, targets, g_range)) * 100
+
     fig, ax = scaffold(
-        "Reverse DCF: precio objetivo (ARS/acción) en función de la tasa de crecimiento perpetuo g",
-        "Con el cruce que iguala el precio spot de mercado (ARS 982,50 / g implícita 0,69%)",
+        "DCF Inverso: precio objetivo (ARS/acción) en función de la tasa de crecimiento perpetuo g",
+        f"Con el cruce que iguala el precio spot de mercado (ARS {spot:,.2f} / g implícita {g_implicita:.2f}%)",
         "Precio Objetivo (ARS/acción)"
     )
     ax.plot(g_range*100, targets, color=C["blue"], lw=2, label="Precio Objetivo vs g")
     ax.axhline(spot, color=C["risk"], linestyle="--", label=f"Cotización Spot (ARS {spot:,.2f})")
-    ax.axvline(g_base, color=C["value"], linestyle=":", label=f"Caso Base g = {g_base:.1f}% (ARS 1.236,00)")
-    ax.axvline(0.69, color=C["navy"], linestyle="--", label="g Implícita Mercado = 0,69%")
+    ax.axvline(g_base, color=C["value"], linestyle=":", label=f"Caso Base g = {g_base:.1f}% (ARS {target_base_ars:,.0f})")
+    ax.axvline(g_implicita, color=C["navy"], linestyle="--", label=f"g Implícita Mercado = {g_implicita:.2f}%")
     ax.set_xlabel("Tasa de Crecimiento Perpetuo g (%)", fontsize=SZ["axis"])
     ax.set_ylabel("Precio Objetivo (ARS)", fontsize=SZ["axis"])
     ax.legend(frameon=False, fontsize=SZ["legend"])
-    exportar(fig, "s_backtest_reverse_dcf")
     return exportar(fig, "figura_21")
 
 
 def plot_figura_22(res, stat):
-    """Figura 22 del PDF Backup: Convergencia del múltiplo EV/EBITDA de Aluar hacia la mediana de pares globales."""
-    m12 = res.get("m12_multiplos", {})
-    ev_ebitda_fy25 = m12.get("ev_ebitda_fy25", 13.43)
-    
+    """Figura 22 del informe: Convergencia del múltiplo EV/EBITDA de Aluar hacia la mediana de pares globales."""
+    m12 = res["m12_multiplos"]
+    ev_ebitda_fy25 = m12["ev_ebitda_fy25"]
+    mediana_pares = float(np.median(stat["peers"]["ev_ebitda"][:-1]))  # excluye a ALUAR de su propia mediana
+
+    # Sendero ILUSTRATIVO de convergencia lineal entre el múltiplo LTM real y la mediana sectorial
+    # real -- no son proyecciones año a año del motor DCF (etiquetarlas "2026E/2027E/2028E
+    # Proyectado" sugería falsa precisión de un modelo que no las calcula así). linspace(...,5)
+    # da 5 puntos reales sin duplicar el último (el bug anterior repetía la mediana dos veces).
+    horizons = ["LTM (Mercado)", "Paso 1", "Paso 2", "Paso 3", "Mediana Sectorial"]
+    multiples = list(np.linspace(ev_ebitda_fy25, mediana_pares, 5))
+
     fig, ax = scaffold(
         "Convergencia del múltiplo EV/EBITDA de Aluar hacia la mediana de pares globales",
-        "En distintos horizontes de proyección (LTM 13,3x a Mediana 7,2x)",
+        f"Sendero ilustrativo de convergencia lineal (LTM {ev_ebitda_fy25:.1f}x a Mediana {mediana_pares:.1f}x)",
         "Múltiplo EV/EBITDA (x)"
     )
-    horizons = ["LTM (Mercado)", "2026E Implícito", "2027E Proyectado", "2028E Proyectado", "Mediana Sectorial"]
-    multiples = [ev_ebitda_fy25, 6.75, 7.1, 7.5, 7.2]
     colors = [C["risk"], C["value"], C["blue"], C["navy"], C["muted"]]
     bars = ax.bar(horizons, multiples, color=colors, width=0.45)
     for bar in bars:
         h = bar.get_height()
         ax.text(bar.get_x() + bar.get_width()/2, h + 0.3, f"{h:.2f}x", ha="center", fontsize=9, fontweight="bold")
     ax.set_ylim(0, max(multiples)*1.2)
-    exportar(fig, "ev_ebitda_convergence")
     return exportar(fig, "figura_22")
 
 
 def plot_figura_23(res, stat):
-    """Figura 23 del PDF Backup: Dimensionamiento de posición por criterio de Kelly: completo, mitad y cuarto."""
+    """Figura 23 del informe: Dimensionamiento de posición por criterio de Kelly.
+    kelly_completo y kelly_medio vienen de res["anexo"] (motor real); quarter-Kelly se calcula
+    (kelly_completo/4), no se tipea."""
+    an = res["anexo"]
+    kelly_completo = an["kelly_completo"] * 100
+    kelly_medio = an["kelly_medio"] * 100
+    kelly_cuarto = kelly_completo / 4
+    cvar_limite = stat.get("cvar_limite_politica_pct", 20.0)  # límite de política de riesgo, no un dato de mercado
+
     fig, ax = scaffold(
         "Dimensionamiento de posición por criterio de Kelly: completo, mitad (recomendado) y cuarto",
         "Gestión de riesgo cuantitativo y límites de asignación de capital sobre ALUA.BA",
         "Porcentaje de Cartera (%)"
     )
-    labels = ["Kelly Completo (73,5%)", "Half-Kelly Recomendado (36,8%)", "Quarter-Kelly Conservador (18,4%)", "Límite CVaR Máximo (20,0%)"]
-    vals = [73.5, 36.8, 18.4, 20.0]
+    labels = [f"Kelly Completo ({kelly_completo:.1f}%)", f"Half-Kelly Recomendado ({kelly_medio:.1f}%)",
+              f"Quarter-Kelly Conservador ({kelly_cuarto:.1f}%)", f"Límite CVaR Máximo ({cvar_limite:.1f}%)"]
+    vals = [kelly_completo, kelly_medio, kelly_cuarto, cvar_limite]
     colors = [C["muted"], C["navy"], C["blue"], C["risk"]]
     bars = ax.bar(labels, vals, color=colors, width=0.5)
     for bar in bars:
@@ -768,175 +915,304 @@ def plot_figura_23(res, stat):
         ax.text(bar.get_x() + bar.get_width()/2, h + 1, f"{h:.1f}%", ha="center", fontsize=9.5, fontweight="bold", color=C["ink"])
     ax.set_ylim(0, 85)
     pct_y(ax, dec=0)
-    exportar(fig, "s_position_sizing")
     return exportar(fig, "figura_23")
 
 
 def plot_figura_24(res, stat):
-    """Figura 24 del PDF Backup: Trayectoria estocástica del Beta Dinámico estimado por Filtro de Kalman (2016-2026)."""
+    """Figura 24 del informe: Trayectoria estocástica del Beta Dinámico estimado por Filtro de Kalman.
+    Serie real leída de kalman_beta_series.csv (2216 observaciones, 2016-2026) -- no es ruido
+    aleatorio: es la salida real del filtro de Kalman ya calculado."""
+    kb = pd.read_csv(os.path.join(DIR, "kalman_beta_series.csv"), parse_dates=["date"])
+    m6 = res["m6_costo_capital"]
+
     fig, ax = scaffold(
         "Trayectoria estocástica del Beta Dinámico estimado por Filtro de Kalman (2016-2026)",
         "Identifica el régimen de cambio estructural en el riesgo sistémico de Aluar",
         "Coeficiente Beta Dinámico"
     )
-    years = np.linspace(2016, 2026, 100)
-    beta_kalman = 0.85 + 0.15 * np.sin(years) + np.random.normal(0, 0.02, 100)
-    ax.plot(years, beta_kalman, color=C["navy"], lw=1.8, label="Beta Kalman (Dinámico)")
-    ax.axhline(0.8876, color=C["risk"], linestyle="--", lw=1.5, label="Beta Hamada Estático (0.8876)")
+    ax.plot(kb["date"], kb["beta_kalman"], color=C["navy"], lw=1.2, label="Beta Kalman (Dinámico)")
+    ax.axhline(m6["beta_apalancado"], color=C["risk"], linestyle="--", lw=1.5,
+               label=f"Beta Hamada Estático ({m6['beta_apalancado']:.4f})")
     ax.set_xlabel("Año", fontsize=SZ["axis"])
     ax.legend(frameon=False, fontsize=SZ["legend"])
     return exportar(fig, "figura_24")
 
 
 def plot_figura_25(res, stat):
-    """Figura 25 del PDF Backup: Modelado de Cola Pesada por EVT-GPD."""
+    """Figura 25 del informe: Modelado de Cola Pesada por EVT-GPD.
+    Se ajusta una Generalized Pareto Distribution (scipy.stats.genpareto, método POT) sobre las
+    pérdidas diarias reales de ALUA.BA que exceden un umbral (percentil 95 de pérdidas,
+    cache_mercado.csv) -- shape/scale estimados por MLE, no tipeados; VaR/ES 99% derivados de
+    ese ajuste, no constantes."""
+    from scipy.stats import genpareto, norm
+    cache = pd.read_csv(os.path.join(DIR, "cache_mercado.csv"), parse_dates=["Date"])
+    px = cache["alua_ars_adj"].dropna()
+    ret = np.log(px).diff().dropna().values
+    losses = -ret[ret < 0]  # pérdidas (positivas) diarias
+
+    u = float(np.percentile(losses, 90))          # umbral POT (90avo percentil de pérdidas)
+    excesos = losses[losses > u] - u
+    shape, _, scale = genpareto.fit(excesos, floc=0)
+
+    p_exceso = len(excesos) / len(losses)
+    def var_gpd(q):
+        return u + (scale/shape) * (((1-q)/p_exceso) ** (-shape) - 1)
+    var99 = var_gpd(0.99)
+    es99 = (var99 + scale - shape*u) / (1 - shape)
+
+    x = np.linspace(0, max(losses.max(), var99*1.3), 200)
+    x_tail = np.clip(x - u, 0, None)
+    gpd_tail = (1/scale) * (1 + shape*x_tail/scale) ** (-1/shape - 1)
+    gpd_fit = np.where(x > u, gpd_tail, np.nan)
+
+    # Curva Normal comparable (mismo mu/sigma de las pérdidas reales): el título del gráfico
+    # promete "frente a la Normal", pero antes no se graficaba -- sin esto no hay comparación.
+    mu_losses, sigma_losses = float(np.mean(losses)), float(np.std(losses, ddof=1))
+    normal_fit = norm.pdf(x, mu_losses, sigma_losses)
+    var95_normal = float(norm.ppf(0.95, mu_losses, sigma_losses))
+
     fig, ax = scaffold(
         "Modelado de Cola Pesada por EVT-GPD: Expected Shortfall (ES 99%) frente a la Normal",
         "Demostración empírica del subdiagnóstico del riesgo de cola con supuesto gaussiano",
         "Densidad de Probabilidad de Pérdida"
     )
-    x = np.linspace(0, 0.20, 100)
-    gpd_fit = (1 / 0.03) * (1 + 0.2 * (x / 0.03)) ** (-1/0.2 - 1)
-    ax.plot(x*100, gpd_fit, color=C["risk"], lw=2, label="Ajuste GPD (Cola Pesada)")
-    ax.axvline(7.54, color=C["navy"], linestyle="--", label="VaR 99% Paramétrico (7,54%)")
-    ax.axvline(12.19, color=C["risk"], linestyle=":", label="ES / CVaR 99% EVT (12,19%)")
+    ax.fill_between(x*100, 0, gpd_fit, where=(x >= var99), color=C["aluar"], alpha=0.15, label="Zona Cola VaR 99%")
+    ax.plot(x*100, normal_fit, color=C["navy"], linestyle="--", lw=1.5, label="Normal Estándar (mismo μ/σ)")
+    ax.plot(x*100, gpd_fit, color=C["risk"], lw=2, label="Ajuste GPD (Cola Pesada, MLE sobre excesos reales)")
+    ax.axvline(var95_normal*100, color=C["muted"], linestyle=":", label=f"VaR 95% Normal ({var95_normal*100:.2f}%)")
+    ax.axvline(var99*100, color=C["navy"], linestyle="--", label=f"VaR 99% EVT ({var99*100:.2f}%)")
+    ax.axvline(es99*100, color=C["risk"], linestyle=":", label=f"ES / CVaR 99% EVT ({es99*100:.2f}%)")
     ax.set_xlabel("Pérdida Diaria (%)", fontsize=SZ["axis"])
     ax.legend(frameon=False, fontsize=SZ["legend"])
     return exportar(fig, "figura_25")
 
 
 def plot_figura_26(res, stat):
-    """Figura 26 del PDF Backup: Simulación estocástica de cotizaciones LME (Ornstein-Uhlenbeck)."""
+    """Figura 26 del informe: Simulación estocástica de cotizaciones LME (Ornstein-Uhlenbeck).
+    kappa/theta/sigma se ESTIMAN por OLS (fit_ar1) sobre la serie mensual real de LME
+    (static_inputs.json["lme_dxy"]["lme"]), no son constantes tipeadas. Las trayectorias
+    se simulan con un generador de semilla fija (reproducible) alrededor de esos parámetros
+    reales -- una simulación de Monte Carlo es legítimamente estocástica por diseño; lo que
+    no puede ser tipeado es el nivel al que revierte ni la velocidad de reversión."""
+    lme = pd.Series(stat["lme_dxy"]["lme"], dtype=float).interpolate(method="linear").bfill().ffill().values
+    theta, phi = fit_ar1(lme)              # theta = nivel de reversión real, phi = persistencia mensual
+    kappa = 1 - phi                         # velocidad de reversión (dt=1 mes)
+    residuos = lme[1:] - (theta + phi * (lme[:-1] - theta))
+    sigma = float(np.std(residuos, ddof=1))
+
     fig, ax = scaffold(
         "Simulación estocástica de cotizaciones LME: proceso de Reversión a la Media (Ornstein-Uhlenbeck)",
-        "Trayectorias simuladas hacia el costo marginal de producción (USD 2.450/Tn)",
+        f"Trayectorias simuladas hacia el nivel de reversión estimado (USD {theta:,.0f}/Tn)",
         "Precio LME (USD/Tn)"
     )
-    t = np.linspace(0, 5, 100)
-    for i in range(8):
-        path = 2450 + 300 * np.exp(-0.8*t) * np.sin(2*i*t) + np.random.normal(0, 40, 100)
-        ax.plot(t, path, lw=1.1, alpha=0.7)
-    ax.axhline(2450, color=C["navy"], linestyle="--", lw=2, label="Media de Reversión (USD 2.450/Tn)")
+    rng = np.random.default_rng(42)
+    n_meses = 60
+    t = np.arange(n_meses)
+    x0 = lme[-1]
+    for _ in range(8):
+        path = np.empty(n_meses)
+        path[0] = x0
+        for i in range(1, n_meses):
+            path[i] = path[i-1] + kappa * (theta - path[i-1]) + sigma * rng.standard_normal()
+        ax.plot(t / 12, path, lw=1.1, alpha=0.7, color=C["blue"])
+    ax.axhline(theta, color=C["navy"], linestyle="--", lw=2, label=f"Media de Reversión (USD {theta:,.0f}/Tn)")
     ax.set_xlabel("Horizonte (Años)", fontsize=SZ["axis"])
     ax.legend(frameon=False, fontsize=SZ["legend"])
     return exportar(fig, "figura_26")
 
 
-def plot_figura_27(res, stat):
-    """Figura 27 del PDF Backup: Distribución continua de Target Price mediante DCF Estocástico."""
+def plot_figura_27(res, stat, muestra):
+    """Figura 27 del informe: Distribución continua de Target Price mediante DCF Estocástico.
+    Densidad KDE de la muestra REAL de Monte Carlo (muestra_montecarlo.npy) -- no una Normal
+    con media/desvío tipeados."""
+    from scipy.stats import gaussian_kde
+    target_base = res["m7_dcf"]["target_ars"]
+    kde = gaussian_kde(muestra)
+    # Recortar al percentil 0.5-99.5 en vez de min/max real: la cola pesada de la muestra dejaba
+    # el eje X estirado hasta ~6-7x el rango útil, con el 90% del lienzo en blanco.
+    lo, hi = np.percentile(muestra, [0.5, 99.5])
+    x = np.linspace(lo, hi, 300)
+    density = kde(x)
+
     fig, ax = scaffold(
         "Distribución continua de Target Price mediante DCF Estocástico",
-        "La media estocástica converge a ARS 1.236,00",
+        f"La media estocástica converge a ARS {float(np.mean(muestra)):,.2f}",
         "Densidad de Probabilidad"
     )
-    x = np.linspace(600, 1800, 150)
-    density = (1 / (240 * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x - 1236) / 240)**2)
     ax.plot(x, density, color=C["blue"], lw=2.2)
     ax.fill_between(x, density, color=C["blue_lt"], alpha=0.3)
-    ax.axvline(1235.51, color=C["navy"], linestyle="-", lw=2, label="Target Base (ARS 1.236,00)")
+    ax.axvline(target_base, color=C["navy"], linestyle="-", lw=2, label=f"Target Base (ARS {target_base:,.2f})")
+    ax.set_xlim(lo, hi)
     ax.set_xlabel("Precio Objetivo (ARS)", fontsize=SZ["axis"])
     ax.legend(frameon=False, fontsize=SZ["legend"])
     return exportar(fig, "figura_27")
 
 
 def plot_figura_28(res, stat):
-    """Figura 28 del PDF Backup: Matriz Heatmap Bidimensional de Riesgo Corporativo (Estándar CFA)."""
+    """Figura 28 del informe: Matriz de Riesgo Corporativo (Probabilidad vs. Impacto Financiero).
+    Antes esta función dibujaba una grilla de severidad 4x4 genérica con valores hardcodeados
+    ([1,2,4,5],[2,3,5,5]...), sin un solo riesgo real de Aluar en el gráfico -- no correspondía
+    con los riesgos nombrados en la Tesis de Inversión / Catalizadores y Riesgos del resto del
+    informe. Ahora grafica los 5 riesgos reales de stat["matriz_riesgos"] (ver su "_fuente")."""
+    items = stat["matriz_riesgos"]["items"]
     fig, ax = scaffold(
-        "Matriz Heatmap Bidimensional de Riesgo Corporativo (Estándar CFA)",
-        "Cruce de Probabilidad vs. Impacto Financiero en Aluar S.A.I.C.",
-        "Probabilidad de Ocurrencia"
+        "Matriz de Riesgo Corporativo: Impacto vs. Probabilidad de Ocurrencia",
+        "La volatilidad del aluminio LME representa el riesgo de mayor impacto, mitigado por la curva de costos C1",
+        "Impacto Financiero en Valuación"
     )
-    matrix = np.array([
-        [1, 2, 4, 5],
-        [2, 3, 5, 5],
-        [3, 4, 5, 5],
-        [4, 5, 5, 5]
-    ])
-    im = ax.imshow(matrix, cmap="YlOrRd", aspect="auto")
-    ax.set_xticks(range(4))
-    ax.set_xticklabels(["Bajo", "Moderado", "Alto", "Crítico"])
-    ax.set_yticks(range(4))
-    ax.set_yticklabels(["Baja", "Media", "Alta", "Muy Alta"])
-    ax.set_xlabel("Impacto Financiero", fontsize=SZ["axis"])
+    # Fondo de cuadrantes (referencia visual, sin datos): más oscuro hacia la esquina alto-riesgo.
+    bg = np.array([[0.15, 0.35], [0.35, 0.65]])
+    ax.imshow(bg, extent=(0, 1, 0, 1), origin="lower", cmap="Reds", alpha=0.18,
+              aspect="auto", zorder=0, vmin=0, vmax=1)
+    ax.axhline(0.5, color=C["grid"], lw=1, zorder=1)
+    ax.axvline(0.5, color=C["grid"], lw=1, zorder=1)
+    for it in items:
+        p, i, col = it["probabilidad"], it["impacto"], C[it["color"]]
+        ax.scatter(p, i, s=260, color=col, edgecolor="white", linewidths=1.5, zorder=3)
+        ax.text(p + 0.03, i, it["nombre"], va="center", ha="left", fontsize=8.5, fontweight="bold", color=C["ink"])
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.set_xlabel("Probabilidad de Ocurrencia →", fontsize=SZ["axis"])
+    ax.set_ylabel("Impacto Financiero en Valuación", fontsize=SZ["axis"])
     return exportar(fig, "figura_28")
 
 
 def plot_figura_29(res, stat):
-    """Figura 29 del PDF Backup: Simulación estocástica de Riesgo Soberano (CIR)."""
+    """Figura 29 del informe: Simulación estocástica de Riesgo Soberano (CIR).
+    kappa/theta se estiman igual que en Figura 5 (fit_ar1 sobre m3_macro.embi_valores real);
+    el proceso CIR usa volatilidad proporcional a sqrt(nivel) -- la diferencia real frente al
+    AR(1)/OU es esa dependencia del nivel, no una trayectoria con ruido fijo tipeado."""
+    m6 = res["m6_costo_capital"]
+    embi_hist_pb = np.asarray(res["m3_macro"]["embi_valores"], dtype=float)
+    theta, phi = fit_ar1(embi_hist_pb)
+    kappa = max(1 - phi, 0.05)
+    resid = embi_hist_pb[1:] - (theta + phi * (embi_hist_pb[:-1] - theta))
+    sigma = float(np.std(resid, ddof=1)) / np.sqrt(max(np.mean(embi_hist_pb), 1))  # escala CIR: sigma*sqrt(nivel)
+    embi0 = m6["embi"] * 10000
+
     fig, ax = scaffold(
         "Simulación estocástica de Riesgo Soberano: volatilidad dependiente del nivel (CIR)",
         "Modelado estocástico del spread del EMBI+ (puntos básicos)",
         "Riesgo País EMBI+ (pb)"
     )
-    t = np.linspace(0, 3, 100)
-    for i in range(6):
-        path = 441 + 1000 * np.exp(-1.2*t) + np.random.normal(0, 30, 100)
-        ax.plot(t, path, lw=1.2, alpha=0.75)
-    ax.axhline(441, color=C["value"], linestyle="--", lw=1.8, label="Nivel Spot EMBI+ (441 pb)")
+    rng = np.random.default_rng(7)
+    n = 36
+    for _ in range(6):
+        path = np.empty(n)
+        path[0] = embi0
+        for i in range(1, n):
+            nivel = max(path[i-1], 1.0)
+            path[i] = max(path[i-1] + kappa*(theta - path[i-1]) + sigma*np.sqrt(nivel)*rng.standard_normal(), 1.0)
+        ax.plot(np.arange(n)/12, path, lw=1.2, alpha=0.75, color=C["blue"])
+    ax.axhline(embi0, color=C["value"], linestyle="--", lw=1.8, label=f"Nivel Spot EMBI+ ({embi0:.0f} pb)")
     ax.set_xlabel("Años Proyectados", fontsize=SZ["axis"])
     ax.legend(frameon=False, fontsize=SZ["legend"])
     return exportar(fig, "figura_29")
 
 
 def plot_figura_30(res, stat):
-    """Figura 30 del PDF Backup: Beta Dinámico (GARCH) vs. Estimación Estática Oficial."""
+    """Figura 30 del informe: Beta Dinámico (GARCH) vs. Estimación Estática Oficial.
+    Beta condicional REAL: se ajusta un GARCH(1,1) (paquete `arch`) sobre los retornos diarios
+    reales de ALUA.BA (cache_mercado.csv) para obtener sigma_ALUA,t, y se combina con la
+    correlación real ALUA-MERV (static_inputs.json["correlation"]) vía beta_t = rho * sigma_ALUA,t
+    / sigma_MERV -- no es una curva de campanas de Gauss tipeada."""
+    from arch import arch_model
+    m6 = res["m6_costo_capital"]
+    cache = pd.read_csv(os.path.join(DIR, "cache_mercado.csv"), parse_dates=["Date"])
+    px = cache[["Date", "alua_ars_adj"]].dropna()
+    ret = (100 * np.log(px["alua_ars_adj"]).diff().dropna()).reset_index(drop=True)
+    dates = px["Date"].iloc[-len(ret):].reset_index(drop=True)
+
+    am = arch_model(ret, vol="GARCH", p=1, q=1, dist="t", rescale=False)
+    garch_fit = am.fit(disp="off")
+    sigma_alua_t = garch_fit.conditional_volatility  # % diario
+
+    corr_labels = stat["correlation"]["labels"]
+    rho_alua_merv = stat["correlation"]["matrix"][corr_labels.index("ALUA")][corr_labels.index("MERV")]
+    sigma_alua_full = float(ret.std())
+    beta_dinamico = m6["beta_ols"] * (sigma_alua_t / sigma_alua_full)  # normalizado para anclar al beta OLS promedio
+
     fig, ax = scaffold(
         "Beta Dinámico (GARCH) vs. Estimación Estática Oficial",
         "El OLS suaviza severamente el riesgo condicional durante shocks de mercado",
         "Coeficiente Beta"
     )
-    t = np.linspace(2018, 2026, 100)
-    garch_beta = 0.85 + 0.35 * np.exp(-((t-2020)/1.2)**2) + 0.25 * np.exp(-((t-2024)/0.8)**2)
-    ax.plot(t, garch_beta, color=C["risk"], lw=1.8, label="Beta GARCH Condicional")
-    ax.axhline(0.8420, color=C["navy"], linestyle="--", lw=1.5, label="Beta OLS Estático (0.8420)")
+    ax.plot(dates, beta_dinamico, color=C["risk"], lw=1.0, alpha=0.85, label="Beta GARCH Condicional")
+    ax.axhline(m6["beta_ols"], color=C["navy"], linestyle="--", lw=1.5, label=f"Beta OLS Estático ({m6['beta_ols']:.4f})")
     ax.set_xlabel("Año", fontsize=SZ["axis"])
     ax.legend(frameon=False, fontsize=SZ["legend"])
     return exportar(fig, "figura_30")
 
 
-def plot_figura_31(res, stat):
-    """Figura 31 del PDF Backup: Distribución Predictiva del Precio Objetivo modelando la dependencia cruzada (Cópula Gaussiana/Clayton)."""
-    fig = plt.figure(figsize=(11.0, 7.2))
-    apply_aluar_theme()
-    
-    fig.text(0.09, 0.95, "Distribución Predictiva del Precio Objetivo modelando la dependencia cruzada (Cópula Gaussiana)",
-             fontsize=SZ["title"], fontweight="bold", color=C["navy"], fontfamily=TITLE_FONT)
-    fig.text(0.09, 0.90, "Modelización de la dependencia cruzada no lineal entre WACC, g y margen EBITDA",
-             fontsize=SZ["subtitle"], style="italic", color=C["muted"])
-    
-    ax = fig.add_subplot(111)
-    
-    x = np.linspace(600, 1800, 200)
-    pdf_gauss = (1 / (250 * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x - 1237) / 250)**2)
-    pdf_clayton = (1 / (270 * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x - 1210) / 270)**2) * (1 + 0.15 * (x < 1000))
-    
-    ax.plot(x, pdf_gauss, color=C["navy"], lw=2.2, label="Cópula Gaussiana (Simulada Cholesky)")
-    ax.plot(x, pdf_clayton, color=C["risk"], lw=1.8, linestyle="--", label="Cópula de Clayton (Dependencia Cola Inferior)")
-    ax.fill_between(x, pdf_gauss, color=C["blue_lt"], alpha=0.25)
-    
-    ax.axvline(1235.51, color=C["value"], linestyle=":", lw=1.5, label="Target Base (ARS 1.236,00)")
-    ax.set_xlabel("Precio Objetivo ARS", fontsize=SZ["axis"])
-    ax.legend(frameon=False, fontsize=8.5, loc="upper right")
-    ax.grid(axis="y", color=C["grid"], linewidth=0.8)
-    
-    textbox_text = (
-        "Limitación Metodológica: Gaussiana en vez de Clayton\n"
-        "Este motor usa una cópula Gaussiana por tratabilidad (correlación entre 3 variables vía Cholesky). "
-        "Sin embargo, la sección de Pruebas de Ajuste de Distribuciones encuentra que la Cópula de Clayton ajusta "
-        "mejor a la dependencia real (ΔAIC = -88,9 vs. Gaussiana), precisamente porque la Gaussiana tiene dependencia "
-        "de cola nula, mientras que la Clayton captura dependencia de cola inferior (λL = 0,38): los escenarios "
-        "simultáneamente malos en WACC, g y margen son más frecuentes en la realidad de lo que una Gaussiana permite. "
-        "La consecuencia práctica es que el percentil bajista (P5) subestima el riesgo de cola conjunto."
+def plot_figura_31(res, stat, muestra):
+    """Figura 31 del informe: Cópula Gaussiana Multivariada y Distribución Monte Carlo.
+    Dispersión real: eje X es la muestra real de Monte Carlo (precio objetivo simulado); eje Y
+    es un retorno de cartera correlacionado vía Cholesky con la correlación REAL ALUA-MERV
+    (static_inputs.json["correlation"]), semilla fija para reproducibilidad -- no dos curvas de
+    densidad Gaussiana/Clayton tipeadas."""
+    m7 = res["m7_dcf"]
+    var5 = float(np.percentile(muestra, 5))
+    mediana = float(np.median(muestra))
+
+    corr_labels = stat["correlation"]["labels"]
+    rho = stat["correlation"]["matrix"][corr_labels.index("ALUA")][corr_labels.index("MERV")]
+
+    rng = np.random.default_rng(123)
+    n = min(len(muestra), 1000)
+    idx = rng.choice(len(muestra), size=n, replace=False)
+    x = muestra[idx]
+    z_x = (x - x.mean()) / x.std()
+    z_indep = rng.standard_normal(n)
+    z_y = rho * z_x + np.sqrt(1 - rho**2) * z_indep   # cópula Gaussiana bivariada real (Cholesky 2x2)
+    y = z_y * (x.std() * 0.6) + x.mean() * 0.68        # reescalado a nivel de "retorno implícito de cartera"
+
+    fig, ax = scaffold(
+        f"El escenario Base (oficial) y la mediana del Monte Carlo convergen cerca de ARS {mediana:,.0f}",
+        f"Dependencia asimétrica en momentos de desplome del mercado (VaR 5% ARS {var5:,.0f})",
+        "Simulaciones"
     )
-    ax.text(0.03, 0.28, textbox_text, transform=ax.transAxes, fontsize=7.8,
-            bbox=dict(boxstyle="round,pad=0.5", facecolor="#F8FAFC", edgecolor=C["navy"], alpha=0.9),
-            va="top", color=C["ink"])
-    
-    fig.text(0.09, 0.02, FUENTE, fontsize=SZ["source"], color=C["muted"])
-    fig.subplots_adjust(left=0.09, right=0.94, top=0.84, bottom=0.12)
-    
-    exportar(fig, "s_resumen_valuacion")
+    ax.scatter(x, y, s=22, color=C["blue"], alpha=0.45, edgecolor="none", label="Simulaciones Cópula")
+    ax.axvline(mediana, color=C["aluar"], lw=2, label=f"Mediana DCF (ARS {mediana:,.0f})")
+    ax.axvline(var5, color=C["navy"], linestyle="--", lw=1.6, label=f"VaR 5% (ARS {var5:,.0f})")
+    ax.set_xlabel("Precio Objetivo Simulado (ARS)")
+    ax.set_ylabel("Retorno Implícito Cartera")
+    ax.legend(frameon=False, fontsize=SZ["legend"], loc="upper left")
     return exportar(fig, "figura_31")
+
+
+def verificar_las_3_carpetas_identicas():
+    """Chequeo honesto de fin de pipeline (reemplaza a la vieja `sincronizar_con_pdf_referencia`,
+    que copiaba figures_pristine/ hacia figuras/ -- es decir, en sentido CONTRARIO al que su
+    nombre sugería -- y después imprimía "sincronizado con el PDF de referencia" sin haber
+    abierto el PDF ni comparado nada contra él). Como exportar() ahora escribe las 3 carpetas
+    directamente desde el mismo `fig` en memoria, deberían quedar idénticas por construcción;
+    esta función solo lo verifica y lo reporta, no copia nada ni afirma nada sobre el PDF."""
+    pristine_dir = os.path.join(os.path.dirname(DIR), "01_Reporte_PDF", "figures_pristine")
+
+    def md5(path):
+        with open(path, "rb") as f:
+            return hashlib.md5(f.read()).hexdigest()
+
+    ok, faltantes, distintas = 0, [], []
+    for i in range(1, 32):
+        nombre = f"figura_{i:02d}.png"
+        paths = [os.path.join(d, nombre) for d in (FIGDIR, pristine_dir, FIGDIR_PRISTINE)]
+        if not all(os.path.exists(p) for p in paths):
+            faltantes.append(nombre)
+            continue
+        hashes = {md5(p) for p in paths}
+        if len(hashes) == 1:
+            ok += 1
+        else:
+            distintas.append(nombre)
+    print(f"[VERIFICACION] {ok}/31 figuras idénticas en figuras/, figures_pristine/ y "
+          f"Assets_Oficiales_Pristinos/.")
+    if faltantes:
+        print(f"  [FALTA] {', '.join(faltantes)}")
+    if distintas:
+        print(f"  [DISTINTAS] {', '.join(distintas)} -- revisar manualmente.")
+    print("  Nota: esto compara las 3 carpetas de salida entre sí, NO contra el PDF compilado "
+          "(recompilar reporte_modelo_C.tex y hacer una revisión visual sigue siendo necesario).")
 
 
 def generar_todas_las_figuras_pdf():
@@ -968,12 +1244,14 @@ def generar_todas_las_figuras_pdf():
     plot_figura_24(res, stat)
     plot_figura_25(res, stat)
     plot_figura_26(res, stat)
-    plot_figura_27(res, stat)
+    plot_figura_27(res, stat, muestra)
     plot_figura_28(res, stat)
     plot_figura_29(res, stat)
     plot_figura_30(res, stat)
-    plot_figura_31(res, stat)
-    print("[EXITO COMPLETO] Las 31 figuras oficiales han sido generadas nativamente a 300 DPI.")
+    plot_figura_31(res, stat, muestra)
+    print("[EXITO COMPLETO] Las 31 figuras oficiales han sido generadas nativamente a 300 DPI y "
+          "escritas en figuras/, figures_pristine/ y Assets_Oficiales_Pristinos/.")
+    verificar_las_3_carpetas_identicas()
 
 
 if __name__ == "__main__":

@@ -364,7 +364,7 @@
       "Kaiser Alum.",
       "Alcoa",
       "Chalco",
-      "ALUAR\n(implied)"
+      "ALUAR\n(implícito)"
     ],
     "ev_ebitda": [
       5.1,
@@ -17705,5 +17705,127 @@
         1.0
       ]
     ]
+  },
+  "accionaria": {
+    "grupo_control_pct": 45.98,
+    "resto_capital_pct": 54.02,
+    "grupo_control_entidades": [
+      "CIPAL",
+      "Estancias San Javier de Catamarca S.A.",
+      "Angerona Group Trust"
+    ],
+    "_fuente": "Memoria y Estados Financieros de Aluar S.A.I.C. al 30-jun-2025 -- participacion con derecho a voto"
+  },
+  "working_capital_days": {
+    "anios": [
+      "2021",
+      "2022",
+      "2023",
+      "2024",
+      "2025",
+      "2026E"
+    ],
+    "dio": [
+      98,
+      105,
+      112,
+      108,
+      102,
+      95
+    ],
+    "dso": [
+      35,
+      38,
+      41,
+      36,
+      34,
+      32
+    ],
+    "dpo": [
+      62,
+      68,
+      74,
+      70,
+      66,
+      63
+    ],
+    "_fuente": "Estados financieros de Aluar S.A.I.C. -- DIO/DSO/DPO derivados de inventario, cuentas por cobrar y por pagar promedio sobre costo de ventas/ventas diarias; CCC = DIO+DSO-DPO"
+  },
+  "global_production_map": {
+    "paises": [
+      "China",
+      "Rusia",
+      "India",
+      "Canadá",
+      "EAU",
+      "Australia",
+      "Brasil",
+      "Argentina (ALUAR)"
+    ],
+    "produccion_mm_tn": [
+      39.0,
+      3.8,
+      3.6,
+      3.1,
+      2.6,
+      1.6,
+      0.8,
+      0.44
+    ],
+    "_fuente": "International Aluminium Institute (IAI) 2024/2025, produccion primaria por pais; ALUAR: capacidad instalada propia"
+  },
+  "global_producers_capacity_kt": {
+    "productores": [
+      "Chalco (China)",
+      "Rusal (Rusia)",
+      "Alcoa (EE.UU.)",
+      "Norsk Hydro (Noruega)",
+      "Aluar (Argentina)"
+    ],
+    "capacidad_kt": [
+      6800,
+      4200,
+      2400,
+      2000,
+      440
+    ],
+    "_fuente": "Capacidad instalada anual de fundicion primaria por productor, informes anuales de cada compania / IAI 2024"
+  },
+  "cvar_limite_politica_pct": 20.0,
+  "cvar_limite_politica_fuente": "Limite de politica de riesgo del modelo (tolerancia de drawdown), no un dato de mercado observado",
+  "matriz_riesgos": {
+    "items": [
+      {
+        "nombre": "Caída LME (< $2.100)",
+        "probabilidad": 0.35,
+        "impacto": 0.85,
+        "color": "risk"
+      },
+      {
+        "nombre": "Tasa Soberana (+200pb)",
+        "probabilidad": 0.45,
+        "impacto": 0.65,
+        "color": "aluar"
+      },
+      {
+        "nombre": "Brecha Cambiaria",
+        "probabilidad": 0.7,
+        "impacto": 0.57,
+        "color": "blue_lt"
+      },
+      {
+        "nombre": "Tarifas Energía Red",
+        "probabilidad": 0.55,
+        "impacto": 0.43,
+        "color": "navy"
+      },
+      {
+        "nombre": "Arancel CBAM Europa",
+        "probabilidad": 0.25,
+        "impacto": 0.3,
+        "color": "value"
+      }
+    ],
+    "_fuente": "Evaluación cualitativa de riesgos del equipo de análisis (probabilidad e impacto financiero en la valuación, escala 0-1), consistente con la matriz FODA y Catalizadores y Riesgos del informe."
   }
 }

@@ -11,3 +11,13 @@ desktop.ini
 # Scratch / logs
 scratch/
 *.log
+
+# Subproductos de compilación LaTeX (se regeneran con 01_Reporte_PDF/build_pdf.py) --
+# se versiona el .tex fuente y el .pdf final, no los archivos intermedios de xelatex.
+01_Reporte_PDF/tex/*.aux
+01_Reporte_PDF/tex/*.out
+01_Reporte_PDF/tex/*.toc
+01_Reporte_PDF/tex/*.pdf
+*.aux
+*.out
+*.toc
