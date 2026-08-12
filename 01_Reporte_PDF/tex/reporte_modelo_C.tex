@@ -243,8 +243,8 @@ El mix de valor agregado cayó de 6,0\% a 3,3\% del volumen total en dos ejercic
 \textbf{Métrica} & \textbf{FY2020} & \textbf{FY2021} & \textbf{FY2022} & \textbf{FY2023} & \textbf{FY2024} & \textbf{FY2025} \\
 \midrule
 Ingresos (Ventas Netas) & 823,5 & 513,5 & 654,7 & 647,8 & 915,9 & 1.092,6 \\
-EBITDA & 116,5 & 107,4 & 209,7 & 105,7 & 204,7 & 163,3 \\
-Margen EBITDA & 14,2\% & 20,9\% & 32,0\% & 16,3\% & 22,4\% & 14,9\% \\
+EBITDA & 116,5 & 110,2 & 208,8 & 103,5 & 204,7 & 163,3 \\
+Margen EBITDA & 14,1\% & 21,5\% & 31,9\% & 16,0\% & 22,4\% & 14,9\% \\
 Deuda Neta & 351,30 & 137,44 & 57,33 & 169,88 & 211,23 & 525,76 \\
 \bottomrule
 \end{tabular}
@@ -284,7 +284,7 @@ La caída del EMBI+ desde el pico de 2.400 pb (2022) hasta los 441 pb actuales e
     \item \textbf{Beta de Mercado:} el Beta apalancado que ingresa al CAPM es 0,888 (secuencia OLS $\rightarrow$ Blume $\rightarrow$ Hamada detallada a continuación).
 \end{itemize}
 
-\textbf{Secuencia completa del Beta (4 pasos).} (1) Regresión OLS de retornos diarios: $\beta_{OLS}=0,842$ (Desapalancado $\beta_U=0,588$). (2) Ajuste de Blume [6]: $\beta_{Blume} = 2/3 \times 0,842 + 1/3 = 0,895$. (3) Desapalancamiento de Hamada [7]: $\beta_U = 0,645$. (4) Reapalancamiento al D/E objetivo de 0,486 (mediana FY2023-2025, estructura de capital target): $\beta_L = 0,888$.
+\textbf{Secuencia completa del Beta (4 pasos).} (1) Regresión OLS de retornos diarios: $\beta_{OLS}=0,842$ (Desapalancado $\beta_U=0,588$). (2) Ajuste de Blume [5]: $\beta_{Blume} = 2/3 \times 0,842 + 1/3 = 0,895$. (3) Desapalancamiento de Hamada [6]: $\beta_U = 0,645$. (4) Reapalancamiento al D/E objetivo de 0,486 (mediana FY2023-2025, estructura de capital target): $\beta_L = 0,888$.
 
 \subsection{Curva de Tasas de Argentina y Convergencia del Riesgo País (Modelo AR(1))}
 La tasa de descuento en dólares de ALUAR es la suma de dos curvas: la curva libre de riesgo de EE.\,UU. (4,70\%) más el spread soberano argentino (EMBI+).
@@ -319,7 +319,7 @@ Los shocks de oferta (cierres de smelters europeos por crisis energéticas) han 
 
 {\footnotesize\color{gsgray} \textbf{Limitación de datos.} Aproximadamente 300 observaciones consecutivas de la serie LME entre jun-2018 y ago-2019 (12\% de la muestra en esa ventana) están congeladas en un puñado de valores repetidos día tras día -- un artefacto de \textit{forward-fill} sobre datos faltantes del proveedor de mercado, no un precio real. No se corrigió recotizando esos días (fabricaría un precio que no existió) ni se excluyó de las pruebas estadísticas que siguen (Engle-Granger, elasticidad LME-ALUA), que usan la serie completa 2016-2026; el efecto esperado de esa ventana estática es amortiguar levemente la varianza y covarianza estimadas en ese sub-período, no invalidar la dirección de los resultados sobre una década completa de datos.\par}
 
-\textbf{Validación estadística del vínculo ALUA-LME: test de cointegración de Engle-Granger.} La tesis de inversión descansa en que ALUAR es, en esencia, una posición apalancada al ciclo del aluminio. Sometimos esa premisa a un test formal en vez de apoyarla solo en el gráfico anterior: sobre el precio de ALUA.BA convertido a USD vía CCL (metodología idéntica a la de la Secuencia del Beta, N=2.355 observaciones diarias, 2016-2026) y el precio LME, el test de Engle-Granger [11] no rechaza la hipótesis nula de no cointegración (estadístico $-2,29$; $p=0,38$; valor crítico al 5\% de $-3,34$). No hay, en niveles de precio, un equilibrio de largo plazo estable entre ambas series a lo largo de la década completa. Sí existe una relación contemporánea significativa: una regresión de log-precios arroja una elasticidad de 0,66 (ALUA.BA sube/baja 0,66\% de USD por cada 1\% de movimiento del LME, $R^2=0,12$). La ausencia de cointegración no contradice la tesis: es consistente con que el precio de ALUA.BA está gobernado por dos procesos superpuestos —el commodity y el riesgo soberano argentino, que se mueve por su propio ciclo (compresión del EMBI+ de 2.400 a 441 pb en cuatro años)— y es precisamente esa segunda fuente de varianza, no capturada por el LME, la razón metodológica por la que este informe separa explícitamente el Costo del Equity en un componente de mercado global ($\beta \times ERP$) y uno de riesgo país ($\lambda \times EMBI+$) en vez de tratar a ALUAR como un derivado puro del aluminio.
+\textbf{Validación estadística del vínculo ALUA-LME: test de cointegración de Engle-Granger.} La tesis de inversión descansa en que ALUAR es, en esencia, una posición apalancada al ciclo del aluminio. Sometimos esa premisa a un test formal en vez de apoyarla solo en el gráfico anterior: sobre el precio de ALUA.BA convertido a USD vía CCL (metodología idéntica a la de la Secuencia del Beta, N=2.355 observaciones diarias, 2016-2026) y el precio LME, el test de Engle-Granger [10] no rechaza la hipótesis nula de no cointegración (estadístico $-2,29$; $p=0,38$; valor crítico al 5\% de $-3,34$). No hay, en niveles de precio, un equilibrio de largo plazo estable entre ambas series a lo largo de la década completa. Sí existe una relación contemporánea significativa: una regresión de log-precios arroja una elasticidad de 0,66 (ALUA.BA sube/baja 0,66\% de USD por cada 1\% de movimiento del LME, $R^2=0,12$). La ausencia de cointegración no contradice la tesis: es consistente con que el precio de ALUA.BA está gobernado por dos procesos superpuestos —el commodity y el riesgo soberano argentino, que se mueve por su propio ciclo (compresión del EMBI+ de 2.400 a 441 pb en cuatro años)— y es precisamente esa segunda fuente de varianza, no capturada por el LME, la razón metodológica por la que este informe separa explícitamente el Costo del Equity en un componente de mercado global ($\beta \times ERP$) y uno de riesgo país ($\lambda \times EMBI+$) en vez de tratar a ALUAR como un derivado puro del aluminio.
 
 El mercado del aluminio se encuentra altamente comoditizado pero geográficamente segmentado en primas regionales. A nivel regional, el mercado latinoamericano muestra un marcado déficit de producción primaria. Aluar abastece cerca del 60\% del mercado doméstico total y exporta agresivamente ($\sim$70-80\% de su despacho anual) a Estados Unidos, Brasil y Japón.
 
@@ -496,11 +496,11 @@ El ROE de FY2025 se derrumbó a 0,83\%, frente al 10,68\% de FY2024 —el desplo
 \toprule
 \textbf{Factor} & \textbf{FY2020} & \textbf{FY2021} & \textbf{FY2022} & \textbf{FY2023} & \textbf{FY2024} & \textbf{FY2025} \\
 \midrule
-Margen Neto (Res. Neto / Ventas) & -5,34\% & 5,48\% & 15,79\% & 19,48\% & 9,80\% & 0,84\% \\
+Margen Neto (Res. Neto / Ventas) & -5,34\% & 5,48\% & 17,65\% & 21,46\% & 9,80\% & 0,84\% \\
 Rotación de Activos (Ventas / Activo) & 0,78x & 0,74x & 0,79x & 0,71x & 0,63x & 0,55x \\
 Apalancamiento (Activo / PN) & 2,27x & 2,00x & 1,82x & 1,68x & 1,74x & 1,78x \\
 \midrule
-\textbf{ROE (producto de los 3 factores)} & \textbf{-9,49\%} & \textbf{8,04\%} & \textbf{22,64\%} & \textbf{23,25\%} & \textbf{10,68\%} & \textbf{0,83\%} \\
+\textbf{ROE (producto de los 3 factores)} & \textbf{-9,49\%} & \textbf{8,04\%} & \textbf{25,31\%} & \textbf{25,62\%} & \textbf{10,68\%} & \textbf{0,83\%} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -558,19 +558,19 @@ El balance de Aluar muestra el impacto del intensivo plan de inversiones en el P
 \textbf{Métrica / Año} & \textbf{FY2020} & \textbf{FY2021} & \textbf{FY2022} & \textbf{FY2023} & \textbf{FY2024} & \textbf{FY2025} \\
 \midrule
 Ventas Netas & 823,50 & 513,50 & 654,72 & 647,75 & 915,85 & 1.092,60 \\
-EBITDA & 116,50 & 107,39 & 209,67 & 105,70 & 204,70 & 163,25 \\
-Margen EBITDA & 14,15\% & 20,91\% & 32,02\% & 16,32\% & 22,35\% & 14,94\% \\
+EBITDA & 116,50 & 110,23 & 208,81 & 103,47 & 204,70 & 163,25 \\
+Margen EBITDA & 14,15\% & 21,47\% & 31,89\% & 15,97\% & 22,35\% & 14,94\% \\
 EBIT & 48,10 & 61,33 & 162,14 & 61,97 & 152,57 & 92,27 \\
 Margen EBIT & 5,84\% & 11,94\% & 24,76\% & 9,57\% & 16,66\% & 8,44\% \\
-Resultado Neto & -43,94 & 28,13 & 103,35 & 126,19 & 89,74 & 9,17 \\
-Margen Neto & -5,34\% & 5,48\% & 15,79\% & 19,48\% & 9,80\% & 0,84\% \\
+Resultado Neto & -43,94 & 28,13 & 115,53 & 139,01 & 89,74 & 9,17 \\
+Margen Neto & -5,34\% & 5,48\% & 17,65\% & 21,46\% & 9,80\% & 0,84\% \\
 CAPEX & -103,01 & -9,43 & -11,11 & -65,89 & -25,59 & -243,93 \\
 Deuda Neta & 351,30 & 137,44 & 57,33 & 169,88 & 211,23 & 525,76 \\
 \midrule
 \textbf{ROIC} & \textbf{3,73\%} & \textbf{7,50\%} & \textbf{17,85\%} & \textbf{5,22\%} & \textbf{7,94\%} & \textbf{3,52\%} \\
-ROE & -9,49\% & 8,04\% & 22,64\% & 23,25\% & 10,68\% & 0,83\% \\
+ROE & -9,49\% & 8,04\% & 25,31\% & 25,62\% & 10,68\% & 0,83\% \\
 Liquidez Corriente & 1,89x & 3,78x & 2,92x & 2,92x & 4,93x & 2,45x \\
-Deuda Neta / EBITDA & 3,02x & 1,28x & 0,27x & 1,61x & 1,03x & 3,22x \\
+Deuda Neta / EBITDA & 3,02x & 1,25x & 0,27x & 1,64x & 1,03x & 3,22x \\
 Cobertura de Intereses (EBIT/Int.) & 2,72x & 4,12x & 28,35x & 3,87x & 11,63x & 3,53x \\
 \bottomrule
 \end{tabular}
@@ -592,7 +592,7 @@ De 79 días (2023) a 64 días (2026E): así se proyecta comprimir el Ciclo de Co
 \end{center}
 
 \section{Valuación Fundamental (DCF)}
-\textbf{Tratamiento Aditivo de la Opción Real Eólica (PEAL V).} Se valora la opción real de expansión eólica del Parque PEAL V (312 MW adicionales) mediante Monte Carlo por Mínimos Cuadrados de Longstaff-Schwartz (LSMC) [5]. La prima asciende a +ARS 19,60 por acción (+USD 0,01 al CCL de ARS 1.584,25):
+\textbf{Tratamiento Aditivo de la Opción Real Eólica (PEAL V).} Se valora la opción real de expansión eólica del Parque PEAL V (312 MW adicionales) mediante Monte Carlo por Mínimos Cuadrados de Longstaff-Schwartz (LSMC) [4]. La prima asciende a +ARS 19,60 por acción (+USD 0,01 al CCL de ARS 1.584,25):
 \begin{itemize}
     \item \textbf{Precio Objetivo DCF Base (Determinístico):} ARS 1.235,51 por acción (USD 0,78, +25,8\% Upside).
     \item \textbf{Prima Opción Real PEAL V (Flexibilidad Eólica):} +ARS 19,60 por acción (+USD 0,01).
@@ -737,7 +737,7 @@ Rusal & 5,1x & -2,0\% & 8,4\% & 2,1\% & 1,5\% \\
 \section{Gestión Cuantitativa de Riesgo y Extensiones del Modelo}
 
 \subsection{De VaR/ES a un Límite Explícito de Tamaño de Posición}
-El CVaR diario al 95\% [9] (-7,16\%) escalado a 21 sesiones ($\sqrt{21}$) resulta -32,80\%. El criterio de Kelly (1956), aplicado al retorno y varianza anualizados de ALUA.BA sobre la tasa libre de riesgo, arroja un Kelly completo de 73,5\%; dado el riesgo de sobre-estimación muestral inherente a la fórmula, se adopta la convención de Half-Kelly, lo que sugeriría un tamaño de posición de 36,8\% de la cartera (Quarter-Kelly conservador: 18,4\%). Ese 36,8\% igual excede el límite de política de riesgo del propio modelo (20\% máximo de tolerancia al \textit{drawdown}, Figura 23) -- un límite independiente del criterio de Kelly, no derivado de él. El tamaño de posición efectivamente recomendado es entonces el menor de los dos: 20\%, no el 36,8\% del Half-Kelly sin acotar.
+El CVaR diario al 95\% [8] (-7,16\%) escalado a 21 sesiones ($\sqrt{21}$) resulta -32,80\%. El criterio de Kelly (1956), aplicado al retorno y varianza anualizados de ALUA.BA sobre la tasa libre de riesgo, arroja un Kelly completo de 73,5\%; dado el riesgo de sobre-estimación muestral inherente a la fórmula, se adopta la convención de Half-Kelly, lo que sugeriría un tamaño de posición de 36,8\% de la cartera (Quarter-Kelly conservador: 18,4\%). Ese 36,8\% igual excede el límite de política de riesgo del propio modelo (20\% máximo de tolerancia al \textit{drawdown}, Figura 23) -- un límite independiente del criterio de Kelly, no derivado de él. El tamaño de posición efectivamente recomendado es entonces el menor de los dos: 20\%, no el 36,8\% del Half-Kelly sin acotar.
 
 \begin{center}
 \begin{minipage}{\linewidth}
@@ -837,7 +837,7 @@ CVaR Cornish-Fisher\textsuperscript{a} & -7,12\% & -10,49\% & -20,35\% \\
 \end{table}
 {\footnotesize\textsuperscript{a} El CVaR de Cornish-Fisher no tiene una forma cerrada simple: se estima por simulación de la misma transformación de Cornish-Fisher ya validada para el VaR de esta tabla (5 corridas de 5.000.000 sorteos $N(0,1)$ cada una, promediadas; desvío entre corridas $<$0,05pp), en vez de la expansión analítica de Boudt-Peterson-Croux (2008), propensa a errores de transcripción en sus términos de Hermite de orden superior. Metodología y valores persistidos en \texttt{resultados\_original.json} (\texttt{anexo/cvar\_cornish\_fisher\_*}), reproducible desde \texttt{engine\_valuacion.py}.\par}
 
-Al 90\% y 95\% de confianza, las cuatro metodologías convergen dentro de un rango razonable (VaR 95\% entre -4,7\% y -5,3\%). Al 99\%, Cornish-Fisher diverge fuertemente del resto (-13,41\% vs. un rango de -7,5\% a -8,6\% en las otras tres) y su CVaR asociado más que duplica al paramétrico ya al 90\% (-7,12\% vs. -5,67\%), brecha que se amplía a 99\% (-20,35\% vs. -8,65\%). Esa inestabilidad en la cola no es un error de cálculo: es el comportamiento documentado de la expansión de Cornish-Fisher cuando la asimetría y curtosis muestrales son altas, un régimen en el que el polinomio de ajuste deja de ser monótono y puede sobre-corregir el cuantil (Jaschke, 2001 [10]). Es exactamente la razón por la que, para el Expected Shortfall al 99\% que sustenta el dimensionamiento de posición (sección anterior), este informe no reporta el número de Cornish-Fisher sino que recurre a EVT-GPD —una metodología diseñada específicamente para modelar la cola sin depender de momentos de orden superior de la distribución completa—, desarrollada a continuación.
+Al 90\% y 95\% de confianza, las cuatro metodologías convergen dentro de un rango razonable (VaR 95\% entre -4,7\% y -5,3\%). Al 99\%, Cornish-Fisher diverge fuertemente del resto (-13,41\% vs. un rango de -7,5\% a -8,6\% en las otras tres) y su CVaR asociado más que duplica al paramétrico ya al 90\% (-7,12\% vs. -5,67\%), brecha que se amplía a 99\% (-20,35\% vs. -8,65\%). Esa inestabilidad en la cola no es un error de cálculo: es el comportamiento documentado de la expansión de Cornish-Fisher cuando la asimetría y curtosis muestrales son altas, un régimen en el que el polinomio de ajuste deja de ser monótono y puede sobre-corregir el cuantil (Jaschke, 2001 [9]). Es exactamente la razón por la que, para el Expected Shortfall al 99\% que sustenta el dimensionamiento de posición (sección anterior), este informe no reporta el número de Cornish-Fisher sino que recurre a EVT-GPD —una metodología diseñada específicamente para modelar la cola sin depender de momentos de orden superior de la distribución completa—, desarrollada a continuación.
 
 \subsection{Teoría de Valores Extremos (EVT) y Ajuste Pareto Generalizado (GPD)}
 Aplicamos la Teoría de Valores Extremos (EVT) mediante la Distribución Pareto Generalizada (GPD) para ajustar las pérdidas superiores al umbral del 95\%:
@@ -899,7 +899,7 @@ A diferencia del Monte Carlo de la sección homónima (que perturba WACC, $g$ y 
 La convergencia casi exacta de la media estocástica hacia el target determinístico oficial (ARS 1.235,51, 100\% de coincidencia) confirma que el caso base no está sesgado respecto a la trayectoria esperada de largo plazo del LME que el propio modelo asume; la dispersión de la distribución es atribuible por completo a la volatilidad del commodity.
 
 \subsection{Pruebas de Ajuste de Distribuciones (Bondad de Ajuste) y Cópula de Clayton}
-Las pruebas K-S y A-D confirman el ajuste superior de la Student-t ($\nu=4,2$, AIC=$-12.450$) y de la Cópula de Clayton (AIC=$-501,40$, $\lambda_L=0,38$), bajo el marco general de cópulas de Sklar [8] --- estos dos valores de AIC absoluto no están persistidos en el motor (a diferencia del $\Delta$AIC=-88,9 de Clayton vs. Gaussiana de la Sección 16.4, que sí se recalcula en \texttt{graficos.py}), con la misma limitación de reproducibilidad señalada en la Sección 16.1.
+Las pruebas K-S y A-D confirman el ajuste superior de la Student-t ($\nu=4,2$, AIC=$-12.450$) y de la Cópula de Clayton (AIC=$-501,40$, $\lambda_L=0,38$), bajo el marco general de cópulas de Sklar [7] --- estos dos valores de AIC absoluto no están persistidos en el motor (a diferencia del $\Delta$AIC=-88,9 de Clayton vs. Gaussiana de la Sección 16.4, que sí se recalcula en \texttt{graficos.py}), con la misma limitación de reproducibilidad señalada en la Sección 16.1.
 
 \begin{table}[H]
 \centering
@@ -1154,7 +1154,7 @@ EBITDA & 391,2 & 369,3 & 347,4 & 325,5 & 303,6 \\
 (+) D\&A (Reversi\'on) & 108,4 & 105,1 & 101,8 & 98,5 & 95,2 \\
 (-) CAPEX de Mantenimiento & (103,2) & (100,0) & (96,9) & (93,8) & (90,6) \\
 (-) Variaci\'on Capital de Trabajo ($\Delta$NWC) & (246,5) & 23,9 & 23,9 & 23,9 & 23,9 \\
-\textbf{FCFF Expl\'icito} & \textbf{-57,5} & \textbf{200,7} & \textbf{188,4} & \textbf{176,2} & \textbf{164,0} \\
+\textbf{FCFF Expl\'icito} & \textbf{-57,5} & \textbf{200,7} & \textbf{188,5} & \textbf{176,2} & \textbf{164,0} \\
 \bottomrule
 \end{tabular}%
 }
@@ -1169,7 +1169,6 @@ EBITDA & 391,2 & 369,3 & 347,4 & 325,5 & 303,6 \\
     \item Damodaran, Aswath (2012). \textit{Investment Valuation}, 3rd Ed, Wiley.
     \item Dumrauf, Guillermo L. (2013). \textit{Finanzas Corporativas}, 3ª Ed, Alfaomega.
     \item Ross, S.A., Westerfield, R.W., Jaffe, J. (2019). \textit{Corporate Finance}, 12th Ed, McGraw-Hill.
-    \item Black, F., Scholes, M. (1973). ``The Pricing of Options'', \textit{Journal of Political Economy}, 81(3).
     \item Longstaff, F.A., Schwartz, E.S. (2001). ``Valuing American Options by Simulation'', \textit{RFS}, 14(1).
     \item Blume, M.E. (1975). ``Betas and Their Regression Tendencies'', \textit{Journal of Finance}, 30(3).
     \item Hamada, R.S. (1972). ``Effect of Capital Structure on Systematic Risk'', \textit{Journal of Finance}, 27(2).
