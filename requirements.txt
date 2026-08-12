@@ -1,0 +1,15 @@
+# Dependencias para reproducir el motor de valuación, los gráficos y las
+# comprobaciones de auditoría de este repositorio (03_Modelo_y_Codigo/,
+# 01_Reporte_PDF/build_pdf.py). Versiones fijadas al entorno en el que el
+# modelo y el informe fueron verificados por última vez.
+pandas==3.0.3
+numpy==2.5.1
+matplotlib==3.11.0
+scipy==1.18.0
+seaborn==0.13.2
+openpyxl==3.1.5
+python-pptx==1.0.2
+PyMuPDF==1.28.0
+arch==8.0.0
+statsmodels==0.14.6
+jupyter

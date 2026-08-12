@@ -12,6 +12,7 @@
 \usepackage{array}
 \usepackage{float}
 \usepackage{multicol}
+\usepackage{enumitem}
 \usepackage{tcolorbox}
 \tcbuselibrary{skins, breakable}
 \usepackage{wrapfig}
@@ -46,6 +47,9 @@
     filecolor=gsblue,
     urlcolor=gsblue,
     pdftitle={Reporte de Valuación Institucional Aluar S.A.I.C. - UNCuyo},
+    pdfauthor={Federico Agustín Chillón},
+    pdfsubject={Valuación fundamental y estocástica de Aluar Aluminio Argentino S.A.I.C. (ALUA.BA) -- Trabajo práctico final, Cátedra de Economía y Técnica Bursátil, FCE-UNCuyo},
+    pdfkeywords={Aluar, ALUA.BA, valuación de empresas, DCF, WACC, CAPM, Monte Carlo, VaR, CVaR, valor en riesgo, riesgo país, EMBI+, aluminio, UNCuyo},
 }
 
 \pagestyle{fancy}
@@ -140,7 +144,7 @@
 
 \vspace{0.15cm}
 \noindent
-{\tiny \color{gsgray} \textbf{Nota metodol\'ogica.} Este reporte corresponde al Modelo C Acad\'emico, que aplica la metodolog\'ia $CRP = \lambda \times EMBI+$ y Opci\'on Real aditiva por LSMC. Los par\'ametros de mercado (Beta OLS, Rf, EMBI+, CCL) est\'an congelados al cierre del 23-jul-2026; el modelo Excel adjunto es reproducible pero no est\'atico y puede mostrar una variaci\'on residual de hasta $\pm 5\%$ en el Target si se recalcula con datos de mercado m\'as recientes. El detalle completo de los 18 supuestos del modelo, con fuente individual de cada uno, est\'a disponible en el slide ``Metodolog\'ia -- Supuestos del modelo'' de la presentaci\'on adjunta y en la hoja ``0) Supuestos'' del modelo Excel oficial.\par}
+{\tiny \color{gsgray} \textbf{Nota metodol\'ogica.} Este reporte corresponde al Modelo C Acad\'emico, que aplica la metodolog\'ia $CRP = \lambda \times EMBI+$ y Opci\'on Real aditiva por LSMC. Los par\'ametros de mercado (Beta OLS, Rf, EMBI+, CCL) est\'an congelados al cierre del 23-jul-2026; el modelo Excel adjunto es reproducible pero no est\'atico y puede mostrar una variaci\'on residual de hasta $\pm 5\%$ en el Target si se recalcula con datos de mercado m\'as recientes. El detalle completo de los supuestos del modelo, con fuente individual de cada uno, est\'a disponible en el slide ``Metodolog\'ia -- Supuestos del modelo'' de la presentaci\'on adjunta y en el Cuadro de Supuestos Clave al final de este informe.\par}
 
 \vspace{0.25cm}
 \noindent
@@ -162,6 +166,12 @@
 \begingroup
 \small
 \tableofcontents
+\endgroup
+
+\begingroup
+\footnotesize
+\listoffigures
+\listoftables
 \endgroup
 
 \clearpage
@@ -391,6 +401,10 @@ Chalco & 2600.HK & 5,8x & 8,8\% & 3,8x \\
 \end{tabular}
 \end{table}
 
+\textbf{Alcance del universo de comparables.} El grupo de pares se limita a productores primarios de aluminio con estados financieros auditados de acceso público (Alcoa, Norsk Hydro, Chalco); no incluye pares domésticos como Ternium Argentina (TXAR.BA), porque este informe no dispone para esa compañía de una cifra de EV/EBITDA con la misma trazabilidad de fuente que exige el resto del documento (ver \S5, Metodología de auditoría). Al ser un grupo reducido, la mediana es sensible a la exclusión de cualquiera de sus tres miembros: si se excluye Chalco —de gobernanza estatal china y perfil de riesgo regulatorio distinto al de un productor privado— la mediana de EV/EBITDA sube de 6,5x a 7,3x.
+
+\textbf{Cobertura de research y calificación crediticia.} Este informe no compara el Precio Objetivo contra un consenso de analistas sell-side (Bloomberg, Refinitiv o similar) ni contra una calificación crediticia de S\&P, Moody's o Fitch, porque ninguna de esas dos fuentes forma parte del conjunto de datos auditados y trazables que sostiene el resto del modelo (\texttt{datos\_auditados.py}, \texttt{resultados\_original.json}); incorporarlas sin esa misma disciplina de trazabilidad sería inconsistente con el criterio de fuente citada que rige el resto del documento.
+
 \begin{center}
 \begin{minipage}{\linewidth}
 \centering
@@ -579,6 +593,28 @@ Cobertura de Intereses (EBIT/Int.) & 2,72x & 4,12x & 28,35x & 3,87x & 11,63x & 3
 \textbf{Sobre la cobertura de intereses.} La serie completa (Intereses Pagados del Estado de Flujo de Efectivo, convertidos a USD al CCL de cierre de cada ejercicio) muestra un rango amplio: de un mínimo de 2,72x (FY2020, con intereses elevados sobre un EBIT deprimido) a un máximo de 28,35x (FY2022, año de EBIT récord y financiamiento excepcionalmente bajo), sin una tendencia monótona hasta FY2023 (3,87x). El deterioro reciente es, en ese contexto, real pero no inédito en magnitud: la cobertura cayó de 11,63x (FY2024) a 3,53x (FY2025) —el gasto en intereses se duplicó mientras el EBIT cayó 39,5\%—, un nivel similar al de FY2020 y FY2023, no un mínimo histórico. Es, aun así, la evidencia más directa detrás del riesgo de apalancamiento ya señalado en el ratio Deuda Neta/EBITDA, agravado por la coincidencia con el pico de CAPEX del Parque Eólico. Sobre base EBITDA (menos conservadora, ignora la carga de D\&A), la cobertura de FY2024-FY2025 es de 15,61x y 6,24x respectivamente.
 
 \textbf{Proyección de CAPEX: Varianza Inversa y Filtro Huber.} La intensidad de capital (CAPEX/Ventas) se proyecta mediante \textit{Inverse-Variance Weighting} (Fisher-Cochran) con filtro Huber MAD (M-estimación robusta a outliers), fijando el CAPEX de mantenimiento en $\approx$6,5\% de las ventas (mediana histórica CAPEX/Revenue de la serie auditada).
+
+\subsection{Política de Dividendos}
+Aluar no sigue una política de dividendos con una regla de payout fija; la distribución la define la Asamblea de Accionistas ejercicio a ejercicio, sujeta al resultado del año, al plan de inversiones vigente (en particular el CAPEX del Parque Eólico Puerto Madryn) y a la disponibilidad de caja en un contexto de control de cambios. El cuadro siguiente muestra el dividendo efectivamente pagado en cada ejercicio (Estado de Flujo de Efectivo, columna de actividades de financiación) y su relación con el Resultado Neto del mismo año.
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Dividendos Pagados y Payout Ratio, FY2020--FY2025 (USD MM)} {\small\color{gsgray} (Elaboración propia en base a estados financieros de Aluar. 30-Jul-2026.)}}
+\small
+\begin{tabular}{lcccccc}
+\toprule
+ & \textbf{FY2020} & \textbf{FY2021} & \textbf{FY2022} & \textbf{FY2023} & \textbf{FY2024} & \textbf{FY2025} \\
+\midrule
+Dividendos Pagados & 71,7 & 1,6 & 18,6 & 110,5 & 2,3 & 6,3 \\
+Resultado Neto & -43,9 & 28,1 & 115,5 & 139,0 & 89,7 & 9,2 \\
+Payout Ratio & n.a.\textsuperscript{a} & 5,7\% & 16,1\% & 79,5\% & 2,6\% & 69,1\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\footnotesize\textsuperscript{a} El payout de FY2020 no es un indicador significativo: la compañía distribuyó dividendos en un ejercicio con resultado neto negativo, con cargo a resultados no asignados de ejercicios anteriores, algo permitido por la Ley General de Sociedades pero que vuelve inaplicable el cociente Dividendos/Resultado Neto de ese año puntual.\normalsize
+
+La serie no muestra una relación estable entre resultado y distribución: FY2023, el año de mayor Resultado Neto de la serie, tuvo el payout más alto (79,5\%); FY2024, con un Resultado Neto casi igual de alto, tuvo uno de los más bajos (2,6\%), coincidiendo con el arranque del CAPEX del Parque Eólico. La lectura consistente con el resto del informe es que la caja generada se prioriza para el plan de inversiones en curso por sobre una distribución sostenida al accionista, más que una política de dividendos formal con un objetivo de payout explícito.
 
 \subsection{Ciclo de Conversión de Efectivo y Capital de Trabajo}
 De 79 días (2023) a 64 días (2026E): así se proyecta comprimir el Ciclo de Conversión de Efectivo (CCC) por la gestión de inventarios y plazos comerciales, liberando caja operativa y mejorando la conversión de EBITDA en FCFF.
@@ -1012,22 +1048,25 @@ A diferencia de los modelos tradicionales que asumen Cópula Gaussiana con depen
 \end{minipage}
 \end{center}
 
-\subsection{Sensibilidad Global y Descomposición de Varianza (Sobol)}
+\subsection{Sensibilidad Comparada del Precio Objetivo ante Shocks Individuales}
+Para jerarquizar el peso relativo de los principales factores de riesgo sobre el Precio Objetivo, se recorrió el modelo DCF completo desplazando una variable por vez —manteniendo las demás en su valor base— y se registró el rango resultante. Es una sensibilidad de un factor a la vez, no una descomposición de varianza multivariada de tipo Sobol: no captura la interacción entre factores ni reparte la varianza total del Precio Objetivo en participaciones porcentuales, cálculo que exigiría un diseño muestral específico (esquema de Saltelli) que este modelo no implementa. Dentro de esa limitación, permite comparar de forma directa cuánto mueve el Precio Objetivo cada variable.
+
 \begin{table}[H]
 \centering
-\caption{\textbf{Índices de Sobol (Orden 1 y Total) sobre la Varianza del EV} {\small\color{gsgray} (Elaboración propia en base a modelo empírico — 01-Aug-2026.)}}
+\caption{\textbf{Rango de Precio Objetivo ante un Shock Individual por Factor} {\small\color{gsgray} (Elaboración propia en base al motor de valuación, recorriendo el DCF completo con un shock simétrico por variable. 01-Ago-2026.)}}
 \small
 \begin{tabular}{lccc}
 \toprule
-\textbf{Vector de Riesgo Sobol} & \textbf{$S_i$ (Directo)} & \textbf{$S_{Ti}$ (Total)} & \textbf{Efecto Interacción} \\
+\textbf{Factor} & \textbf{Shock Aplicado} & \textbf{Precio Objetivo (ARS)} & \textbf{Amplitud} \\
 \midrule
-Precio LME (Aluminio) & 0,421 & 0,510 & Fuerte \\
-Spread Soberano (EMBI) & 0,285 & 0,392 & Moderado \\
-Costo Energético (USD/MWh) & 0,112 & 0,165 & Débil \\
-Tipo de Cambio Real & 0,084 & 0,140 & Moderado \\
+Precio Realizado del Aluminio (LME) & $\pm$10\% & 878,53 -- 1.592,48 & 713,95 (57,8\% del valor base) \\
+Costo de Capital (WACC) & $\pm$0,75pp & 1.050,08 -- 1.484,95 & 434,87 (35,2\% del valor base) \\
+Tasa de Crecimiento Terminal ($g$) & $\pm$0,50pp & 1.124,66 -- 1.370,63 & 245,97 (19,9\% del valor base) \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+El precio del aluminio es, de los tres factores recorridos, el que más mueve el Precio Objetivo: un shock de 10\% sobre el precio realizado desplaza el valor casi 1,6 veces más que el mismo tipo de shock sobre el costo de capital, y cerca de 3 veces más que sobre la tasa de crecimiento terminal. Es consistente con la naturaleza de Aluar como productor de un commodity de margen relativamente fijo, donde el precio de venta explica la mayor parte de la variabilidad del flujo de fondos.
 
 \subsection{Simulación del Impacto del RIGI y Apertura Comercial}
 Bajo el escenario RIGI pleno (Ganancias al 25\%, aranceles 0\% en aerogeneradores Goldwind y retenciones 0\%), el NOPAT de régimen aumenta un +12,4\%, impulsando el Target Integrado a ARS 1.304,10 por acción.
@@ -1163,6 +1202,79 @@ EBITDA & 391,2 & 369,3 & 347,4 & 325,5 & 303,6 \\
 {\small \textbf{Reconciliaci\'on FCFF Expl\'icito 2030E vs. Terminal Normalizado.} FCFF Expl\'icito 2030E: USD 164,0 MM (incluye CAPEX de mantenimiento de USD 90,6 MM y $\Delta$NWC = USD 23,9 MM). FCFF Terminal Normalizado ($g = 2,0\%$): USD 135,5 MM (asume estado estacionario donde CAPEX = D\&A y $\Delta$NWC = \$0, por lo que el FCFF terminal converge al NOPAT 2030E).}
 
 
+
+\section*{Cuadro de Supuestos Clave}
+Este cuadro reúne en un solo lugar los supuestos que alimentan el modelo DCF, cada uno con su fuente puntual. Es el mismo cuadro del slide ``Metodología -- Supuestos del modelo'' de la presentación adjunta; se reproduce aquí para que quede disponible sin salir del informe.
+
+\begin{table}[H]
+\centering
+\caption{\textbf{Supuestos Clave del Modelo DCF y su Fuente} {\small\color{gsgray} (Elaboración propia. Parámetros de mercado congelados al cierre del 23-jul-2026.)}}
+\scriptsize
+\begin{tabular}{p{4.0cm}p{2.6cm}p{7.2cm}}
+\toprule
+\textbf{Variable} & \textbf{Valor} & \textbf{Fuente} \\
+\midrule
+Tasa libre de riesgo (Rf) & 4,70\% & Tesoro de EE.\,UU. a 10 años, cierre del 23-jul-2026 (Dumrauf, Cap. 6) \\
+Prima por riesgo de mercado (ERP) & 4,18\% & Damodaran (NYU Stern), julio 2026 (Dumrauf, Cap. 8) \\
+Retorno del mercado (Rm) & 8,88\% & Rm = Rf + ERP, sobre el S\&P 500 \\
+Riesgo país ponderado ($\lambda \times$ EMBI+) & 0,20 $\times$ 441 pb & $\lambda$ = ventas al mercado interno / ventas totales (Damodaran; Dumrauf, Caps. 6 y 14) \\
+Continuidad del programa económico & Se asume sostenida 2026E--2030E & El EMBI+ de 441 pb y el WACC de 7,06\% reflejan la compresión vigente; ver Riesgo 4 (reversión si no se sostiene el programa) \\
+Beta apalancado (Hamada) & 0,888 & Regresión OLS a 10 años sobre el S\&P 500, ajuste de Blume y reapalancamiento de Hamada (Dumrauf, Cap. 10) \\
+Alícuota de Impuesto a las Ganancias & 35,0\% & Ley 20.628: alícuota estatutaria plana en los cinco ejercicios proyectados \\
+WACC & 7,06\% & Ke $\times$ E/V + Kd $\times$ (1 $-$ t) $\times$ D/V (Dumrauf, Cap. 12) \\
+Crecimiento perpetuo ($g$) & 2,00\% & Convergencia suavizada al crecimiento de largo plazo, con capacidad instalada saturada (Dumrauf, Cap. 14) \\
+Capacidad instalada & 460.000 Tn/año & Memoria Anual: planta de Puerto Madryn \\
+Factor de utilización & 94\% & Entre la mediana de seis ejercicios (89,5\%) y la de los últimos tres (96,4\%) \\
+Cash cost C1 & USD 1.680/Tn & Curva de costos global de productores primarios \\
+Aluminio LME de largo plazo & USD 2.587/Tn & Media de la serie mensual del LME \\
+Deuda neta (Modelo DCF) & USD 456,00 MM & Posición financiera neta al cierre del 1T26 \\
+Acciones en circulación & 2.800 MM & Estados Financieros: resultado por acción \\
+Tipo de cambio (CCL) & ARS 1.584,2 & Contado con liquidación implícito al 23-jul-2026 \\
+Valor terminal & Flujo normalizado & Estado estacionario donde CAPEX = D\&A y $\Delta$NWC = 0 (Dumrauf, Cap. 14) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section*{Glosario de Abreviaturas}
+\begin{multicols}{2}
+\scriptsize
+\begin{description}[leftmargin=1.6cm, style=nextline]
+\item[ADR] American Depositary Receipt: certificado que representa acciones de una empresa no estadounidense y cotiza en una bolsa de EE.\,UU.
+\item[AIC / BIC] Criterio de Información de Akaike / Bayesiano: miden la bondad de ajuste de un modelo estadístico penalizando el número de parámetros; se usan para comparar especificaciones alternativas.
+\item[CAPEX] \textit{Capital Expenditures}: inversión en bienes de capital.
+\item[CAPM] \textit{Capital Asset Pricing Model}: modelo que estima el costo del equity a partir de la tasa libre de riesgo, el beta y la prima de riesgo de mercado.
+\item[CCC] Ciclo de Conversión de Efectivo (días de inventario más días de cobro, menos días de pago).
+\item[CCL] Contado con Liquidación: tipo de cambio implícito que surge de operar un mismo activo en pesos y en dólares.
+\item[CIR] Proceso de Cox--Ingersoll--Ross: modelo de reversión a la media para tasas de interés o spreads, con varianza proporcional al nivel (condición de Feller).
+\item[CNV] Comisión Nacional de Valores.
+\item[CVaR] \textit{Conditional Value at Risk} (Valor en Riesgo Condicional o Pérdida Esperada de Cola): pérdida esperada en el subconjunto de escenarios peores que el VaR.
+\item[DCF] \textit{Discounted Cash Flow}: flujos de fondos descontados.
+\item[DIO / DSO / DPO] Días de Inventario / Días de Cobro / Días de Pago (\textit{Days Inventory Outstanding / Days Sales Outstanding / Days Payable Outstanding}).
+\item[EBIT] Resultado antes de intereses e impuestos.
+\item[EBITDA] Resultado antes de intereses, impuestos, depreciaciones y amortizaciones.
+\item[EMBI+] \textit{Emerging Markets Bond Index Plus}: spread de rendimiento de bonos soberanos en dólares sobre el Tesoro de EE.\,UU., proxy estándar del riesgo país.
+\item[ESG] \textit{Environmental, Social and Governance}: criterios ambientales, sociales y de gobierno corporativo.
+\item[EV] \textit{Enterprise Value}: valor de la firma (equity más deuda neta).
+\item[EVT / GPD] Teoría de Valores Extremos / Distribución Generalizada de Pareto: modela la cola de una distribución de pérdidas por separado del cuerpo central.
+\item[FCFF] \textit{Free Cash Flow to the Firm}: flujo de fondos libre para la firma, disponible para todos los proveedores de capital.
+\item[GARCH] \textit{Generalized Autoregressive Conditional Heteroskedasticity}: modelo de volatilidad condicional que permite que el riesgo varíe en el tiempo.
+\item[LSMC] \textit{Least Squares Monte Carlo} (Longstaff--Schwartz): método de regresión por mínimos cuadrados para valuar opciones con ejercicio anticipado dentro de una simulación de Monte Carlo.
+\item[MLE] \textit{Maximum Likelihood Estimation}: estimación por máxima verosimilitud.
+\item[NIC] Normas Internacionales de Contabilidad.
+\item[NOPAT] \textit{Net Operating Profit After Tax}: resultado operativo neto de impuestos.
+\item[OLS] \textit{Ordinary Least Squares}: mínimos cuadrados ordinarios.
+\item[OU] Proceso de Ornstein--Uhlenbeck: modelo de reversión a la media de uso estándar para precios de \textit{commodities}.
+\item[PESTEL] Análisis Político, Económico, Social, Tecnológico, Ecológico y Legal.
+\item[PN / PT] Patrimonio Neto / Pasivo Total.
+\item[RIGI] Régimen de Incentivo para Grandes Inversiones (Ley 27.742, Argentina).
+\item[ROA] \textit{Return on Assets}: retorno sobre los activos.
+\item[ROE] \textit{Return on Equity}: retorno sobre el patrimonio neto.
+\item[ROIC] \textit{Return on Invested Capital}: retorno sobre el capital invertido.
+\item[SOX] Ley Sarbanes--Oxley (normativa estadounidense de gobierno corporativo y control interno).
+\item[VaR] \textit{Value at Risk} (Valor en Riesgo): pérdida máxima esperada con un nivel de confianza dado, en un horizonte determinado.
+\item[WACC] \textit{Weighted Average Cost of Capital}: costo promedio ponderado del capital.
+\end{description}
+\end{multicols}
 
 \section*{Referencias Bibliográficas y Fuentes Académicas}
 \begin{enumerate}

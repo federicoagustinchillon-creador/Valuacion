@@ -21,3 +21,12 @@ scratch/
 *.aux
 *.out
 *.toc
+*.lof
+*.lot
+
+# Copias de respaldo de rondas de auditoría anteriores -- no son el
+# entregable, se conservan solo en el disco local del autor, no en el
+# repositorio público. El entregable de referencia es
+# 01_Reporte_PDF/Informe_Valuacion_Institucional_Aluar_UNCuyo.pdf.
+01_Reporte_PDF/backup/
+01_Reporte_PDF/backup_*/
