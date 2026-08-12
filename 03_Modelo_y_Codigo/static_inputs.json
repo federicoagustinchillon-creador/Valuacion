@@ -17860,22 +17860,22 @@
     ],
     "ev_ebitda": [
       13.43,
-      7.24,
-      6.61,
-      5.13
+      8.54,
+      7.72,
+      5.2
     ],
     "margen_ebitda_pct": [
       14.9,
-      15.46,
-      13.55,
-      18.63
+      13.12,
+      11.89,
+      15.53
     ],
     "deuda_neta_ebitda": [
       3.2,
-      0.43,
-      0.34,
-      0.48
+      0.51,
+      0.39,
+      0.61
     ],
-    "_fuente": "Aluar: recalculado en vivo desde resultados_original.json:m12_multiplos.ev_ebitda_fy25 (market_cap+deuda_neta sobre EBITDA FY25 real), sin cambios en esta ronda. Alcoa, Norsk Hydro y Chalco: recomputados desde cero al 12-ago-2026 a partir de fuentes primarias -- EBITDA ajustado FY2025 y deuda neta al cierre de FY2025 de los comunicados oficiales de cada compania (Alcoa: news.alcoa.com, 4Q/FY2025 results; Norsk Hydro: hydro.com, suma de los 4 comunicados trimestrales de 2025; Chalco: stockanalysis.com/quote/hkg/2600/statistics, internamente consistente con EV/Sales y Debt/EBITDA verificados a mano) mas Enterprise Value calculado como Market Cap (precio de cierre 12-ago-2026, stockanalysis.com) + Deuda Neta. Reemplaza el dataset anterior (Alcoa 8.1x/9.2%/2.1x, Norsk Hydro 6.5x/11.4%/1.4x, Chalco 5.8x/8.8%/3.8x), que esta misma nota de fuente ya marcaba como sin fuente reproducible en el repo. No incluye a Ternium Argentina (TXAR.BA): es una siderurgica, no un productor de aluminio, y se documenta por separado en el Cuadro de Comparables del informe como referencia de mercado domestico, no como par de industria."
+    "_fuente": "Aluar: recalculado en vivo desde resultados_original.json:m12_multiplos.ev_ebitda_fy25, sin cambios. Alcoa, Norsk Hydro y Chalco: EBITDA = Resultado Operativo (GAAP, reportado, SIN excluir partidas no recurrentes) + Depreciacion y Amortizacion, la misma definicion que usa este informe para Aluar -- se descarto deliberadamente el EBITDA ajustado que cada compania reporta en sus comunicados de prensa (que excluye partidas especiales de forma no estandarizada entre companias) por no ser comparable entre si ni contra la metodologia de Aluar. Alcoa: Resultado Operativo USD 1.060 MM + D&A USD 623 MM, FY2025, 10-K oficial (SEC). Norsk Hydro: EBIT NOK 14.401 MM + D&A NOK 10.328 MM, Year 2025, informe oficial del cuarto trimestre. Chalco: Resultado Operativo RMB 25.805,9 MM (informe anual oficial, PRC GAAP) + D&A estimado en RMB 11.640 MM (unica cifra de esta tabla sin fuente primaria confirmada -- de un agregador de terceros, no del informe anual oficial de 411 paginas, donde no se pudo ubicar la linea de D&A consolidada en el tiempo disponible); Enterprise Value convertido de RMB a HKD a un tipo de cambio cruzado de 1,09. Deuda neta y capitalizacion de mercado de Alcoa y Norsk Hydro de sus propios comunicados/estadisticas de mercado al 12-ago-2026; de Chalco, de stockanalysis.com/quote/hkg/2600 (HKD). No incluye a Ternium Argentina (TXAR.BA): es una siderurgica, no un productor de aluminio, documentada por separado en el informe como referencia de mercado domestico."
   }
 }
