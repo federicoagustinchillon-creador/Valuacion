@@ -573,10 +573,13 @@ def plot_figura_11(res, stat):
     mediana_x = float(np.median(ev_ebitda[otros]))
     mediana_y = float(np.median(margins[otros]))
 
+    if margins[idx_aluar] > mediana_y:
+        frase_margen = f"consistente con su margen EBITDA superior ({margins[idx_aluar]:.1f}% vs. mediana {mediana_y:.1f}%)"
+    else:
+        frase_margen = f"pese a un margen EBITDA similar o inferior a la mediana ({margins[idx_aluar]:.1f}% vs. mediana {mediana_y:.1f}%)"
     fig, ax = scaffold(
         "Premio Fundamental: Múltiplo EV/EBITDA vs. Margen EBITDA de Pares Globales",
-        f"Aluar transa con premio sobre los pares ({ev_ebitda[idx_aluar]:.1f}x vs. mediana {mediana_x:.1f}x), consistente con su margen EBITDA superior ({margins[idx_aluar]:.1f}% vs. mediana {mediana_y:.1f}%)",
-        "EV/EBITDA (x) / Margen (%)"
+        f"Aluar transa con premio sobre los pares ({ev_ebitda[idx_aluar]:.1f}x vs. mediana {mediana_x:.1f}x), {frase_margen}",
     )
 
     ax.axvline(mediana_x, color=C["slate"], linestyle="--", lw=1.2, label=f"Mediana Múltiplo Pares ({mediana_x:.1f}x)")

@@ -17846,11 +17846,36 @@
     "_fuente": "Cuadro 'Marco de Escenarios: Bear/Base/Bull' y parrafo de compresion EMBI<400pb del informe (reporte_modelo_C.tex, seccion Marco de Escenarios). Igual que stress_test_embi_max: cada escenario narrativo (LME, riesgo pais, CAPEX/RIGI) implica una re-proyeccion conjunta del FCFF que engine_original.py no expone como funcion parametrica en resultados_original.json -- WACC/g de cada escenario si son reproducibles (Ke=Rf+Beta*ERP+Lambda*EMBI), el target_ars resultante no. Se referencian aqui en vez de recalcularse. El bull_target_ars (1.481) es internamente consistente con su propio +19,8% vs. base citado en el informe (1.235,51*1,198=1.480,1, redondeo)."
   },
   "comparables_ev_ebitda_margen": {
-    "names": ["Aluar S.A.I.C.", "Alcoa Corp.", "Norsk Hydro", "Chalco"],
-    "tickers": ["ALUA.BA", "AA", "NHY.OL", "2600.HK"],
-    "ev_ebitda": [13.43, 8.1, 6.5, 5.8],
-    "margen_ebitda_pct": [14.9, 9.2, 11.4, 8.8],
-    "deuda_neta_ebitda": [3.2, 2.1, 1.4, 3.8],
-    "_fuente": "Cuadro 'Analisis de Comparables: Evaluacion Relativa frente a la Industria' del informe (reporte_modelo_C.tex). Reemplaza el dataset previo de graficos.py::plot_figura_11, que combinaba el EV/EBITDA de un grupo de pares DISTINTO (peers.ev_ebitda, 7 companias, fuente Bloomberg/Reuters consenso Q1-2026, sin overlap total de valores con este cuadro para las companias en comun -- ej. Chalco 9.0x vs 5.8x aqui) con margenes EBITDA EXPLICITAMENTE etiquetados como 'sinteticos' en el codigo (fabricados, sin fuente real). El valor de Aluar (13,43x, no el 10,2x que citaba originalmente el Cuadro de Comparables) se corrigio para que coincida EXACTAMENTE con resultados_original.json:m12_multiplos.ev_ebitda_fy25 -- el unico de los 4 valores de esta tabla que se recalcula en vivo desde el motor (market_cap+deuda_neta sobre EBITDA FY25 real); los otros 3 (peers extranjeros) no tienen fuente reproducible en el repo mas alla de la cita del cuadro original y se dejaron como estaban. Los margenes EBITDA de los 4 SI estan verificados (Aluar 14,9% coincide con el motor; los de los pares no se pudieron verificar de forma independiente, mismo caso que sus multiplos)."
+    "names": [
+      "Aluar S.A.I.C.",
+      "Alcoa Corp.",
+      "Norsk Hydro",
+      "Chalco"
+    ],
+    "tickers": [
+      "ALUA.BA",
+      "AA",
+      "NHY.OL",
+      "2600.HK"
+    ],
+    "ev_ebitda": [
+      13.43,
+      7.24,
+      6.61,
+      5.13
+    ],
+    "margen_ebitda_pct": [
+      14.9,
+      15.46,
+      13.55,
+      18.63
+    ],
+    "deuda_neta_ebitda": [
+      3.2,
+      0.43,
+      0.34,
+      0.48
+    ],
+    "_fuente": "Aluar: recalculado en vivo desde resultados_original.json:m12_multiplos.ev_ebitda_fy25 (market_cap+deuda_neta sobre EBITDA FY25 real), sin cambios en esta ronda. Alcoa, Norsk Hydro y Chalco: recomputados desde cero al 12-ago-2026 a partir de fuentes primarias -- EBITDA ajustado FY2025 y deuda neta al cierre de FY2025 de los comunicados oficiales de cada compania (Alcoa: news.alcoa.com, 4Q/FY2025 results; Norsk Hydro: hydro.com, suma de los 4 comunicados trimestrales de 2025; Chalco: stockanalysis.com/quote/hkg/2600/statistics, internamente consistente con EV/Sales y Debt/EBITDA verificados a mano) mas Enterprise Value calculado como Market Cap (precio de cierre 12-ago-2026, stockanalysis.com) + Deuda Neta. Reemplaza el dataset anterior (Alcoa 8.1x/9.2%/2.1x, Norsk Hydro 6.5x/11.4%/1.4x, Chalco 5.8x/8.8%/3.8x), que esta misma nota de fuente ya marcaba como sin fuente reproducible en el repo. No incluye a Ternium Argentina (TXAR.BA): es una siderurgica, no un productor de aluminio, y se documenta por separado en el Cuadro de Comparables del informe como referencia de mercado domestico, no como par de industria."
   }
 }
