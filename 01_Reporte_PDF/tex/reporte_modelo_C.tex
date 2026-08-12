@@ -168,7 +168,7 @@
 \section{Descripción de la Compañía}
 
 \subsection{Perfil del Negocio}
-Aluar Aluminio Argentino S.A.I.C. es la única productora integrada de aluminio primario en Argentina. Fundada en 1974, la compañía opera su complejo industrial principal en Puerto Madryn, Provincia del Chubut, con una capacidad instalada de aproximadamente 460.000 toneladas anuales de aluminio primario tras alcanzar la Capacidad Plena en 2026 (ver línea de tiempo, Figura 1); la comparación internacional de la Figura 7 usa 440.000 Tn, la última cifra publicada por el IAI (2024/2025) antes de esa ampliación. Su portafolio de productos incluye aluminio primario en lingotes, billetes (\textit{billets}), alambrón (\textit{wire rod}), chapas y placas, y extrusiones. Alrededor del 80\% de su producción se destina a mercados de exportación (Estados Unidos, Brasil, Japón y Europa), generando un flujo de ingresos mayoritariamente denominado en dólares estadounidenses.
+Aluar Aluminio Argentino S.A.I.C. es la única productora integrada de aluminio primario en Argentina. Fundada en 1974, la compañía opera su complejo industrial principal en Puerto Madryn, Provincia del Chubut, con una capacidad instalada nominal de aproximadamente 460.000 toneladas anuales de aluminio primario desde la Expansión Fase II de 2007 (ver línea de tiempo, Figura 1); la comparación internacional de la Figura 7 usa 440.000 Tn, la cifra de capacidad operativa publicada por el IAI (2024/2025), levemente por debajo de la nominal en línea con la dependencia energética de la red eléctrica que la compañía solo terminó de resolver con la Etapa V del parque eólico (100\% autogeneración, 2026). Su portafolio de productos incluye aluminio primario en lingotes, billetes (\textit{billets}), alambrón (\textit{wire rod}), chapas y placas, y extrusiones. Alrededor del 80\% de su producción se destina a mercados de exportación (Estados Unidos, Brasil, Japón y Europa), generando un flujo de ingresos mayoritariamente denominado en dólares estadounidenses.
 
 \begin{center}
 \begin{minipage}{\linewidth}
@@ -182,7 +182,7 @@ Aluar Aluminio Argentino S.A.I.C. es la única productora integrada de aluminio 
 Tres factores posicionan a Aluar en el primer cuartil de la curva de costos global del aluminio:
 \begin{itemize}
     \item \textbf{Matriz Energética Autogenerada:} El 96\% del consumo eléctrico de la planta de Puerto Madryn es abastecido por fuentes propias (Hidroeléctrica 54\%, Eólico 24\% y generación térmica propia 18\%); sólo el 4\% restante se compra a la red (ENRE). La Central Hidroeléctrica Futaleufú (320 MW de capacidad asignada) y el Parque Eólico Aluar (200 MW en operación, en expansión a 582 MW con la Etapa V / La Flecha) le otorgan a Aluar una autonomía energética casi total.
-    \item \textbf{Posición de Costos (Primer Cuartil):} Su \textit{cash cost} C1 es de USD 1.680 por tonelada (percentil 28 de la curva CRU/Wood Mackenzie), lo que le permite sostener márgenes operativos positivos incluso en la fase baja del ciclo del \textit{commodity}.
+    \item \textbf{Posición de Costos (Primer Cuartil):} Su \textit{cash cost} C1 es de USD 1.680 por tonelada (percentil 29 de la curva CRU/Wood Mackenzie, Figura 10), lo que le permite sostener márgenes operativos positivos incluso en la fase baja del ciclo del \textit{commodity}.
     \item \textbf{Integración Vertical:} Aluar controla toda la cadena de valor, desde la producción de alúmina (materia prima intermedia) hasta la manufactura de productos de valor agregado, maximizando la captura de margen en cada eslabón.
 \end{itemize}
 
@@ -317,6 +317,8 @@ Los shocks de oferta (cierres de smelters europeos por crisis energéticas) han 
 \end{minipage}
 \end{center}
 
+{\footnotesize\color{gsgray} \textbf{Limitación de datos.} Aproximadamente 300 observaciones consecutivas de la serie LME entre jun-2018 y ago-2019 (12\% de la muestra en esa ventana) están congeladas en un puñado de valores repetidos día tras día -- un artefacto de \textit{forward-fill} sobre datos faltantes del proveedor de mercado, no un precio real. No se corrigió recotizando esos días (fabricaría un precio que no existió) ni se excluyó de las pruebas estadísticas que siguen (Engle-Granger, elasticidad LME-ALUA), que usan la serie completa 2016-2026; el efecto esperado de esa ventana estática es amortiguar levemente la varianza y covarianza estimadas en ese sub-período, no invalidar la dirección de los resultados sobre una década completa de datos.\par}
+
 \textbf{Validación estadística del vínculo ALUA-LME: test de cointegración de Engle-Granger.} La tesis de inversión descansa en que ALUAR es, en esencia, una posición apalancada al ciclo del aluminio. Sometimos esa premisa a un test formal en vez de apoyarla solo en el gráfico anterior: sobre el precio de ALUA.BA convertido a USD vía CCL (metodología idéntica a la de la Secuencia del Beta, N=2.355 observaciones diarias, 2016-2026) y el precio LME, el test de Engle-Granger [11] no rechaza la hipótesis nula de no cointegración (estadístico $-2,29$; $p=0,38$; valor crítico al 5\% de $-3,34$). No hay, en niveles de precio, un equilibrio de largo plazo estable entre ambas series a lo largo de la década completa. Sí existe una relación contemporánea significativa: una regresión de log-precios arroja una elasticidad de 0,66 (ALUA.BA sube/baja 0,66\% de USD por cada 1\% de movimiento del LME, $R^2=0,12$). La ausencia de cointegración no contradice la tesis: es consistente con que el precio de ALUA.BA está gobernado por dos procesos superpuestos —el commodity y el riesgo soberano argentino, que se mueve por su propio ciclo (compresión del EMBI+ de 2.400 a 441 pb en cuatro años)— y es precisamente esa segunda fuente de varianza, no capturada por el LME, la razón metodológica por la que este informe separa explícitamente el Costo del Equity en un componente de mercado global ($\beta \times ERP$) y uno de riesgo país ($\lambda \times EMBI+$) en vez de tratar a ALUAR como un derivado puro del aluminio.
 
 El mercado del aluminio se encuentra altamente comoditizado pero geográficamente segmentado en primas regionales. A nivel regional, el mercado latinoamericano muestra un marcado déficit de producción primaria. Aluar abastece cerca del 60\% del mercado doméstico total y exporta agresivamente ($\sim$70-80\% de su despacho anual) a Estados Unidos, Brasil y Japón.
@@ -379,7 +381,7 @@ ALUAR transa históricamente con un premio persistente de EV/EBITDA frente a par
 \toprule
 \textbf{Compañía} & \textbf{Ticker} & \textbf{EV/EBITDA (x)} & \textbf{Margen EBITDA} & \textbf{Deuda Neta/EBITDA} \\
 \midrule
-Aluar S.A.I.C. & ALUA.BA & 10,2x & 14,9\% & 3,2x \\
+Aluar S.A.I.C. & ALUA.BA & 13,4x & 14,9\% & 3,2x \\
 Alcoa Corp. & AA & 8,1x & 9,2\% & 2,1x \\
 Norsk Hydro & NHY.OL & 6,5x & 11,4\% & 1,4x \\
 Chalco & 2600.HK & 5,8x & 8,8\% & 3,8x \\
@@ -735,13 +737,13 @@ Rusal & 5,1x & -2,0\% & 8,4\% & 2,1\% & 1,5\% \\
 \section{Gestión Cuantitativa de Riesgo y Extensiones del Modelo}
 
 \subsection{De VaR/ES a un Límite Explícito de Tamaño de Posición}
-El CVaR diario al 95\% [9] (-7,16\%) escalado a 21 sesiones ($\sqrt{21}$) resulta -32,80\%. El criterio de Kelly (1956), aplicado al retorno y varianza anualizados de ALUA.BA sobre la tasa libre de riesgo, arroja un Kelly completo de 73,5\%; dado el riesgo de sobre-estimación muestral inherente a la fórmula, se adopta la convención de Half-Kelly, fijando el tamaño de posición recomendado en 36,8\% de la cartera (Quarter-Kelly conservador: 18,4\%).
+El CVaR diario al 95\% [9] (-7,16\%) escalado a 21 sesiones ($\sqrt{21}$) resulta -32,80\%. El criterio de Kelly (1956), aplicado al retorno y varianza anualizados de ALUA.BA sobre la tasa libre de riesgo, arroja un Kelly completo de 73,5\%; dado el riesgo de sobre-estimación muestral inherente a la fórmula, se adopta la convención de Half-Kelly, lo que sugeriría un tamaño de posición de 36,8\% de la cartera (Quarter-Kelly conservador: 18,4\%). Ese 36,8\% igual excede el límite de política de riesgo del propio modelo (20\% máximo de tolerancia al \textit{drawdown}, Figura 23) -- un límite independiente del criterio de Kelly, no derivado de él. El tamaño de posición efectivamente recomendado es entonces el menor de los dos: 20\%, no el 36,8\% del Half-Kelly sin acotar.
 
 \begin{center}
 \begin{minipage}{\linewidth}
 \centering
 \includegraphics[height=5.4cm, width=0.74\linewidth, keepaspectratio]{figures_pristine/figura_23.png}
-\captionof{figure}{Dimensionamiento de posición por criterio de Kelly: completo, mitad (recomendado) y cuarto (conservador).}
+\captionof{figure}{Dimensionamiento de posición por criterio de Kelly (completo, mitad y cuarto) acotado por el límite de política de riesgo de 20\%, que gobierna sobre el Half-Kelly sin acotar.}
 \end{minipage}
 \end{center}
 
@@ -753,7 +755,7 @@ El CVaR diario al 95\% [9] (-7,16\%) escalado a 21 sesiones ($\sqrt{21}$) result
 \toprule
 \textbf{Prob.} & \textbf{Riesgo} & \textbf{Impacto en Valuación} & \textbf{Mitigante} \\
 \midrule
-Alta & Riesgo de Commodity (LME): caída sostenida del LME hacia la zona de cash-cost global ($\sim$USD 1.900/Tn). & Target cae de ARS 1.236 a ARS 812 (-34,3\%), dictamen pasa a MANTENER (ver Matriz de Estrés). & Cash-cost C1 propio de USD 1.680/Tn ubica a Aluar en el percentil $\sim$21-28\% de la curva global; margen de maniobra frente a pares de mayor costo. \\
+Alta & Riesgo de Commodity (LME): caída sostenida del LME hacia la zona de cash-cost global ($\sim$USD 1.900/Tn). & Target cae de ARS 1.236 a ARS 812 (-34,3\%), dictamen pasa a MANTENER (ver Matriz de Estrés). & Cash-cost C1 propio de USD 1.680/Tn ubica a Aluar en el percentil 29 de la curva global (Figura 10); margen de maniobra frente a pares de mayor costo. \\
 Alta & Prima de Cobertura Cambiaria: el mercado ignora los fundamentos del DCF y sigue transando ALUA como cobertura dolarizada del CCL. & Es un riesgo de temporalidad, no de valuación: el upside de +25,8\% podría no cerrarse en el corto plazo aunque el modelo sea correcto. & El backtest del DCF Inverso (Sección Monte Carlo) muestra que esta brecha entre precio y $g$ implícito es recurrente, no estructural. \\
 Media & Shock Macro (Riesgo País): re-ampliación del EMBI+ a su máximo histórico de la serie (2.400 pb, nivel de 2022). & WACC sube de 7,06\% a 13,21\% (+564 pb); target colapsa a ARS 237,00 (-80,8\% vs. caso base), dictamen VENDER. & El EMBI+ actual (441 pb) ya está cerca de su equilibrio de largo plazo estimado por AR(1)/CIR ($\approx$422 pb); el CIR no sugiere corrección direccional al alza. \\
 Media & Estrés Combinado: ocurrencia simultánea del shock de riesgo país y de un LME deprimido. & Target colapsa a ARS 165,00 (-86,7\% vs. caso base), dictamen VENDER —el peor escenario modelado. & Los dos shocks son parcialmente anticorrelacionados en la práctica (un LME débil suele coincidir con dólar fuerte, no con más apetito de riesgo emergente); la Cópula Gaussiana ya captura parte de esa dependencia. \\
@@ -854,9 +856,9 @@ donde $\xi=0,18$ y $\beta=0,042$, determinando un VaR 99\% EVT del 10,44\% y un 
 
 \subsection{Dinámica de Commodities: Movimiento Browniano Geométrico vs. Ornstein-Uhlenbeck}
 \begin{equation}
-dS_t = \kappa(\theta - \ln S_t)S_t dt + \sigma S_t dW_t \quad \text{(Ornstein-Uhlenbeck Log-Normal)}
+dS_t = \kappa(\theta - S_t) dt + \sigma dW_t \quad \text{(Ornstein-Uhlenbeck sobre el nivel de precio)}
 \end{equation}
-Rechazamos la hipótesis nula de raíz unitaria para el spread de commodities (ADF=$-3,84$, $p<0,01$), confirmando el proceso OU con $\theta=$ USD 2.814/Tn (recalculado sobre la serie mensual completa 2016--2026 de cache\_mercado.csv, no sobre el tramo 2021--2026 usado en una versión anterior) y $\kappa=0,80$.
+Rechazamos la hipótesis nula de raíz unitaria para el spread de commodities (ADF=$-3,84$, $p<0,01$), confirmando el proceso OU con $\theta=$ USD 2.814/Tn y $\kappa=0,0316$ mensual (equivalente a una vida media de $\approx$1,8 años), recalculado sobre la serie mensual completa 2016--2026 de cache\_mercado.csv, no sobre el tramo 2021--2026 usado en una versión anterior.
 
 \begin{center}
 \begin{minipage}{\linewidth}

@@ -165,7 +165,7 @@ def plot_figura_01(res, stat):
         "Expansión Fase II\n(460 kt/año)",
         "Inauguración Parque\nEólico PEAL (Etapa I)",
         "Adhesión RIGI y PEAL V\n(582 MW total)",
-        "Capacidad Plena 460 kt\ny 100% Autogeneración"
+        "100% Autogeneración\nEnergética (Etapa V)"
     ]
     ax.axhline(0, color=C["navy"], lw=2, zorder=1)
     ax.scatter(years, [0]*len(years), color=C["aluar"], s=140, zorder=3, edgecolors="white", linewidths=1.5)
@@ -491,14 +491,23 @@ def plot_figura_09(res, stat):
 
 def plot_figura_10(res, stat):
     """Figura 10 del informe: Matriz energética de Puerto Madryn (arriba) y curva C1 con cuartiles (abajo)."""
+    # Percentil de Aluar en la curva C1 calculado ANTES del subtitulo (no hardcodeado)
+    # para que el numero del texto nunca quede desincronizado del que dibuja el eje.
+    cc_pre = stat["cost_curve"]
+    cash_cost_pre = np.asarray(cc_pre["cash_cost"], dtype=float)
+    order_pre = np.argsort(cash_cost_pre)
+    n_pre = len(cash_cost_pre)
+    idx_aluar_pre = [i for i, nm in enumerate(order_pre) if "ALUAR" in cc_pre["names"][nm]][0]
+    aluar_percentil_pre = np.linspace(0, 100, n_pre)[idx_aluar_pre]
+
     fig = plt.figure(figsize=(11.0, 7.5))
     apply_aluar_theme()
-    
+
     fig.text(0.09, 0.96, "Matriz energética de Puerto Madryn (arriba) y curva de costos globales C1 (abajo)",
              fontsize=SZ["title"], fontweight="bold", color=C["navy"], fontfamily=TITLE_FONT)
-    fig.text(0.09, 0.91, "Integración de autogeneración eólica y posicionamiento en el 1er cuartil global de costos C1 (Percentil 21)",
+    fig.text(0.09, 0.91, f"Integración de autogeneración eólica y posicionamiento en el 1er cuartil global de costos C1 (Percentil {aluar_percentil_pre:.0f})",
              fontsize=SZ["subtitle"], style="italic", color=C["slate"])
-    
+
     ax1 = fig.add_subplot(211)
     em = stat["energy_mix"]
     labels1 = [k.replace("\n", " ").replace("\\n", " ") for k in em.keys()]
@@ -549,39 +558,42 @@ def plot_figura_10(res, stat):
 
 
 def plot_figura_11(res, stat):
-    """Figura 11 del informe: Múltiplos EV/EBITDA de Aluar vs. pares globales.
-    REDISEÑO CROSS-PLOT: Múltiplo EV/EBITDA vs Margen EBITDA (%) para evidenciar el descuento fundamental de Aluar."""
-    p_data = stat["peers"]
-    peers = p_data["names"]
-    ev_ebitda = np.array(p_data["ev_ebitda"], dtype=float)
-    # Generar márgenes sintéticos empíricos para la misma cantidad de pares
-    margins = np.array([24.2, 18.5, 15.2, 19.0, 14.8, 22.1, 24.2][:len(peers)], dtype=float)
-    if len(margins) < len(peers):
-        margins = np.resize(margins, len(peers))
+    """Figura 11 del informe: Múltiplos EV/EBITDA vs. Margen EBITDA de Aluar vs. pares globales.
+    Usa el dataset de 4 companias con las 3 metricas verificadas contra el Cuadro de
+    Comparables del informe (comparables_ev_ebitda_margen); reemplaza una version previa
+    que cruzaba EV/EBITDA de un grupo de 7 pares con margenes EBITDA fabricados
+    (hardcodeados como 'sinteticos' en el codigo, sin fuente real, y que ni siquiera
+    coincidian con el margen real de Aluar ya citado en el resto del informe)."""
+    cp = stat["comparables_ev_ebitda_margen"]
+    peers = cp["names"]
+    ev_ebitda = np.array(cp["ev_ebitda"], dtype=float)
+    margins = np.array(cp["margen_ebitda_pct"], dtype=float)
+    idx_aluar = [i for i, p in enumerate(peers) if "Aluar" in p][0]
+    otros = [i for i in range(len(peers)) if i != idx_aluar]
+    mediana_x = float(np.median(ev_ebitda[otros]))
+    mediana_y = float(np.median(margins[otros]))
 
     fig, ax = scaffold(
-        "Descuento Fundamental: Múltiplo EV/EBITDA vs. Margen EBITDA de Pares Globales",
-        f"Aluar destaca por su elevado margen EBITDA ({margins[-1]:.1f}%) frente a una valuación deprimida por riesgo país ({ev_ebitda[-1]:.1f}x)",
+        "Premio Fundamental: Múltiplo EV/EBITDA vs. Margen EBITDA de Pares Globales",
+        f"Aluar transa con premio sobre los pares ({ev_ebitda[idx_aluar]:.1f}x vs. mediana {mediana_x:.1f}x), consistente con su margen EBITDA superior ({margins[idx_aluar]:.1f}% vs. mediana {mediana_y:.1f}%)",
         "EV/EBITDA (x) / Margen (%)"
     )
-    mediana_x = float(np.median(ev_ebitda[:-1]))
-    mediana_y = float(np.median(margins[:-1]))
 
-    ax.axvline(mediana_x, color=C["slate"], linestyle="--", lw=1.2, label=f"Mediana Múltiplo ({mediana_x:.1f}x)")
-    ax.axhline(mediana_y, color=C["slate"], linestyle=":", lw=1.2, label=f"Mediana Margen ({mediana_y:.1f}%)")
+    ax.axvline(mediana_x, color=C["slate"], linestyle="--", lw=1.2, label=f"Mediana Múltiplo Pares ({mediana_x:.1f}x)")
+    ax.axhline(mediana_y, color=C["slate"], linestyle=":", lw=1.2, label=f"Mediana Margen Pares ({mediana_y:.1f}%)")
 
     for i, p in enumerate(peers):
-        is_aluar = "ALUAR" in p
+        is_aluar = i == idx_aluar
         col = C["aluar"] if is_aluar else C["navy"]
         sz = 220 if is_aluar else 120
         ax.scatter(ev_ebitda[i], margins[i], color=col, s=sz, zorder=4, edgecolor="white", lw=1.5)
-        ax.text(ev_ebitda[i] + 0.2, margins[i] + 0.3, p, fontsize=9, fontweight="bold" if is_aluar else "normal", color=col)
+        ax.text(ev_ebitda[i] + 0.15, margins[i] + 0.25, p, fontsize=9, fontweight="bold" if is_aluar else "normal", color=col)
 
     ax.set_xlabel("Múltiplo EV/EBITDA LTM (x)", fontsize=SZ["axis"])
     ax.set_ylabel("Margen EBITDA (%)", fontsize=SZ["axis"])
-    ax.set_xlim(min(ev_ebitda)*0.8, max(ev_ebitda)*1.15)
-    ax.set_ylim(min(margins)*0.8, max(margins)*1.2)
-    ax.legend(frameon=False, fontsize=SZ["legend"], loc="lower right")
+    ax.set_xlim(min(ev_ebitda)*0.8, max(ev_ebitda)*1.20)
+    ax.set_ylim(min(margins)*0.8, max(margins)*1.25)
+    ax.legend(frameon=False, fontsize=SZ["legend"], loc="upper right")
     return exportar(fig, "figura_11")
 
 
@@ -609,7 +621,7 @@ def plot_figura_12(res, stat):
         ax.text(bar.get_x() + bar.get_width()/2, h + 8, f"${h:.0f}", ha="center", fontsize=8.5, fontweight="bold", color=C["ink"])
 
     # Badges explicativos de ratios
-    ax.annotate("Pico CAPM PEAL V\nDeuda Neta/EBITDA: 3,22x", xy=(5, ebitda[5]), xytext=(3.5, max(ebitda)*0.88),
+    ax.annotate("Pico CAPM PEAL V\nDeuda Neta/EBITDA: 3,22x", xy=(5, ebitda[5]*0.82), xytext=(3.5, max(ebitda)*0.88),
                 arrowprops=dict(facecolor=C["risk"], arrowstyle="->", lw=1.2),
                 bbox=dict(boxstyle="round,pad=0.35", facecolor="white", edgecolor=C["risk"], lw=1.1),
                 fontsize=8.5, fontweight="bold", color=C["risk"])
@@ -850,7 +862,8 @@ def plot_figura_18(res, stat, muestra):
     ax.set_yticks(y)
     ax.set_yticklabels(methods)
     ax.set_xlabel("ARS / acción")
-    ax.legend(frameon=False, fontsize=SZ["legend"], loc="lower right")
+    ax.set_xlim(min(mins)*0.92, max(maxs)*1.18)
+    ax.legend(frameon=False, fontsize=SZ["legend"], loc="upper left")
     return exportar(fig, "figura_18")
 
 
@@ -1036,12 +1049,12 @@ def plot_figura_23(res, stat):
     cvar_limite = stat.get("cvar_limite_politica_pct", 20.0)
 
     fig, ax = scaffold(
-        "Dimensionamiento de posición por criterio de Kelly: completo, mitad (recomendado) y cuarto",
-        "Gestión de riesgo cuantitativo y límites de asignación de capital sobre ALUA.BA",
+        "Dimensionamiento de posición por criterio de Kelly, acotado por el límite de política de riesgo",
+        f"Half-Kelly ({kelly_medio:.1f}%) excede el límite de tolerancia al drawdown ({cvar_limite:.1f}%): el tamaño efectivo recomendado es el menor de los dos",
         "Porcentaje de Cartera (%)"
     )
-    labels = [f"Kelly Completo ({kelly_completo:.1f}%)", f"Half-Kelly Recomendado ({kelly_medio:.1f}%)",
-              f"Quarter-Kelly Conservador ({kelly_cuarto:.1f}%)", f"Límite CVaR Máximo ({cvar_limite:.1f}%)"]
+    labels = [f"Kelly Completo ({kelly_completo:.1f}%)", f"Half-Kelly ({kelly_medio:.1f}%)",
+              f"Quarter-Kelly ({kelly_cuarto:.1f}%)", f"Límite CVaR Máximo\n= Recomendado ({cvar_limite:.1f}%)"]
     vals = [kelly_completo, kelly_medio, kelly_cuarto, cvar_limite]
     colors = [C["slate"], C["navy"], C["slate"], C["risk"]]
     bars = ax.bar(labels, vals, color=colors, width=0.5)
@@ -1185,17 +1198,26 @@ def plot_figura_26(res, stat):
     t = np.arange(n_meses)
     x0 = lme[-1]
     
+    # NOTA: kappa=1-phi y sigma salen de fit_ar1()/residuos calibrados sobre la serie YA
+    # mensualizada (lme_mensual) -- son, por construccion, la tasa de reversion y el desvio
+    # POR PASO MENSUAL, no una tasa anualizada. Multiplicarlos de nuevo por dt=1/12 (bug
+    # anterior) descontaba el tiempo dos veces y volvia la reversion ~12x mas lenta que la
+    # que el propio ajuste de datos implica -- la mediana OU apenas se movia hacia theta en
+    # el horizonte de 5 anios. El paso Euler correcto para una calibracion ya-mensual es de
+    # 1 paso = 1 mes, sin reescalar kappa/sigma otra vez.
     paths_ou = np.zeros((n_paths, n_meses))
     paths_ou[:, 0] = x0
     for i in range(1, n_meses):
         dW = rng.standard_normal(n_paths)
-        paths_ou[:, i] = paths_ou[:, i-1] + kappa * (theta - paths_ou[:, i-1]) * (1/12.0) + sigma * np.sqrt(1/12.0) * dW
-        
+        paths_ou[:, i] = paths_ou[:, i-1] + kappa * (theta - paths_ou[:, i-1]) + sigma * dW
+
+    mu_mbg_m = mu_mbg  # log-retorno YA mensual (np.diff sobre log(lme) mensual)
+    sigma_mbg_m = sigma_mbg
     paths_mbg = np.zeros((n_paths, n_meses))
     paths_mbg[:, 0] = x0
     for i in range(1, n_meses):
         dW = rng.standard_normal(n_paths)
-        paths_mbg[:, i] = paths_mbg[:, i-1] * np.exp((mu_mbg - 0.5*sigma_mbg**2)*(1/12.0) + sigma_mbg * np.sqrt(1/12.0) * dW)
+        paths_mbg[:, i] = paths_mbg[:, i-1] * np.exp((mu_mbg_m - 0.5*sigma_mbg_m**2) + sigma_mbg_m * dW)
 
     p5_ou, p50_ou, p95_ou = np.percentile(paths_ou, [5, 50, 95], axis=0)
     p5_mbg, p50_mbg, p95_mbg = np.percentile(paths_mbg, [5, 50, 95], axis=0)
