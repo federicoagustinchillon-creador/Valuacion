@@ -1364,21 +1364,21 @@
   "wacc_lambda": 0.08088802960154777,
   "asimetria": -0.3940052239881985,
   "exceso_curtosis": 6.676100537294545,
+  "var_cornish_fisher_90": -0.026978229731548117,
+  "z_cornish_fisher_90": -0.8492334252519266,
   "var_cornish_fisher_95": -0.05223115616155714,
   "z_cornish_fisher_95": -1.619207941332364,
   "var_cornish_fisher_99": -0.1341985004327448,
   "z_cornish_fisher_99": -4.118433780148692,
+  "cvar_cornish_fisher_90": -0.07119742128250758,
+  "cvar_cornish_fisher_95": -0.10484897397944226,
+  "cvar_cornish_fisher_99": -0.20346181661555462,
   "kelly_completo": 0.7351988225877202,
   "kelly_medio": 0.3675994112938601,
   "ou_kappa": 0.25212608406305065,
   "ou_theta": 2.377743952011118,
   "ou_sigma": 0.49578280695384164,
-  "ou_half_life_dias": 692.8005491785002,
-  "var_cornish_fisher_90": -0.026978229731548117,
-  "z_cornish_fisher_90": -0.8492334252519266,
-  "cvar_cornish_fisher_90": -0.07119742128250758,
-  "cvar_cornish_fisher_95": -0.10484897397944226,
-  "cvar_cornish_fisher_99": -0.20346181661555462
+  "ou_half_life_dias": 692.8005491785002
  },
  "robustez": {
   "base": {
@@ -1415,22 +1415,22 @@
   }
  },
  "m9_monte_carlo": {
-  "n_sim": 20000,
+  "n_sim": 19995,
   "semilla": 42,
   "sd_wacc": 0.0045185587203847395,
   "sd_g": 0.005,
   "cv_margen_ebitda_anual": 0.333332007957717,
   "n_hist_margen": 6,
   "sd_shock_margen": 0.13608222240562476,
-  "media": 1257.8990285193347,
-  "mediana": 1233.6564342122324,
-  "desvio": 283.21949036024563,
-  "p5": 838.8974809818773,
-  "p25": 1062.427782657368,
-  "p50": 1233.6564342122324,
-  "p75": 1427.6568404649731,
-  "p95": 1755.8759277340012,
-  "prob_suba": 0.84325,
+  "media": 1260.4890129761948,
+  "mediana": 1237.3530350561355,
+  "desvio": 293.0730736734913,
+  "p5": 843.7729909349349,
+  "p25": 1068.0471902554782,
+  "p50": 1237.3530350561355,
+  "p75": 1420.521725289382,
+  "p95": 1737.213366013121,
+  "prob_suba": 0.8521130282570643,
   "precio_mercado_ars": 982.5
  },
  "m12_multiplos": {
@@ -1491,23 +1491,15 @@
   "p_e_fy25": 189.32465524470658,
   "ev_ebitda_implicito_dcf": 16.168854230488776,
   "peers_nombres": [
-   "Rusal",
-   "Constellium",
+   "Alcoa Corp.",
    "Norsk Hydro",
-   "Kaiser Alum.",
-   "Alcoa",
-   "Chalco",
-   "ALUAR\n(implied)"
+   "Chalco"
   ],
   "peers_ev_ebitda": [
-   5.1,
-   5.4,
-   6.4,
-   7.2,
-   8.5,
-   9.0,
-   15.5
+   8.54,
+   7.72,
+   5.2
   ],
-  "peers_fuente": "Bloomberg/Reuters consenso Q1-2026 -- EV/EBITDA LTM peers aluminio"
+  "peers_fuente": "Aluar: recalculado en vivo desde resultados_original.json:m12_multiplos.ev_ebitda_fy25, sin cambios. Alcoa, Norsk Hydro y Chalco: EBITDA = Resultado Operativo (GAAP, reportado, SIN excluir partidas no recurrentes) + Depreciacion y Amortizacion, la misma definicion que usa este informe para Aluar -- se descarto deliberadamente el EBITDA ajustado que cada compania reporta en sus comunicados de prensa (que excluye partidas especiales de forma no estandarizada entre companias) por no ser comparable entre si ni contra la metodologia de Aluar. Alcoa: Resultado Operativo USD 1.060 MM + D&A USD 623 MM, FY2025, 10-K oficial (SEC). Norsk Hydro: EBIT NOK 14.401 MM + D&A NOK 10.328 MM, Year 2025, informe oficial del cuarto trimestre. Chalco: Resultado Operativo RMB 25.805,9 MM (informe anual oficial, PRC GAAP) + D&A estimado en RMB 11.640 MM (unica cifra de esta tabla sin fuente primaria confirmada -- de un agregador de terceros, no del informe anual oficial de 411 paginas, donde no se pudo ubicar la linea de D&A consolidada en el tiempo disponible); Enterprise Value convertido de RMB a HKD a un tipo de cambio cruzado de 1,09. Deuda neta y capitalizacion de mercado de Alcoa y Norsk Hydro de sus propios comunicados/estadisticas de mercado al 12-ago-2026; de Chalco, de stockanalysis.com/quote/hkg/2600 (HKD). No incluye a Ternium Argentina (TXAR.BA): es una siderurgica, no un productor de aluminio, documentada por separado en el informe como referencia de mercado domestico."
  }
 }

@@ -1021,10 +1021,14 @@ def plot_figura_21(res, stat):
 
 
 def plot_figura_22(res, stat):
-    """Figura 22 del informe: Convergencia del múltiplo EV/EBITDA de Aluar hacia la mediana de pares globales."""
+    """Figura 22 del informe: Convergencia del múltiplo EV/EBITDA de Aluar hacia la mediana de pares globales.
+    Usa comparables_ev_ebitda_margen (Alcoa/Norsk Hydro/Chalco, EBITDA GAAP homogéneo, ver Cuadro de
+    Comparables del informe); reemplaza el dataset previo 'peers' de 7 nombres con margenes fabricados,
+    ya retirado de graficos.py (ver plot_figura_11)."""
     m12 = res["m12_multiplos"]
     ev_ebitda_fy25 = m12["ev_ebitda_fy25"]
-    mediana_pares = float(np.median(stat["peers"]["ev_ebitda"][:-1]))
+    cp = stat["comparables_ev_ebitda_margen"]
+    mediana_pares = float(np.median(np.array(cp["ev_ebitda"], dtype=float)[1:]))
 
     horizons = ["LTM (Mercado)", "Paso 1", "Paso 2", "Paso 3", "Mediana Sectorial"]
     multiples = list(np.linspace(ev_ebitda_fy25, mediana_pares, 5))

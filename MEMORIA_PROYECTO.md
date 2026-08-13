@@ -244,6 +244,24 @@ El usuario, sin ver el código ni los datos crudos, cuestionó la Ronda 7 con do
 
 **No se tocó el modelo base** en esta corrección tampoco: WACC, DCF, Precio Objetivo y dictamen quedan iguales.
 
+## 4novies. Segunda tabla de comparables duplicada y fabricada, encontrada al cerrar la Ronda 7 (13-ago-2026)
+
+Al verificar que la corrección de la Ronda 7 (§4octies) se hubiera propagado a todo el documento, apareció una **segunda sección de comparables** más adelante en el PDF (`\section{Valuación Relativa y Comparación de Pares Globales}`, antes de la figura 22) que el trabajo de la Ronda 7 no había tocado: una tabla con 7 pares (Alcoa, Chalco, Kaiser Aluminum, Norsk Hydro, Constellium, Rusal) con columnas de Crecimiento de Ingresos LTM, ROIC LTM y FCF Yield 2026E sin ninguna cita de fuente por compañía -- ni siquiera el pie de tabla genérico apuntaba a un comunicado puntual. Cuatro de esas siete columnas (Kaiser, Constellium, Rusal y las tres columnas adicionales para los siete) no tenían ningún dato trazable en `static_inputs.json`, `datos_auditados.py` ni ningún otro archivo del repositorio: eran cifras sin respaldo.
+
+**Origen del problema:** `static_inputs.json` conservaba un bloque `"peers"` (7 nombres, EV/EBITDA sin margen) con la nota de fuente genérica `"Bloomberg/Reuters consenso Q1-2026"` -- exactamente el patrón de cita no trazable que el resto de este documento identificó y corrigió en rondas anteriores. Ese bloque alimentaba dos cosas además de la tabla del PDF: `graficos.py::plot_figura_22` (gráfico de convergencia del múltiplo) y `engine_valuacion.py::m12_multiplos` (los campos `peers_nombres`/`peers_ev_ebitda`/`peers_fuente` exportados a `resultados_original.json`). La figura 11 ya se había migrado en una ronda previa al dataset correcto (`comparables_ev_ebitda_margen`, 4 nombres con fuente primaria); la figura 22 y el bloque `m12_multiplos` habían quedado atrás, sin que nadie los hubiera notado porque el texto de la tabla vieja parecía plausible a primera vista.
+
+**Corrección aplicada:**
+- Se eliminó la sección duplicada completa (tabla de 7 pares + párrafo "Sobre la prima de valuación relativa") y se reemplazó por dos frases que remiten al Cuadro de Comparables ya corregido de la sección anterior, sin repetir cifras.
+- `graficos.py::plot_figura_22` ahora lee `stat["comparables_ev_ebitda_margen"]` (Alcoa/Norsk Hydro/Chalco, EBITDA GAAP homogéneo) en vez del bloque `"peers"` viejo.
+- `engine_valuacion.py::m12_multiplos` ahora exporta `peers_nombres`/`peers_ev_ebitda`/`peers_fuente` desde `comparables_ev_ebitda_margen`, la misma fuente primaria que ya usa el Cuadro de Comparables del PDF.
+- Se borró el bloque `"peers"` de `static_inputs.json` (fabricado, sin fuente primaria, y ya sin ningún lector en el código tras el punto anterior) para que no pueda reusarse por error en el futuro.
+- Se regeneró `resultados_original.json` completo (`python engine_valuacion.py`) y solo la figura 22 (no las 31), verificando que el Precio Objetivo no cambió (ARS 1.235,51, idéntico) -- el modelo base no se tocó, solo el dato de comparables.
+- Recompilación completa del PDF (3 pasadas xelatex, 0 errores), 30 páginas, sin cambio de longitud.
+
+**Lección:** un dataset fabricado puede sobrevivir a una corrección real si alimenta a más de un consumidor (una tabla de texto, una figura y un export JSON) y solo se corrige uno de los tres. La verificación de "¿quedan más lectores del dato viejo?" (`grep` de la clave en todo el árbol de `.py`) antes de dar por cerrada una corrección debería ser un paso estándar, no una ocurrencia tardía.
+
+**No se tocó el modelo base.**
+
 ## 5. Metodología de auditoría usada en esta sesión
 
 No hubo una sola técnica — se combinaron varias según el tipo de bug buscado:

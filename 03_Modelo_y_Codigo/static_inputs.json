@@ -356,37 +356,6 @@
     }
   },
   "market_share_pies_fuente": "IAI (International Aluminium Institute) 2024, Memoria Anual ALUAR",
-  "peers": {
-    "names": [
-      "Rusal",
-      "Constellium",
-      "Norsk Hydro",
-      "Kaiser Alum.",
-      "Alcoa",
-      "Chalco",
-      "ALUAR\n(implícito)"
-    ],
-    "ev_ebitda": [
-      5.1,
-      5.4,
-      6.4,
-      7.2,
-      8.5,
-      9.0,
-      15.5
-    ],
-    "highlight": [
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      true
-    ],
-    "_fuente": "Bloomberg/Reuters consenso Q1-2026 -- EV/EBITDA LTM peers aluminio",
-    "_fecha_generacion_script": "2026-07-23"
-  },
   "peer_capex_da": {
     "observaciones": [
       {

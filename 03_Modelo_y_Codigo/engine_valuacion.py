@@ -707,9 +707,9 @@ def m12_multiplos(est, dcf, mkt, panel=None) -> dict:
         "ev_ventas_fy25": ev_mercado / f25["ventas"],
         "p_e_fy25": mkt_cap / f25["resultado_neto"],
         "ev_ebitda_implicito_dcf": dcf["enterprise_value"] / f25["ebitda"],
-        "peers_nombres": st["peers"]["names"],
-        "peers_ev_ebitda": st["peers"]["ev_ebitda"],
-        "peers_fuente": st["peers"]["_fuente"],
+        "peers_nombres": st["comparables_ev_ebitda_margen"]["names"][1:],
+        "peers_ev_ebitda": st["comparables_ev_ebitda_margen"]["ev_ebitda"][1:],
+        "peers_fuente": st["comparables_ev_ebitda_margen"]["_fuente"],
     }
 
 
