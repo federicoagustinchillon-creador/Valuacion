@@ -366,7 +366,7 @@ def build_word_report():
     pr.alignment = WD_ALIGN_PARAGRAPH.CENTER
     pr.paragraph_format.line_spacing = 1.15
     
-    rr_stat = pr.add_run("Dictamen del Modelo Fundamental\n")
+    rr_stat = pr.add_run("Dictamen del Modelo Teórico\n")
     rr_stat.font.name = "Georgia"
     rr_stat.font.size = Pt(8.5)
     rr_stat.font.color.rgb = COLOR_GRAY
