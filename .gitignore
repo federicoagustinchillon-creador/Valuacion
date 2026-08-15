@@ -1,34 +1,25 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
-.ipynb_checkpoints/
-
-# Temporary / OS / Editor files
-.DS_Store
-Thumbs.db
-desktop.ini
-.vscode/
-.idea/
-~$*.xlsx
-~$*.docx
-~$*.pptx
-
-# Scratch / logs / local private archives
-scratch/
-*.log
-_archivo_local_privado/
-_local*/
-backup*/
-01_Reporte_PDF/backup*/
-
-# Subproductos de compilación LaTeX (se versiona el .tex fuente y el .pdf final)
+# Archivos de compilación y temporales
 *.aux
+*.log
 *.out
 *.toc
-*.lof
-*.lot
-*.fls
-*.fdb_latexmk
-*.synctex.gz
-01_Reporte_PDF/tex/*.pdf
+*.synctex*
+*.bak*
+*.tmp
+__pycache__/
+*.pyc
+
+# Scripts de construcción internos no destinados a entrega en GitHub
+01_Reporte_PDF/generate_master_word_report.py
+01_Reporte_PDF/build_pdf.py
+01_Reporte_PDF/tex/
+05_Guia_de_Estudio/build_master_encyclopedia.py
+05_Guia_de_Estudio/generate_theory_charts.py
+05_Guia_de_Estudio/modules/
+05_Guia_de_Estudio/theory_charts/
+05_Guia_de_Estudio/figures_pristine/
+
+# Carpetas de desarrollo y scratch
+scratch/
+.system_generated/
+_archivo_local_privado/
