@@ -70,24 +70,6 @@ valuacion-aluar-uncuyo/
    * Modelo Peaks Over Threshold con Distribución Pareto Generalizada para estimación robusta de VaR 99% (-8,20%) y CVaR 99% (-10,35%).
    * Asignación prudencial de capital bajo el Criterio de *Half-Kelly* ($f = 20,0\%$).
 
----
-
-### Instrucciones de Reproducción
-
-* **Ejecutar el Motor Cuantitativo Completo:**
-  ```bash
-  python 03_Modelo_y_Codigo/engine_valuacion.py
-  ```
-* **Compilar la Guía de Estudio (53 Páginas):**
-  ```bash
-  cd 05_Guia_de_Estudio
-  xelatex -interaction=nonstopmode GUIA_DE_ESTUDIO_ALUAR.tex
-  ```
-* **Regenerar el Informe Word con Paridad 1:1:**
-  ```bash
-  cd 01_Reporte_PDF
-  python generate_master_word_report.py
-  ```
 
 ---
 *Mendoza, República Argentina — Agosto de 2026*
