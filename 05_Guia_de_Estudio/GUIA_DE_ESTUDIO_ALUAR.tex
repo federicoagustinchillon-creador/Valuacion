@@ -339,7 +339,7 @@ El control estrategico es ejercido por el Grupo Madanes (45,98\% del capital), m
 \textbf{Alineacion de Intereses y Vision de Largo Plazo:}
 \begin{itemize}
     \item La familia Madanes ha liderado Aluar desde su fundacion en 1974, reinvirtiendo sistematicamente los flujos operativos en expansiones de capacidad (de 140k a 460k t/ano) y autogeneracion renovable.
-    \item Al mantener casi el 46\% de su patrimonio familiar invertido en el capital de la firma, los incentivos de los accionistas de control estan perfectamente alineados con la creacion de valor y la solvencia financiera de largo plazo, reduciendo drásticamente los costos de agencia tipicos de corporaciones con gerencias no accionistas.
+    \item Al mantener casi el 46\% de su patrimonio familiar invertido en el capital de la firma, los incentivos de los accionistas de control convergen directamente hacia la creacion de valor y la solvencia financiera de largo plazo, reduciendo drasticamente los costos de agencia tipicos de corporaciones con gerencias no accionistas.
     \item La presencia de ANSES (FGS) como accionista minoritario relevante asegura auditoria institucional y participacion en asambleas sin comprometer el control operativo.
 \end{itemize}
 \end{conceptbox}
@@ -442,8 +442,8 @@ ROE = \underbrace{\frac{\text{Neto}}{EBT}}_{\text{Tax Burden (TB)}} \times \unde
 \begin{conceptbox}{Por Que el ROE Colapso a 0,80\% en FY2025: La Trampa del Ajuste por Inflacion Impositivo}
 \textbf{Descalce Fiscal de la Ley 27.468 y la NIC 29:}
 \begin{itemize}
-    \item En FY2025, el resultado operativo ($EBIT = \text{USD } 147,8\text{ MM}$) y el margen operativo ($OM = 14,18\%$) se mantuvieron solidos y alineados al promedio historico.
-    \item Sin embargo, el factor \textbf{Tax Burden se desplomo a $TB = 0,157$}, implicando una \textbf{tasa efectiva de impuesto a las ganancias del 84,3\%} sobre la ganancia antes de impuestos ($EBT = \text{USD } 58,3\text{ MM}$).
+    \item En FY2025, el resultado operativo ($EBIT = \text{USD } 147,8\text{ MM}$) y el margen operativo ($OM = 14,18\%$) se mantuvieron solidos y en linea con el promedio historico.
+    \item En contrapartida, el factor \textbf{Tax Burden se desplomo a $TB = 0,157$}, implicando una \textbf{tasa efectiva de impuesto a las ganancias del 84,3\%} sobre la ganancia antes de impuestos ($EBT = \text{USD } 58,3\text{ MM}$).
     \item \textbf{Causa Raiz:} Bajo la Ley 27.468 del impuesto a las ganancias argentino, el ajuste por inflacion impositivo que arroja perdida debe diferirse obligatoriamente en \textbf{6 cuotas anuales nominales iguales (1/6 por ejercicio)}, sin actualizacion monetaria por inflacion futura.
     \item Al registrarse inflaciones de tres digitos, el valor presente de esas 5 cuotas diferidas se licua casi por completo, generando un impuesto corriente a pagar exorbitante sobre ganancias nominales infladas en pesos, a pesar de que la utilidad real en dolares es moderada.
     \item \textbf{Implicancia para la Valuacion:} Este castigo impositivo es un fenomeno transitorio del shock inflacionario. Por ello, el modelo de valuacion DCF normaliza la tasa impositiva estructural a la alicuota corporativa estatutaria del \textbf{35,0\%}, evitando extrapolar un ROE distorsionado hacia la perpetuidad.
@@ -479,7 +479,7 @@ CCC = DIO\,(120) + DSO\,(45) - DPO\,(101) = \textbf{64 dias}
 \textbf{La Racionalidad del Inventario de Seguridad con Costo de Faltante Infinito:}
 \begin{itemize}
     \item En la industria manufacturera estandar, 120 dias de stock podria considerarse un exceso de capital inmovilizado.
-    \item Sin embargo, para Aluar, el costo de un quiebre de stock de alumina o coque de petroleo es virtualmente \textbf{infinito}: si la planta se queda sin materia prima por mas de 4 horas, las cubas electroliticas se congelan a $960\,^\circ\text{C}$, provocando la destruccion fisica de la celda.
+    \item Para Aluar, en cambio, el costo de un quiebre de stock de alumina o coque de petroleo es virtualmente \textbf{infinito}: si la planta se queda sin materia prima por mas de 4 horas, las cubas electroliticas se congelan a $960\,^\circ\text{C}$, provocando la destruccion fisica de la celda.
     \item Dado que la alumina proviene de Australia o Brasil en buques de ultramar sujetos a contingencias climaticas o portuarias, mantener 120 dias de stock en silos en Puerto Madryn es la politica de gestion de inventarios estrictamente optima bajo la teoria de colas y riesgo operacional.
     \item Este inventario se financia eficientemente con \textbf{101 dias de credito de proveedores (DPO = 101)}, reduciendo el ciclo neto de caja a solo 64 dias.
 \end{itemize}
@@ -1176,7 +1176,7 @@ z_{\text{CF}}(\alpha) = z_\alpha + \frac{S}{6}(z_\alpha^2 - 1) + \frac{K}{24}(z_
 \textbf{La Perdida de Monotonia Cuantilica:}
 \begin{itemize}
     \item La expansion de Cornish-Fisher es un polinomio de tercer grado disenado para corregir cuantiles normales por asimetria $S$ y curtosis $K$.
-    \item Sin embargo, Stefan Jaschke (2001, RiskLab ETH Zurich) demostro que cuando el exceso de curtosis supera $K > 6$, la derivada $\frac{\partial z_{\text{CF}}}{\partial z_\alpha}$ se vuelve estrictamente negativa en las colas ($z_\alpha < -2,33$).
+    \item Al respecto, Stefan Jaschke (2001, RiskLab ETH Zurich) demostro que cuando el exceso de curtosis supera $K > 6$, la derivada $\frac{\partial z_{\text{CF}}}{\partial z_\alpha}$ se vuelve estrictamente negativa en las colas ($z_\alpha < -2,33$).
     \item Esto provoca una aberracion matematica inadmisible: el polinomio se pliega sobre si mismo y asigna \textbf{menores perdidas a niveles de confianza mas exigentes} (por ejemplo, el VaR 99,9\% resulta menor que el VaR 99\%).
     \item Dado que la serie de ALUA.BA presenta una curtosis empirica de \textbf{8,41}, Cornish-Fisher queda formalmente invalidado, haciendo obligatorio el uso de la Teoria de Valores Extremos (EVT-GPD).
 \end{itemize}
@@ -1212,7 +1212,7 @@ DD = \frac{\ln(V_0 / D) + \left( \mu_V - \frac{1}{2}\sigma_V^2 \right) T}{\sigma
 \textbf{La Racionalidad de Acotar el Criterio de Kelly Puro:}
 \begin{itemize}
     \item La formula de Kelly puro ($f^* = \frac{\mu - Rf}{\sigma^2} = \frac{0,258 - 0,047}{0,444^2} = \mathbf{107,0\%}$) maximiza asintoticamente la tasa de crecimiento logaritmico de la riqueza.
-    \item Sin embargo, asume que los parametros de retorno y volatilidad se conocen con certeza matematica absoluta. En presencia de error de estimacion, Full-Kelly expone al inversor a una probabilidad del \textbf{33\% de sufrir un drawdown del 50\%} de la cartera.
+    \item Esta formulacion asume que los parametros de retorno y volatilidad se conocen con certeza matematica absoluta. En presencia de error de estimacion, Full-Kelly expone al inversor a una probabilidad del \textbf{33\% de sufrir un drawdown del 50\%} de la cartera.
     \item El enfoque \textbf{Half-Kelly ($f^* / 2 = 53,5\%$)} reduce la varianza de la riqueza acumulada en un $50\%$ a cambio de sacrificar solo el $25\%$ del crecimiento esperado.
     \item Finalmente, aplicando la politica institucional de control de riesgo de cartera (limite maximo por activo singular), la posicion se acota al \textbf{tope prudencial del 20,0\%}, blindando la cartera contra eventos de cola.
 \end{itemize}
@@ -1308,7 +1308,7 @@ Aluar S.A.I.C. (Spot FY2025) & Argentina & 13,4x & 22,4x & 1,78x & 8,4\% & 460 \
 \textbf{La Relacion Fundamental entre Margen Operativo y Multiplos:}
 \begin{itemize}
     \item Un analista desprevenido podria concluir que Aluar cotiza con sobreprecio al exhibir un EV/EBITDA normalizado de \textbf{10,7x} frente a la mediana global de \textbf{7,7x}.
-    \item Sin embargo, la teoria de valuacion relativa demuestra que las empresas con margenes operativos superiores y estructuras de costos en el primer cuartil mundial convierten una mayor proporcion de sus ingresos en flujo de caja libre neto ($FCFF$).
+    \item La teoria de valuacion relativa demuestra que las empresas con margenes operativos superiores y estructuras de costos en el primer cuartil mundial convierten una mayor proporcion de sus ingresos en flujo de caja libre neto ($FCFF$).
     \item Mientras la mediana de pares globales opera con un margen EBITDA del \textbf{15,3\%}, Aluar alcanza un margen normalizado del \textbf{24,6\%} gracias a su autogeneracion hidroelectrica/eolica y Cash Cost C1 de USD 1.680/t.
     \item Al normalizarse la macroeconomia argentina, la expansion del EBITDA operativo hacia USD 302,9 MM en 2026E comprime el multiplo efectivo a niveles altamente competitivos.
 \end{itemize}
@@ -1379,7 +1379,7 @@ El modelo de Black-Litterman combina el equilibrio de mercado del CAPM (*prior*)
 \subsection{Demostracion Formal de la Descomposicion de Riesgo de Euler}
 
 \begin{teorema}[Teorema de Euler para Funciones Homogeneas y Presupuesto de Riesgo]
-La desviacion estandar de una cartera $\sigma_p(\mathbf{w}) = \sqrt{\mathbf{w}^T \mathbf{\Sigma} \mathbf{w}}$ es una funcion homogenea de grado 1 en las ponderaciones $\mathbf{w}$. Por ende:
+La desviacion estandar de una cartera $\sigma_p(\mathbf{w}) = \sqrt{\mathbf{w}^T \mathbf{\Sigma} \mathbf{w}}$ es una funcion homogenea de grado 1 en las ponderaciones $\mathbf{w}$. En consecuencia:
 \begin{equation}
 \sigma_p(\mathbf{w}) = \sum_{i=1}^n w_i \frac{\partial \sigma_p}{\partial w_i} = \sum_{i=1}^n w_i MCR_i
 \end{equation}
@@ -1390,7 +1390,7 @@ donde el Riesgo Marginal es $MCR_i = \frac{(\mathbf{\Sigma} \mathbf{w})_i}{\sigm
 \textbf{Asignacion Exacta del Riesgo de Portafolio:}
 \begin{itemize}
     \item En la gestion tradicional, los inversores miden la exposicion segun el porcentaje del capital invertido ($w_i$).
-    \item Sin embargo, un activo volatil como Aluar que represente el $20\%$ del capital puede ser responsable del \textbf{35\% al 40\% de la volatilidad total} de la cartera.
+    \item En la practica, un activo volatil como Aluar que represente el $20\%$ del capital puede ser responsable del \textbf{35\% al 40\% de la volatilidad total} de la cartera.
     \item La identidad de Euler permite al comite de inversiones descomponer matematicamente el 100\% del riesgo sin residuos ni dobles contabilizaciones, asignando limites de presupuesto de riesgo cuantitativo (*risk budgeting*).
 \end{itemize}
 \end{conceptbox}

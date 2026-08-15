@@ -78,7 +78,7 @@ z_{\text{CF}}(\alpha) = z_\alpha + \frac{S}{6}(z_\alpha^2 - 1) + \frac{K}{24}(z_
 \textbf{La Perdida de Monotonia Cuantilica:}
 \begin{itemize}
     \item La expansion de Cornish-Fisher es un polinomio de tercer grado disenado para corregir cuantiles normales por asimetria $S$ y curtosis $K$.
-    \item Sin embargo, Stefan Jaschke (2001, RiskLab ETH Zurich) demostro que cuando el exceso de curtosis supera $K > 6$, la derivada $\frac{\partial z_{\text{CF}}}{\partial z_\alpha}$ se vuelve estrictamente negativa en las colas ($z_\alpha < -2,33$).
+    \item Al respecto, Stefan Jaschke (2001, RiskLab ETH Zurich) demostro que cuando el exceso de curtosis supera $K > 6$, la derivada $\frac{\partial z_{\text{CF}}}{\partial z_\alpha}$ se vuelve estrictamente negativa en las colas ($z_\alpha < -2,33$).
     \item Esto provoca una aberracion matematica inadmisible: el polinomio se pliega sobre si mismo y asigna \textbf{menores perdidas a niveles de confianza mas exigentes} (por ejemplo, el VaR 99,9\% resulta menor que el VaR 99\%).
     \item Dado que la serie de ALUA.BA presenta una curtosis empirica de \textbf{8,41}, Cornish-Fisher queda formalmente invalidado, haciendo obligatorio el uso de la Teoria de Valores Extremos (EVT-GPD).
 \end{itemize}
@@ -114,7 +114,7 @@ DD = \frac{\ln(V_0 / D) + \left( \mu_V - \frac{1}{2}\sigma_V^2 \right) T}{\sigma
 \textbf{La Racionalidad de Acotar el Criterio de Kelly Puro:}
 \begin{itemize}
     \item La formula de Kelly puro ($f^* = \frac{\mu - Rf}{\sigma^2} = \frac{0,258 - 0,047}{0,444^2} = \mathbf{107,0\%}$) maximiza asintoticamente la tasa de crecimiento logaritmico de la riqueza.
-    \item Sin embargo, asume que los parametros de retorno y volatilidad se conocen con certeza matematica absoluta. En presencia de error de estimacion, Full-Kelly expone al inversor a una probabilidad del \textbf{33\% de sufrir un drawdown del 50\%} de la cartera.
+    \item Esta formulacion asume que los parametros de retorno y volatilidad se conocen con certeza matematica absoluta. En presencia de error de estimacion, Full-Kelly expone al inversor a una probabilidad del \textbf{33\% de sufrir un drawdown del 50\%} de la cartera.
     \item El enfoque \textbf{Half-Kelly ($f^* / 2 = 53,5\%$)} reduce la varianza de la riqueza acumulada en un $50\%$ a cambio de sacrificar solo el $25\%$ del crecimiento esperado.
     \item Finalmente, aplicando la politica institucional de control de riesgo de cartera (limite maximo por activo singular), la posicion se acota al \textbf{tope prudencial del 20,0\%}, blindando la cartera contra eventos de cola.
 \end{itemize}

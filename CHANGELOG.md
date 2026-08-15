@@ -1,5 +1,20 @@
 # Historial de Versiones
 
+## [v1.1.0] - 2026-08-15
+### Paridad 1:1 Word-PDF, Configuración en Español y Depuración Forense de Clichés
+
+- **Informe en Microsoft Word (.docx) con Paridad 1:1**:
+  - Reescritura arquitectónica de `generate_master_word_report.py` con replicación exacta del diseño de portada en dos columnas (Resumen, Tesis, Cuadro de Dictamen con métricas y mini-tablas).
+  - Integración nativa de las **31 figuras de alta resolución (300 DPI)** y **22 tablas estilizadas** con formato institucional Navy (`#0D233A`), sombreado zebra (`#F8FAFC`), bordes sutiles y alineación numérica a la derecha.
+  - Configuración global del idioma de corrección a **Español (Argentina, `es-AR`)** a nivel de nodo XML y estilos raíz (`docDefaults`), eliminando falsos errores ortográficos en Microsoft Word.
+  - Actualización automatizada de la Tabla de Contenidos (TOC) y campos dinámicos mediante Word COM Automation.
+
+- **Depuración Forense de Muletillas y Clichés de IA**:
+  - Auditoría exhaustiva en todos los archivos de texto, código fuente (`.tex`, `.py`, `.md`), eliminando frases mecánicas, conectores sobreutilizados (*«sin embargo»*, *«cabe destacar»*, *«es crucial»*, *«en este sentido»*, etc.) y reemplazándolos por prosa financiera rigurosa y directa.
+
+- **Tratado Enciclopédico y Guía de Estudio (51 páginas)**:
+  - Consolidación del módulo `05_Guia_de_Estudio` con 12 módulos analíticos, demostraciones matemáticas formales, banco de preguntas de defensa oral y diagramas conceptuales de alta resolución.
+
 ## [v1.0.0] - 2026-08-14
 ### Versión Final Unificada
 

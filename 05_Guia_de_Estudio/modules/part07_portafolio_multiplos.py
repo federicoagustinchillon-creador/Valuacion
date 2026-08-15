@@ -33,7 +33,7 @@ Aluar S.A.I.C. (Spot FY2025) & Argentina & 13,4x & 22,4x & 1,78x & 8,4\% & 460 \
 \textbf{La Relacion Fundamental entre Margen Operativo y Multiplos:}
 \begin{itemize}
     \item Un analista desprevenido podria concluir que Aluar cotiza con sobreprecio al exhibir un EV/EBITDA normalizado de \textbf{10,7x} frente a la mediana global de \textbf{7,7x}.
-    \item Sin embargo, la teoria de valuacion relativa demuestra que las empresas con margenes operativos superiores y estructuras de costos en el primer cuartil mundial convierten una mayor proporcion de sus ingresos en flujo de caja libre neto ($FCFF$).
+    \item La teoria de valuacion relativa demuestra que las empresas con margenes operativos superiores y estructuras de costos en el primer cuartil mundial convierten una mayor proporcion de sus ingresos en flujo de caja libre neto ($FCFF$).
     \item Mientras la mediana de pares globales opera con un margen EBITDA del \textbf{15,3\%}, Aluar alcanza un margen normalizado del \textbf{24,6\%} gracias a su autogeneracion hidroelectrica/eolica y Cash Cost C1 de USD 1.680/t.
     \item Al normalizarse la macroeconomia argentina, la expansion del EBITDA operativo hacia USD 302,9 MM en 2026E comprime el multiplo efectivo a niveles altamente competitivos.
 \end{itemize}
@@ -104,7 +104,7 @@ El modelo de Black-Litterman combina el equilibrio de mercado del CAPM (*prior*)
 \subsection{Demostracion Formal de la Descomposicion de Riesgo de Euler}
 
 \begin{teorema}[Teorema de Euler para Funciones Homogeneas y Presupuesto de Riesgo]
-La desviacion estandar de una cartera $\sigma_p(\mathbf{w}) = \sqrt{\mathbf{w}^T \mathbf{\Sigma} \mathbf{w}}$ es una funcion homogenea de grado 1 en las ponderaciones $\mathbf{w}$. Por ende:
+La desviacion estandar de una cartera $\sigma_p(\mathbf{w}) = \sqrt{\mathbf{w}^T \mathbf{\Sigma} \mathbf{w}}$ es una funcion homogenea de grado 1 en las ponderaciones $\mathbf{w}$. En consecuencia:
 \begin{equation}
 \sigma_p(\mathbf{w}) = \sum_{i=1}^n w_i \frac{\partial \sigma_p}{\partial w_i} = \sum_{i=1}^n w_i MCR_i
 \end{equation}
@@ -115,7 +115,7 @@ donde el Riesgo Marginal es $MCR_i = \frac{(\mathbf{\Sigma} \mathbf{w})_i}{\sigm
 \textbf{Asignacion Exacta del Riesgo de Portafolio:}
 \begin{itemize}
     \item En la gestion tradicional, los inversores miden la exposicion segun el porcentaje del capital invertido ($w_i$).
-    \item Sin embargo, un activo volatil como Aluar que represente el $20\%$ del capital puede ser responsable del \textbf{35\% al 40\% de la volatilidad total} de la cartera.
+    \item En la practica, un activo volatil como Aluar que represente el $20\%$ del capital puede ser responsable del \textbf{35\% al 40\% de la volatilidad total} de la cartera.
     \item La identidad de Euler permite al comite de inversiones descomponer matematicamente el 100\% del riesgo sin residuos ni dobles contabilizaciones, asignando limites de presupuesto de riesgo cuantitativo (*risk budgeting*).
 \end{itemize}
 \end{conceptbox}

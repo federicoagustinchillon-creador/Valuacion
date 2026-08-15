@@ -57,8 +57,8 @@ ROE = \underbrace{\frac{\text{Neto}}{EBT}}_{\text{Tax Burden (TB)}} \times \unde
 \begin{conceptbox}{Por Que el ROE Colapso a 0,80\% en FY2025: La Trampa del Ajuste por Inflacion Impositivo}
 \textbf{Descalce Fiscal de la Ley 27.468 y la NIC 29:}
 \begin{itemize}
-    \item En FY2025, el resultado operativo ($EBIT = \text{USD } 147,8\text{ MM}$) y el margen operativo ($OM = 14,18\%$) se mantuvieron solidos y alineados al promedio historico.
-    \item Sin embargo, el factor \textbf{Tax Burden se desplomo a $TB = 0,157$}, implicando una \textbf{tasa efectiva de impuesto a las ganancias del 84,3\%} sobre la ganancia antes de impuestos ($EBT = \text{USD } 58,3\text{ MM}$).
+    \item En FY2025, el resultado operativo ($EBIT = \text{USD } 147,8\text{ MM}$) y el margen operativo ($OM = 14,18\%$) se mantuvieron solidos y en linea con el promedio historico.
+    \item En contrapartida, el factor \textbf{Tax Burden se desplomo a $TB = 0,157$}, implicando una \textbf{tasa efectiva de impuesto a las ganancias del 84,3\%} sobre la ganancia antes de impuestos ($EBT = \text{USD } 58,3\text{ MM}$).
     \item \textbf{Causa Raiz:} Bajo la Ley 27.468 del impuesto a las ganancias argentino, el ajuste por inflacion impositivo que arroja perdida debe diferirse obligatoriamente en \textbf{6 cuotas anuales nominales iguales (1/6 por ejercicio)}, sin actualizacion monetaria por inflacion futura.
     \item Al registrarse inflaciones de tres digitos, el valor presente de esas 5 cuotas diferidas se licua casi por completo, generando un impuesto corriente a pagar exorbitante sobre ganancias nominales infladas en pesos, a pesar de que la utilidad real en dolares es moderada.
     \item \textbf{Implicancia para la Valuacion:} Este castigo impositivo es un fenomeno transitorio del shock inflacionario. Por ello, el modelo de valuacion DCF normaliza la tasa impositiva estructural a la alicuota corporativa estatutaria del \textbf{35,0\%}, evitando extrapolar un ROE distorsionado hacia la perpetuidad.
@@ -94,7 +94,7 @@ CCC = DIO\,(120) + DSO\,(45) - DPO\,(101) = \textbf{64 dias}
 \textbf{La Racionalidad del Inventario de Seguridad con Costo de Faltante Infinito:}
 \begin{itemize}
     \item En la industria manufacturera estandar, 120 dias de stock podria considerarse un exceso de capital inmovilizado.
-    \item Sin embargo, para Aluar, el costo de un quiebre de stock de alumina o coque de petroleo es virtualmente \textbf{infinito}: si la planta se queda sin materia prima por mas de 4 horas, las cubas electroliticas se congelan a $960\,^\circ\text{C}$, provocando la destruccion fisica de la celda.
+    \item Para Aluar, en cambio, el costo de un quiebre de stock de alumina o coque de petroleo es virtualmente \textbf{infinito}: si la planta se queda sin materia prima por mas de 4 horas, las cubas electroliticas se congelan a $960\,^\circ\text{C}$, provocando la destruccion fisica de la celda.
     \item Dado que la alumina proviene de Australia o Brasil en buques de ultramar sujetos a contingencias climaticas o portuarias, mantener 120 dias de stock en silos en Puerto Madryn es la politica de gestion de inventarios estrictamente optima bajo la teoria de colas y riesgo operacional.
     \item Este inventario se financia eficientemente con \textbf{101 dias de credito de proveedores (DPO = 101)}, reduciendo el ciclo neto de caja a solo 64 dias.
 \end{itemize}

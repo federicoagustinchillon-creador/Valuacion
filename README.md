@@ -39,7 +39,9 @@ valuacion-aluar-uncuyo/
 ├── requirements.txt                             # Dependencias de Python fijadas por versión
 ├── 01_Reporte_PDF/
 │   ├── Informe_Valuacion_Aluar_UNCuyo.pdf       # Informe ejecutivo final (30 páginas)
+│   ├── Informe_Valuacion_Aluar_UNCuyo.docx      # Informe en Microsoft Word 1:1 con tablas y figuras nativas
 │   ├── build_pdf.py                             # Script de compilación XeLaTeX (3 pasadas)
+│   ├── generate_master_word_report.py           # Generador maestro de Word con paridad 1:1 y soporte es-AR
 │   └── tex/
 │       └── reporte_valuacion.tex                # Código fuente LaTeX del informe
 ├── 02_Presentacion_PPTX/
@@ -95,12 +97,18 @@ python 03_Modelo_y_Codigo/engine_valuacion.py
 python 03_Modelo_y_Codigo/graficos.py
 ```
 
-### Compilación del Informe PDF
+### Compilación del Informe PDF y Generación de Word
 
-Para compilar el informe desde la fuente LaTeX (requiere XeLaTeX y tipografía Georgia):
+Para compilar el informe PDF desde la fuente LaTeX (requiere XeLaTeX y tipografía Georgia):
 
 ```bash
 python 01_Reporte_PDF/build_pdf.py
+```
+
+Para generar el informe en Microsoft Word (.docx) con paridad 1:1:
+
+```bash
+python 01_Reporte_PDF/generate_master_word_report.py
 ```
 
 ---
@@ -108,9 +116,11 @@ python 01_Reporte_PDF/build_pdf.py
 ## Entregables Principales
 
 1. **Informe PDF**: [01_Reporte_PDF/Informe_Valuacion_Aluar_UNCuyo.pdf](01_Reporte_PDF/Informe_Valuacion_Aluar_UNCuyo.pdf)
-2. **Presentación (PPTX)**: [02_Presentacion_PPTX/TrabajoFinalEyTBChillonFedericoAluar_HOMOGENEO.pptx](02_Presentacion_PPTX/TrabajoFinalEyTBChillonFedericoAluar_HOMOGENEO.pptx)
-3. **Modelo en Notebook**: [03_Modelo_y_Codigo/ValuacionAluar_M1-13_MASTER.ipynb](03_Modelo_y_Codigo/ValuacionAluar_M1-13_MASTER.ipynb)
-4. **Modelo en Excel**: [04_Modelo_Excel/Valuacion_Aluar_Modelo_Oficial.xlsx](04_Modelo_Excel/Valuacion_Aluar_Modelo_Oficial.xlsx)
+2. **Informe Word (DOCX)**: [01_Reporte_PDF/Informe_Valuacion_Aluar_UNCuyo.docx](01_Reporte_PDF/Informe_Valuacion_Aluar_UNCuyo.docx)
+3. **Presentación (PPTX)**: [02_Presentacion_PPTX/TrabajoFinalEyTBChillonFedericoAluar_HOMOGENEO.pptx](02_Presentacion_PPTX/TrabajoFinalEyTBChillonFedericoAluar_HOMOGENEO.pptx)
+4. **Modelo en Notebook**: [03_Modelo_y_Codigo/ValuacionAluar_M1-13_MASTER.ipynb](03_Modelo_y_Codigo/ValuacionAluar_M1-13_MASTER.ipynb)
+5. **Modelo en Excel**: [04_Modelo_Excel/Valuacion_Aluar_Modelo_Oficial.xlsx](04_Modelo_Excel/Valuacion_Aluar_Modelo_Oficial.xlsx)
+6. **Tratado y Guía de Estudio (PDF)**: [05_Guia_de_Estudio/GUIA_DE_ESTUDIO_ALUAR.pdf](05_Guia_de_Estudio/GUIA_DE_ESTUDIO_ALUAR.pdf)
 
 ---
 

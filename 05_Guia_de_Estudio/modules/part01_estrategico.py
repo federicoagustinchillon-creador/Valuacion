@@ -203,7 +203,7 @@ El control estrategico es ejercido por el Grupo Madanes (45,98\% del capital), m
 \textbf{Alineacion de Intereses y Vision de Largo Plazo:}
 \begin{itemize}
     \item La familia Madanes ha liderado Aluar desde su fundacion en 1974, reinvirtiendo sistematicamente los flujos operativos en expansiones de capacidad (de 140k a 460k t/ano) y autogeneracion renovable.
-    \item Al mantener casi el 46\% de su patrimonio familiar invertido en el capital de la firma, los incentivos de los accionistas de control estan perfectamente alineados con la creacion de valor y la solvencia financiera de largo plazo, reduciendo drásticamente los costos de agencia tipicos de corporaciones con gerencias no accionistas.
+    \item Al mantener casi el 46\% de su patrimonio familiar invertido en el capital de la firma, los incentivos de los accionistas de control convergen directamente hacia la creacion de valor y la solvencia financiera de largo plazo, reduciendo drasticamente los costos de agencia tipicos de corporaciones con gerencias no accionistas.
     \item La presencia de ANSES (FGS) como accionista minoritario relevante asegura auditoria institucional y participacion en asambleas sin comprometer el control operativo.
 \end{itemize}
 \end{conceptbox}

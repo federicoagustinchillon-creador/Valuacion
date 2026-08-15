@@ -21,8 +21,6 @@ _archivo_local_privado/
 _local*/
 backup*/
 01_Reporte_PDF/backup*/
-01_Reporte_PDF/generate_master_word_report.py
-generate_master_word_report.py
 
 # Subproductos de compilación LaTeX (se versiona el .tex fuente y el .pdf final)
 *.aux
