@@ -9,17 +9,21 @@
 __pycache__/
 *.pyc
 
-# Scripts de construcción internos no destinados a entrega en GitHub
+# Material de estudio personal privado (fuera de GitHub)
+05_Guia_de_Estudio/
+_archivo_local_privado/
+Guia_Estudio/
+Guia_Estudio_Personal/
+
+# Scripts de desarrollo y temporales
+scratch/
+.system_generated/
+
+# Scripts constructores internos
 01_Reporte_PDF/generate_master_word_report.py
 01_Reporte_PDF/build_pdf.py
 01_Reporte_PDF/tex/
-05_Guia_de_Estudio/build_master_encyclopedia.py
-05_Guia_de_Estudio/generate_theory_charts.py
-05_Guia_de_Estudio/modules/
-05_Guia_de_Estudio/theory_charts/
-05_Guia_de_Estudio/figures_pristine/
 
-# Carpetas de desarrollo y scratch
-scratch/
-.system_generated/
-_archivo_local_privado/
+# Archivos de sistema operativo
+.DS_Store
+Thumbs.db
