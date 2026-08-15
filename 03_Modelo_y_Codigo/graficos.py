@@ -340,7 +340,7 @@ def plot_figura_09(res, stat):
     return exportar(fig, "figura_09")
 
 def plot_figura_10(res, stat):
-    """Figura 10: Matriz energética y Curva C1 (Rediseñada 100% Anti-Colisión)."""
+    """Figura 10: Matriz energética y Curva C1 (Diseño Limpio Anti-Solapamiento)."""
     fig = plt.figure(figsize=(4.8, 2.9))
     apply_theme()
 
@@ -349,12 +349,12 @@ def plot_figura_10(res, stat):
     em_labels = ["Red (ENRE)", "Térmica (Gas)", "Eólica (PEAL)", "Hidro (Futaleufú)"]
     em_vals = [4.0, 18.0, 24.0, 54.0]
     em_cols = [C["slate"], C["aluar"], C["value"], C["navy"]]
-    bars1 = ax1.barh(em_labels, em_vals, color=em_cols, height=0.60)
+    bars1 = ax1.barh(em_labels, em_vals, color=em_cols, height=0.58)
     for bar in bars1:
         w = bar.get_width()
         ax1.text(w + 1.5, bar.get_y() + bar.get_height()/2, f"{w:.0f}%", va="center", fontsize=7.8, fontweight="bold", color=C["ink"])
     ax1.set_xlim(0, 75)
-    ax1.set_xlabel("Matriz Energética Madryn (%)", fontsize=8.5, fontweight="bold", color=C["navy"])
+    ax1.set_xlabel("Matriz Energética Madryn (%)", fontsize=8.2, fontweight="bold", color=C["navy"])
     ax1.grid(axis="x", color=C["grid"], linewidth=0.8)
 
     # Subplot 2: Curva global C1
@@ -367,19 +367,33 @@ def plot_figura_10(res, stat):
     n = len(sorted_costs)
     percentiles_pts = np.linspace(0, 100, n)
     aluar_cost = cash_cost[[i for i, nm in enumerate(names) if "ALUAR" in nm][0]]
-    aluar_percentil = 18.0 # Percentil exacto 18%
+    aluar_percentil = 18.0
 
     percentiles_smooth = np.linspace(0, 100, 200)
     costs_smooth = np.interp(percentiles_smooth, percentiles_pts, sorted_costs)
     
-    ax2.axvspan(0, 25, color="#DCFCE7", alpha=0.45, label="Q1")
-    ax2.plot(percentiles_smooth, costs_smooth, color=C["navy"], lw=2.2, label="Curva C1")
-    ax2.scatter(percentiles_pts, sorted_costs, color=C["navy"], s=22, zorder=3)
-    ax2.axhline(aluar_cost, color=C["value"], linestyle="--", lw=1.6, label=f"Aluar: ${aluar_cost:,.0f}")
-    ax2.axvline(aluar_percentil, color=C["aluar"], linestyle=":", lw=1.8, label=f"P18%")
-    ax2.set_xlabel(r"Percentil Global (%) $\cdot$ Curva C1 (USD/t)", fontsize=8.5, fontweight="bold", color=C["navy"])
-    ax2.set_ylim(min(sorted_costs)*0.9, max(sorted_costs)*1.12)
-    ax2.legend(frameon=False, fontsize=7.2, loc="upper left")
+    ax2.axvspan(0, 25, color="#DCFCE7", alpha=0.55)
+    ax2.text(12.5, 2380, "Cuartil 1 (Q1)", ha="center", va="center", fontsize=7.2, fontweight="bold", color="#15803D",
+             bbox=dict(boxstyle="round,pad=0.18", facecolor="white", edgecolor="#15803D", lw=0.7))
+    
+    ax2.plot(percentiles_smooth, costs_smooth, color=C["navy"], lw=2.2)
+    ax2.scatter(percentiles_pts, sorted_costs, color=C["navy"], s=20, zorder=3)
+    ax2.axhline(aluar_cost, color=C["value"], linestyle="--", lw=1.2, alpha=0.7)
+    ax2.axvline(aluar_percentil, color=C["aluar"], linestyle=":", lw=1.2, alpha=0.7)
+    
+    ax2.scatter([aluar_percentil], [aluar_cost], color=C["value"], s=60, zorder=5, edgecolor="white", lw=1.5)
+    ax2.annotate("Aluar: USD 1.680/t (P18%)",
+                 xy=(aluar_percentil, aluar_cost),
+                 xytext=(aluar_percentil + 18, aluar_cost - 380),
+                 arrowprops=dict(facecolor=C["value"], edgecolor=C["value"], arrowstyle="->", lw=1.1),
+                 fontsize=7.3, fontweight="bold", color=C["value"],
+                 bbox=dict(boxstyle="round,pad=0.2", facecolor="white", edgecolor=C["value"], lw=0.8))
+    
+    ax2.text(82, 2120, "Curva C1", fontsize=7.5, fontweight="bold", color=C["navy"])
+    
+    ax2.set_xlabel(r"Percentil Global (%) $\cdot$ Curva C1 (USD/t)", fontsize=8.2, fontweight="bold", color=C["navy"])
+    ax2.set_ylim(1100, 2600)
+    ax2.set_xlim(-2, 102)
     ax2.grid(axis="y", color=C["grid"], linewidth=0.8)
     
     fig.subplots_adjust(left=0.28, right=0.96, top=0.94, bottom=0.14, hspace=0.48)
