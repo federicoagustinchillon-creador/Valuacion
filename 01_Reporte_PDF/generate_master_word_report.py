@@ -499,7 +499,17 @@ def build_full_word_document():
     print("Iniciando construcción 1:1 de Informe_Valuacion_Aluar_UNCuyo.docx...")
     doc = docx.Document()
     
-    # 0. Defaults de idioma es-AR
+    # 0. Defaults de idioma es-AR y Metadatos Oficiales (Macrodatos)
+    cp = doc.core_properties
+    cp.author = "Federico Agustín Chillón"
+    cp.title = "Aluar Aluminio Argentino - Informe de Valuación y Análisis de Riesgo"
+    cp.subject = "Valuación Fundamental por Flujo de Fondos Descontados y Modelos Estocásticos (FCE - UNCuyo)"
+    cp.keywords = "Valuación, Aluar, ALUA.BA, DCF, WACC, Opciones Reales, Monte Carlo, GARCH, Cópula Clayton, FCE UNCuyo, Chillón"
+    cp.comments = "Informe de Valuación Financiera y Análisis Cuantitativo de Riesgo elaborado por Federico Agustín Chillón para la Facultad de Ciencias Económicas de la Universidad Nacional de Cuyo."
+    cp.category = "Equity Research / Finanzas Corporativas"
+    cp.language = "es-AR"
+    cp.last_modified_by = "Federico Agustín Chillón"
+    
     try:
         rPrDefault = doc.styles.element.xpath('.//w:docDefaults/w:rPrDefault/w:rPr')
         if rPrDefault:
