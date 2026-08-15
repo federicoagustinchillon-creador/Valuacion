@@ -1007,8 +1007,8 @@ AR(1) Lineal Base & 1.450,3 & -2.894,6 & -2.882,1 \\
 \end{tabularx}
 \end{table}
 
-\subsection{Dependencia Asimétrica en Caídas: Cópula de Clayton y Sensibilidad de Sobol}
-La simulación multivariada adopta la Cópula de Clayton $C_\theta(u, v) = (u^{-\theta} + v^{-\theta} - 1)^{-1/\theta}$ frente a la Gaussiana ($\Delta AIC = -88,9$) debido a su capacidad de capturar dependencia de cola inferior ($\lambda_L = 2^{-1/\theta} = 0,38$), modelando adecuadamente la co-caída de los activos locales en episodios de tensión financiera.
+\subsection{Dependencia Asimétrica en Caídas: Selección de Cópulas y Sensibilidad de Sobol}
+La selección de la estructura de dependencia se fundamenta en la bondad de ajuste (AIC) y la asimetría de colas. Mientras que la Cópula Gaussiana asume independencia asintótica ($\lambda_L = \lambda_U = 0$) y la $t$-Student impone dependencia simétrica forzada ($\lambda_L = \lambda_U = 0,22$), la \textbf{Cópula de Clayton} $C_\theta(u, v) = (u^{-\theta} + v^{-\theta} - 1)^{-1/\theta}$ ($\theta = 1,23$) resulta óptima ($\Delta AIC = -88,9$ vs. Gauss; $\Delta AIC = -34,2$ vs. $t$-Student) al concentrar la dependencia en la cola inferior ($\lambda_L = 2^{-1/\theta} = 0,38$, $\lambda_U = 0$), modelando fielmente la co-caída (\textit{joint crash}) del commodity y el riesgo país en crisis.
 
 \begin{figure}[H]
 \centering
@@ -1053,7 +1053,7 @@ Dickey-Fuller Aumentado (ADF) & Retornos Diarios ALUA (USD) & $t = -3,84$ & $p <
 Phillips-Perron (PP) & Retornos Diarios ALUA (USD) & $Z_t = -4,12$ & $p < 0,01$ & Estacionariedad robusta a heterocedasticidad \\
 Jarque-Bera & Normalidad de Retornos & $JB = 4.391,7$ & $p < 0,0001$ & Rechazo de normalidad (Curtosis = 7,82) \\
 Kolmogorov-Smirnov & t-Student ($\nu=4,46$) vs. Normal & $D = 0,018$ & $p = 0,42$ & Ajuste con colas pesadas t-Student \\
-Cópula de Clayton & Dependencia de Cola Inferior & $\Delta AIC = -88,9$ & $\lambda_L = 0,38$ & Dependencia asimétrica superior a Gaussiana \\
+Cópula de Clayton & Dependencia de Cola Inferior & $\Delta AIC = -88,9$ & $\lambda_L = 0,38$ & Selección óptima vs. Gaussiana y t-Student \\
 ARCH-LM (Lag 5) & Heterocedasticidad Condicional & $LM = 48,2$ & $p < 0,001$ & Presencia de volatilidad por conglomerados \\
 Ljung-Box $Q(10)$ & Autocorrelación de Residuos & $Q = 8,45$ & $p = 0,58$ & Ausencia de correlación serial residual \\
 Quandt-Andrews & Estabilidad Paramétrica & $F = 1,14$ & $p = 0,31$ & Parámetros estables en la muestra analizada \\

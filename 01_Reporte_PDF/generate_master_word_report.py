@@ -484,7 +484,7 @@ PAGE_BREAK_TRIGGERS = [
     r'\section{Simulación Estocástica de Monte Carlo y DCF Inverso',                            # -> Página 11
     r'\section{Gestión de Riesgos de Mercado y Asignación Óptima de Cartera',                  # -> Página 12
     r'\section{Modelización Estocástica Avanzada y Validación Econométrica',                    # -> Página 13
-    r'\subsection{Dependencia Asimétrica en Caídas: Cópula de Clayton y Sensibilidad de Sobol', # -> Página 14
+    r'\subsection{Dependencia Asimétrica en Caídas: Selección de Cópulas y Sensibilidad de Sobol', # -> Página 14
     r'\section*{Apéndice: Estados Financieros Auditados',                                       # -> Página 15
     r'\section*{Referencias Bibliográficas y Fuentes de Información'                             # -> Página 16
 ]
