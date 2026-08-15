@@ -24,21 +24,22 @@
 \setsansfont{Arial}
 \setmonofont{Consolas}[Scale=0.88]
 
-\definecolor{primary}{RGB}{10, 37, 64}
-\definecolor{secondary}{RGB}{0, 128, 128}
-\definecolor{accent}{RGB}{200, 16, 46}
-\definecolor{darkgray}{RGB}{45, 55, 72}
-\definecolor{lightgray}{RGB}{247, 250, 252}
-\definecolor{boxbg}{RGB}{240, 245, 250}
-\definecolor{boxborder}{RGB}{10, 37, 64}
-\definecolor{codegray}{RGB}{245, 247, 250}
+% Paleta Bitonal Sobria de Edición Académica (Estándar University Press)
+\definecolor{primary}{RGB}{10, 25, 47}        % Azul Marino Profundo Institucional
+\definecolor{secondary}{RGB}{45, 55, 72}      % Gris Grafito Pizarra
+\definecolor{accent}{RGB}{139, 0, 0}          % Granate / Oxblood para advertencias clave
+\definecolor{darkgray}{RGB}{45, 55, 72}       % Texto secundario
+\definecolor{lightgray}{RGB}{248, 249, 250}   % Fondo neutro de cajas
+\definecolor{boxbg}{RGB}{248, 249, 250}       % Fondo pergamino tenue
+\definecolor{boxborder}{RGB}{10, 25, 47}      % Borde azul marino
+\definecolor{codegray}{RGB}{245, 247, 250}    % Código
 
 \hypersetup{
     colorlinks=true,
     linkcolor=primary,
     citecolor=secondary,
     urlcolor=secondary,
-    pdftitle={Tratado Enciclopédico de Valuación y Defensa Teórica - Aluar S.A.I.C.},
+    pdftitle={Tratado de Valuación Fundamental, Modelos Estocásticos y Econometría Financiera - Aluar S.A.I.C.},
     pdfauthor={Federico Agustín Chillón},
     pdfsubject={Guía de Estudio Avanzada y Tratado Metodológico de Valuación (FCE - UNCuyo)},
     pdfkeywords={Valuación, Aluar, ALUA.BA, DCF, WACC, Opciones Reales, Monte Carlo, GARCH, FCE UNCuyo, Chillón},
@@ -48,11 +49,11 @@
 
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small\color{primary}\textbf{ALUAR S.A.I.C. | Tratado Enciclopedico de Valuacion y Defensa}}
-\fancyhead[R]{\small\color{darkgray}\textit{Catedra EyTB -- FCE UNCuyo}}
-\fancyfoot[L]{\footnotesize\color{darkgray}Valuacion Financiera y Econometrica Avanzada}
+\fancyhead[L]{\small\color{primary}\textbf{ALUAR S.A.I.C. | Tratado de Valuación y Modelos Cuantitativos}}
+\fancyhead[R]{\small\color{secondary}\textit{Cátedra EyTB -- FCE UNCuyo}}
+\fancyfoot[L]{\footnotesize\color{secondary}Tratado Metodológico y Defensa de Grado}
 \fancyfoot[R]{\small\thepage}
-\renewcommand{\headrulewidth}{0.6pt}
+\renewcommand{\headrulewidth}{0.5pt}
 \renewcommand{\footrulewidth}{0.4pt}
 
 \setstretch{1.04}
@@ -61,8 +62,23 @@
 
 \theoremstyle{definition}
 \newtheorem{teorema}{\color{primary}\textbf{Teorema}}[section]
-\newtheorem{proposicion}{\color{primary}\textbf{Proposicion}}[section]
-\newtheorem{definicion}{\color{primary}\textbf{Definicion}}[section]
+\newtheorem{proposicion}{\color{primary}\textbf{Proposición}}[section]
+\newtheorem{definicion}{\color{primary}\textbf{Definición}}[section]
+
+% Cajas de Arquitectura Cognitiva P-C-M-E-A
+\newtcolorbox{paradoxbox}[2][]{
+    enhanced,
+    breakable,
+    colback=boxbg,
+    colframe=primary,
+    fonttitle=\bfseries\color{white},
+    title={El Conflicto Teórico y la Paradoja: #2},
+    coltitle=white,
+    sharp corners,
+    boxrule=0.8pt,
+    top=3mm,bottom=3mm,left=3mm,right=3mm,
+    #1
+}
 
 \newtcolorbox{conceptbox}[2][]{
     enhanced,
@@ -70,7 +86,21 @@
     colback=boxbg,
     colframe=primary,
     fonttitle=\bfseries\color{white},
-    title={Fundamento y Racionalidad Economica: #2},
+    title={Fundamento y Causalidad Económica: #2},
+    coltitle=white,
+    sharp corners,
+    boxrule=0.8pt,
+    top=3mm,bottom=3mm,left=3mm,right=3mm,
+    #1
+}
+
+\newtcolorbox{checkpointbox}[2][]{
+    enhanced,
+    breakable,
+    colback=lightgray,
+    colframe=accent,
+    fonttitle=\bfseries\color{white},
+    title={Punto de Quiebre y Trampa de Examen: #2},
     coltitle=white,
     sharp corners,
     boxrule=0.8pt,
@@ -96,9 +126,9 @@
     enhanced,
     breakable,
     colback=codegray,
-    colframe=darkgray,
+    colframe=secondary,
     fonttitle=\bfseries\color{white},
-    title={Modulo Cuantitativo: #2},
+    title={Módulo Cuantitativo: #2},
     coltitle=white,
     sharp corners,
     boxrule=0.8pt,
@@ -110,39 +140,30 @@
 
 \begin{titlepage}
     \centering
-    \vspace*{1.0cm}
-    {\Huge\textbf{\color{primary}Tratado Enciclopedico de Valuacion,}}\\[0.3cm]
-    {\Huge\textbf{\color{primary}Econometria y Teoria Financiera}}\\[0.6cm]
-    {\Large\textbf{\color{secondary}Manual Integral de Estudio, Demostraciones Formales y Defensa Oral de Grado}}\\[0.4cm]
-    {\large\textbf{\color{darkgray}Analisis Exhaustivo de Aluar Aluminio Argentino S.A.I.C. (BYMA: ALUA)}}\\[1.5cm]
-
-    \begin{tcolorbox}[colback=boxbg,colframe=primary,sharp corners,boxrule=1pt,width=0.92\linewidth]
+    \vspace*{1.2cm}
+    {\scshape\Large Universidad Nacional de Cuyo}\\[0.25cm]
+    {\scshape\large Facultad de Ciencias Económicas}\\[0.25cm]
+    {\scshape\normalsize Cátedra de Evaluación y Tributación de Bases}\\[1.2cm]
+    
+    \rule{\linewidth}{1.5pt}\vskip 3pt
+    {\Huge\textbf{\color{primary}Tratado de Valuación Fundamental,}}\\[0.35cm]
+    {\Huge\textbf{\color{primary}Modelos Estocásticos y Econometría}}\\[0.45cm]
+    {\large\textbf{\color{secondary}Manual Avanzado de Demostraciones Formales, Dinámica Cuantitativa y Defensa Oral}}\\[0.25cm]
+    \rule{\linewidth}{0.8pt}\vskip 1.4cm
+    
+    {\Large\textbf{Estudio Integral sobre Aluar Aluminio Argentino S.A.I.C. (BYMA: ALUA)}}\\[1.8cm]
+    
+    \begin{minipage}{0.88\linewidth}
         \centering
-        \textbf{\color{primary}Catedra de Evaluacion y Tributacion de Bases (EyTB)}\\[0.15cm]
-        \textbf{Facultad de Ciencias Economicas -- Universidad Nacional de Cuyo (UNCuyo)}\\[0.25cm]
-        \textit{Estructura Curricular y Rigor Academico: Tratado Tecnico para Examen de Grado}\\[0.15cm]
-        \textbf{Periodo de Cobertura:} 2026E--2030E | \textbf{Horizonte de Mercado:} 10 Anos (2016--2026)
-    \end{tcolorbox}
-
-    \vspace{1.5cm}
-
-    \begin{minipage}[t]{0.45\linewidth}
-        \textbf{\color{primary}Dictamen del Modelo DCF:} COMPRAR\\
-        \textbf{\color{primary}Target Base DCF:} ARS 1.235,51 (+25,8\%)\\
-        \textbf{\color{primary}Target con Opcion Real:} ARS 1.255,11 (+27,8\%)\\
-        \textbf{\color{primary}Precio Spot de Mercado:} ARS 982,00\\
-        \textbf{\color{primary}Costo de Capital (WACC):} 7,06\% Dolarizado
-    \end{minipage}\hfill
-    \begin{minipage}[t]{0.45\linewidth}
-        \textbf{\color{primary}Simulacion Monte Carlo:} 20.000 Trayectorias\\
-        \textbf{\color{primary}Distribucion de Retornos:} Student-$t$ ($\nu=4,2$)\\
-        \textbf{\color{primary}Dependencia No Lineal:} Copula de Clayton ($\lambda_L=0,38$)\\
-        \textbf{\color{primary}Riesgo Extremo:} EVT-GPD ($VaR_{99\%} = -10,44\%$)\\
-        \textbf{\color{primary}Dimensionamiento:} Half-Kelly (Tope 20,0\%)
+        \small\setstretch{1.15}
+        \textbf{Autor y Valuador:} Federico Agustín Chillón\\[0.15cm]
+        \textbf{Horizonte de Proyección:} 2026e--2030e \quad|\quad \textbf{Muestra Empírica:} 2016--2026 ($N=2.376$ ruedas)\\[0.15cm]
+        \textbf{Metodologías Nucleares:} DCF Mid-Year, Opciones Reales (LSMC Laguerre), Difusiones CIR y OU, Cópula de Clayton, Teoría de Valores Extremos (EVT-GPD), Filtro de Kalman y Criterio de Half-Kelly.
     \end{minipage}
-
+    
     \vfill
-    {\large\color{darkgray}\textbf{Mendoza, Republica Argentina -- Agosto de 2026}}
+    {\large\textbf{Mendoza, República Argentina}}\\[0.15cm]
+    {\normalsize\color{secondary}Agosto de 2026}
 \end{titlepage}
 
 \tableofcontents
