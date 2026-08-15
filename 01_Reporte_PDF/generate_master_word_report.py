@@ -602,7 +602,7 @@ def build_full_word_document():
     thesis_points = [
         "**Estructura de Costos en Primer Cuartil Global:** Matriz energética 96% autogenerada (78% renovable vía Futaleufú y PEAL), con costo en efectivo C1 en USD 1.680/t (percentil 29% mundial).",
         "**Ingresos en Moneda Dura con Costos Fijos en Pesos:** 80% de las ventas se exportan a precios fijados en el LME, mientras que los costos operativos locales se licúan en términos reales ante depreciaciones del tipo de cambio.",
-        "**Compresión del Diferencial Soberano y Desapalancamiento:** La caída del spread EMBI+ (441 pb) sitúa el WACC en 7,06% (λ = 0,20), y el cese de inversiones intensivas reduce la deuda neta a <1,0x EBITDA hacia FY2028E."
+        "**Compresión del Diferencial Soberano y Desapalancamiento:** La caída del spread EMBI+ (441 pb) sitúa el WACC en 7,06% (λ = 0,20), y el cese de inversiones intensivas reduce la deuda neta a <1,0x EBITDA hacia 2028e."
     ]
     for idx, tp in enumerate(thesis_points, 1):
         p_tpi = c_left.add_paragraph()
@@ -747,7 +747,7 @@ def build_full_word_document():
     
     p_desc = doc.add_paragraph()
     p_desc.paragraph_format.space_after = Pt(0)
-    add_rich_runs(p_desc, "**Estructura del Documento:** Comprende 17 Secciones de Análisis, Apéndice Contable con Estados Financieros Auditados por PwC (FY2020–FY2025), Proyecciones Explícitas de Flujo de Fondos (FCFF 2026E–2030E), 31 Figuras Analíticas con Narrativa Contextual, Referencias Bibliográficas y Sección Separada de Aviso Legal y Certificación del Analista.", font_size=Pt(7.2), color=COLOR_GRAY)
+    add_rich_runs(p_desc, "**Estructura del Documento:** Comprende 17 Secciones de Análisis, Apéndice Contable con Estados Financieros Auditados por PwC (2020–2025), Proyecciones Explícitas de Flujo de Fondos (FCFF 2026e–2030e), 31 Figuras Analíticas con Narrativa Contextual, Referencias Bibliográficas y Sección Separada de Aviso Legal y Certificación del Analista.", font_size=Pt(7.2), color=COLOR_GRAY)
     
     # ==========================================
     # SECCIÓN 3: CUERPO DEL INFORME (PÁGINAS 3 A 16, 1 COLUMNA)

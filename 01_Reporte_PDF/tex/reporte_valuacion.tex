@@ -362,7 +362,7 @@ Existe una relación inversa entre las cotizaciones internacionales de los metal
 \end{figure}
 
 \subsection{Diagnóstico Econométrico: Test de Cointegración de Engle-Granger}
-Se sometió la serie diaria de ALUA.BA (expresada en USD vía CCL, $N=2.355$ ruedas, período 2016--2026) y el futuro del LME a la prueba de cointegración de Engle-Granger. El estadístico $t = -2,29$ ($p = 0,38$, frente a un valor crítico de $-3,34$ al 5\%) no rechaza la hipótesis nula de no cointegración estricta en niveles; no obstante la ausencia de relación de largo plazo estacionaria, la elasticidad contemporánea se sitúa en 0,66 ($R^2=0,12$), confirmando que Aluar responde conjuntamente al ciclo internacional del metal y a la dinámica macroeconómica local.
+Se sometió la serie diaria de ALUA.BA (expresada en USD vía CCL, $N=2.355$ ruedas, período 2016--2026) y el futuro del LME a la prueba de cointegración de Engle-Granger. El estadístico $t = -2,29$ ($p = 0,38$, frente a un valor crítico de $-3,34$ al 5\%) no rechaza la hipótesis nula de no cointegración estricta en niveles. A pesar de no verificarse cointegración lineal en niveles, la elasticidad contemporánea se sitúa en 0,66 ($R^2=0,12$), confirmando que Aluar responde conjuntamente al ciclo internacional del metal y a la dinámica macroeconómica local.
 
 \subsection{Estructura de la Oferta Global y Autonomía Energética Comparada}
 La producción primaria global está altamente concentrada en China (56\% del total mundial, \textbf{Figura \ref{fig:07}}), cuya matriz depende predominantemente de generación térmica a carbón. Frente a los principales productores internacionales, Aluar destaca por su integración energética: el 96\% de su consumo es autogenerado con un 78\% de fuentes renovables (\textbf{Figura \ref{fig:08}}), otorgándole predictibilidad operativa y menores costos unitarios de energía.
@@ -494,15 +494,15 @@ Reemplazando los parámetros calibrados ($E/V = 67,29\%$, $D/V = 32,71\%$, $K_d 
     \begin{equation}
         r_{ALUA, t} = \alpha + \beta_{OLS} r_{SP500, t} + \epsilon_t \implies \beta_{OLS} = 0,8420 \quad (SE = 0,0563, \; R^2 = 8,60\%)
     \end{equation}
-    \item \textbf{Ajuste de Blume (1975):} Corrección por reversión a la media del riesgo sistemático:
+    \item \textbf{Ajuste de Blume (1975) -- ¿Por qué se aplica?:} Corrige el error de muestreo y la tendencia empírica del riesgo sistemático a revertir hacia la media del mercado ($\beta = 1,0$) a largo plazo:
     \begin{equation}
         \beta_{Blume} = \frac{2}{3} \beta_{OLS} + \frac{1}{3} (1,0) = \frac{2}{3} (0,8420) + \frac{1}{3} = \mathbf{0,8947}
     \end{equation}
-    \item \textbf{Desapalancamiento por Hamada (1972):} Con el ratio $D/E$ histórico mediano ($D/E_{hist} = 0,5036$):
+    \item \textbf{Desapalancamiento por Hamada (1972) -- ¿Por qué se desapalanca?:} Aísla el riesgo operativo puro del negocio ($\beta_U = 0,6745$) despojándolo del apalancamiento financiero histórico transitorio ($D/E_{hist} = 0,5036$):
     \begin{equation}
         \beta_U = \frac{\beta_{Blume}}{1 + (1 - t) \left(\frac{D}{E}\right)_{hist}} = \frac{0,8947}{1 + (1 - 0,35) \times 0,5036} = \mathbf{0,6745}
     \end{equation}
-    \item \textbf{Reapalancamiento al $D/E$ Objetivo ($D/E_{obj} = 0,4860$):}
+    \item \textbf{Reapalancamiento al $D/E$ Objetivo -- ¿Por qué al ratio de régimen?:} Incorpora la estructura de capital de régimen ($D/E_{obj} = 0,4860$) para obtener el beta apalancado sin arrastrar distorsiones de deuda:
     \begin{equation}
         \beta_L = \beta_U \left[ 1 + (1 - t) \left(\frac{D}{E}\right)_{obj} \right] = 0,6745 \times [1 + (1 - 0,35) \times 0,4860] = \mathbf{0,8876}
     \end{equation}
@@ -529,7 +529,7 @@ El costo del capital propio incorpora el ajuste por riesgo país bajo el modelo 
 \begin{equation}
     K_e = R_f + \beta_L \times ERP + \lambda \times EMBI+ = 4,70\% + 0,8876 \times 4,18\% + 0,20 \times 4,41\% = \mathbf{9,30\%}
 \end{equation}
-En lugar de adicionar el 100\% del spread soberano generalizado ($EMBI+$), se calibra un factor de exposición $\lambda = 0,20$. Esta ponderación responde a la cobertura natural de Aluar: el 80\% de sus ventas son exportaciones liquidadas en dólares a precios LME y sus costos fijos operativos están fijados en pesos locales (salarios e insumos nacionales), por lo que las depreciaciones cambiarias licúan costos en moneda dura y amortiguan los shocks de riesgo país.
+\textbf{¿Por qué $\lambda = 0,20$ y no el 100\% del CRP?:} En lugar de adicionar el 100\% del spread soberano ($EMBI+$), se calibra $\lambda = 0,20$ por la cobertura natural de Aluar: el 80\% de sus ventas son exportaciones liquidadas en dólares a precios LME y sus costos fijos operativos están fijados en pesos locales (salarios e insumos nacionales), por lo que las depreciaciones cambiarias licúan costos en moneda dura y amortiguan los shocks de riesgo país.
 
 \begin{table}[H]
 \centering
@@ -695,7 +695,7 @@ El valor patrimonial surge del descuento de flujos de fondos libres para la firm
 \end{equation}
 \begin{itemize}
     \item \textbf{Precio Objetivo DCF Caso Base:} \textbf{ARS 1.236,00} por acción (USD 0,78, +25,8\% de retorno esperado).
-    \item \textbf{Opción Real PEAL V (Longstaff-Schwartz):} El DCF tradicional asume decisiones estáticas inflexibles. La opción real valúa la flexibilidad gerencial de postergar o ejecutar la ampliación de 312 MW eólicos ante variaciones en tarifas y precios del metal, calculada mediante mínimos cuadrados (LSMC) sobre polinomios de Laguerre:
+    \item \textbf{Opción Real PEAL V (Longstaff-Schwartz) -- ¿Por qué opción real?:} El DCF tradicional asume decisiones estáticas rígidas. La opción real valúa la flexibilidad gerencial de postergar o ejecutar la ampliación de 312 MW según evolucionen los precios del metal y las tarifas eléctricas, calculada mediante mínimos cuadrados (LSMC) sobre polinomios de Laguerre:
     \begin{equation}
         \hat{C}(S_t) = \mathbb{E}^{\mathbb{Q}}\left[ e^{-r \Delta t} V_{t+1} \mid S_t \right] = \sum_{j=0}^{2} a_j L_j(S_t)
     \end{equation}
@@ -895,13 +895,13 @@ Corrección LME (2022--2023) & +13,61\% & 44,40\% & 200 ruedas & Resiliencia por
 \end{table}
 
 \subsection{Estimación de Pérdidas Extremas por Teoría de Valores Extremos (EVT-GPD)}
-Dado que los retornos de Aluar presentan colas pesadas (curtosis $= 7,82$), la aproximación normal subestima las pérdidas extremas. Se calibra un modelo Pareto Generalizado (GPD, $\hat{\xi} = 0,214 > 0$), capturando pérdidas de cola de tipo Fréchet (\textbf{Figura \ref{fig:25}}):
+\textbf{¿Por qué EVT-GPD?:} Dado que los retornos de Aluar presentan colas pesadas (curtosis $= 7,82$) y la distribución normal subestima severamente las pérdidas de cola, se calibra un modelo Pareto Generalizado (GPD, $\hat{\xi} = 0,214 > 0$), capturando pérdidas de tipo Fréchet (\textbf{Figura \ref{fig:25}}):
 \begin{equation}
     G_{\xi, \beta}(y) = 1 - \left(1 + \frac{\xi y}{\beta}\right)^{-1/\xi}
 \end{equation}
 
 \subsection{Dinámica de la Materia Prima: Proceso Ornstein-Uhlenbeck}
-El aluminio LME exhibe reversión a la media hacia el costo marginal de producción de la industria (\textbf{Figura \ref{fig:26}}), modelado mediante la ecuación estocástica de Ornstein-Uhlenbeck:
+\textbf{¿Por qué Ornstein-Uhlenbeck para el LME?:} Los commodities industriales no siguen un paseo aleatorio sin límite (MBG), sino que revierten a la media hacia el costo marginal de producción de la industria (\textbf{Figura \ref{fig:26}}), modelado mediante:
 \begin{equation}
     dS_t = \kappa (\theta - S_t) dt + \sigma S_t dW_t, \quad \kappa = 0,384, \; \theta = \text{USD 2.814/t}
 \end{equation}
@@ -966,7 +966,7 @@ La integración de 10.000 trayectorias de precios y costos en tiempo continuo (\
 \section{Modelos Estocásticos y Validación Econométrica}
 
 \subsection{Validación de la Tasa de Descuento: Proceso Cox-Ingersoll-Ross (CIR)}
-Para asegurar la no-negatividad matemática en las tasas de descuento del EMBI+ en simulaciones de colas extremas, se valida el modelo estocástico de Cox-Ingersoll-Ross (CIR, \textbf{Figura \ref{fig:29}}):
+\textbf{¿Por qué el modelo CIR?:} Asegura la no-negatividad matemática en las tasas de descuento del EMBI+ en simulaciones de colas extremas (condición de Feller $2\kappa\theta > \sigma^2$) y supera al modelo lineal AR(1) con un AIC sustancialmente menor ($-3.359,4$ vs. $-2.894,6$) y mayor Log-Likelihood ($+1.682,7$ vs. $+1.450,3$, \textbf{Figura \ref{fig:29}}):
 \begin{equation}
     dr_t = \kappa (\theta - r_t) dt + \sigma \sqrt{r_t} dW_t, \quad \text{Condición de Feller: } 2\kappa\theta > \sigma^2
 \end{equation}
@@ -1009,7 +1009,7 @@ AR(1) Lineal Base & 1.450,3 & -2.894,6 & -2.882,1 \\
 \end{table}
 
 \subsection{Dependencia Asimétrica en Caídas: Selección de Cópulas y Sensibilidad de Sobol}
-La selección de la estructura de dependencia se fundamenta en la bondad de ajuste (AIC) y la asimetría de colas. Mientras que la Cópula Gaussiana asume independencia asintótica ($\lambda_L = \lambda_U = 0$) y la $t$-Student impone dependencia simétrica forzada ($\lambda_L = \lambda_U = 0,22$), la \textbf{Cópula de Clayton} $C_\theta(u, v) = (u^{-\theta} + v^{-\theta} - 1)^{-1/\theta}$ ($\theta = 1,23$) resulta óptima ($\Delta AIC = -88,9$ vs. Gauss; $\Delta AIC = -34,2$ vs. $t$-Student) al concentrar la dependencia en la cola inferior ($\lambda_L = 2^{-1/\theta} = 0,38$, $\lambda_U = 0$), modelando fielmente la co-caída (\textit{joint crash}) del commodity y el riesgo país en crisis.
+\textbf{¿Por qué Cópula de Clayton?:} La Cópula Gaussiana asume independencia en colas ($\lambda_L = \lambda_U = 0$) y la $t$-Student impone dependencia simétrica forzada ($\lambda_L = \lambda_U = 0,22$). La \textbf{Cópula de Clayton} $C_\theta(u, v) = (u^{-\theta} + v^{-\theta} - 1)^{-1/\theta}$ ($\theta = 1,23$) resulta óptima ($\Delta AIC = -88,9$ vs. Gauss; $\Delta AIC = -34,2$ vs. $t$-Student) al concentrar la dependencia en la cola inferior ($\lambda_L = 2^{-1/\theta} = 0,38$, $\lambda_U = 0$), capturando la co-caída (\textit{joint crash}) del commodity y el riesgo soberano.
 
 \begin{figure}[H]
 \centering
