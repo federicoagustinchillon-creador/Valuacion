@@ -56,8 +56,15 @@ valuacion-aluar-uncuyo/
 │   ├── kalman_beta_series.csv                   # Serie estimada de beta dinámico
 │   ├── muestra_montecarlo.npy                   # Muestra estocástica de Monte Carlo (10k iteraciones)
 │   └── figuras/                                 # 31 figuras en formato PNG y PDF
-└── 04_Modelo_Excel/
-    └── Valuacion_Aluar_Modelo_Oficial.xlsx      # Planilla financiera con fórmulas dinámicas
+├── 04_Modelo_Excel/
+│   └── Valuacion_Aluar_Modelo_Oficial.xlsx      # Planilla financiera con fórmulas dinámicas
+└── 05_Guia_de_Estudio/
+    ├── GUIA_DE_ESTUDIO_ALUAR.pdf                # Guía y tratado de estudio integral (51 páginas)
+    ├── GUIA_DE_ESTUDIO_ALUAR.tex                # Código fuente LaTeX modular
+    ├── build_master_encyclopedia.py             # Script de compilación XeLaTeX de la guía
+    ├── README.md                                # Índice temático y mapa de estudio móvil
+    ├── modules/                                 # 12 módulos analíticos de teoría y demostraciones
+    └── theory_charts/                           # 10 diagramas teóricos conceptuales
 ```
 
 ---
