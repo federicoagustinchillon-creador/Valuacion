@@ -1,135 +1,93 @@
-# Valuación de Aluar Aluminio Argentino S.A.I.C. (BCBA: ALUA)
+# Valuación Fundamental, Modelos Estocásticos y Econometría Financiera
+## Aluar Aluminio Argentino S.A.I.C. (BYMA: ALUA)
 
-**Trabajo Final de Grado / Evaluación Curricular**  
-*Cátedra de Economía y Técnica Bursátil — Facultad de Ciencias Económicas*  
-*Universidad Nacional de Cuyo (UNCuyo)*  
+**Facultad de Ciencias Económicas — Universidad Nacional de Cuyo (UNCuyo)**  
+**Cátedra de Evaluación y Tributación de Bases (EyTB)**  
 **Autor:** Federico Agustín Chillón  
+**Fecha:** Agosto de 2026  
 
 ---
 
-## Descripción del Proyecto
-
-Este repositorio contiene la valuación financiera y el análisis cuantitativo de **Aluar Aluminio Argentino S.A.I.C. (BCBA: ALUA)**. El trabajo integra finanzas corporativas, valuación por descuento de flujos de fondos, econometría de series temporales y teoría de portafolios con modelización en Python y Excel.
-
-### Metodología Aplicada
-
-- **Flujos de Fondos Descontados (DCF)**: Proyección operativa explícita (2026E–2030E) y cálculo del Valor Terminal modelando costos de alúmina, precios LME, matriz energética autogenerada y capacidad física instalada (460.000 t).
-- **Costo de Capital (WACC)**: Estimación del costo del patrimonio neto ($K_e$) mediante CAPM con prima de riesgo soberano ponderada por ingresos domésticos ($\lambda \times \text{EMBI+}$, $\lambda=0,20$) y desapalancamiento/reapalancamiento de betas (Hamada).
-- **Simulación Monte Carlo**: Evaluación probabilística del precio objetivo con 10.000 iteraciones estocásticas considerando incertidumbre en commodities, tipo de cambio e inflación.
-- **Gestión Cuantitativa de Riesgo**: Modelización de colas mediante Value at Risk (VaR), Conditional VaR (CVaR) y Teoría de Valores Extremos (EVT - Generalized Pareto Distribution).
-- **Valuación por Múltiplos**: Comparativa sectorial con productores globales de aluminio (EV/EBITDA, Margen EBITDA, Deuda Neta/EBITDA).
-- **Reverse DCF y Sensibilidad**: Descomposición de las tasas de crecimiento implícitas en el precio de mercado y matrices bidimensionales (WACC vs. $g$).
-
-### Resultados del Modelo Teórico
-
-- **Precio Objetivo Teórico Base**: **ARS 1.236,00** por acción (USD 0,78 / cotización spot: ARS 982,50 / +25,8% de retorno esperado).
-- **Precio Objetivo Teórico Integrado (con Opción Real PEAL V)**: **ARS 1.255,60** por acción (+27,8% de retorno esperado).
-- **Dictamen del Modelo Teórico**: **COMPRAR**.
-- *Aviso*: Este trabajo fue elaborado con fines exclusivamente académicos y no constituye una oferta, recomendación ni asesoramiento financiero.
+### Resumen Ejecutivo de la Valuación
+* **Dictamen del Modelo Teórico:** **COMPRAR**
+* **Precio Objetivo Base (DCF Dumrauf):** **ARS 1.236,00** (USD 0,78)
+* **Opción Real de Expansión Eólica (PEAL V):** **+ARS 19,60** (USD 0,01)
+* **Target Teórico Integrado:** **ARS 1.255,60** (USD 0,79)
+* **Cotización de Mercado al Cierre:** **ARS 982,50** | **Retorno Esperado:** **+27,8%**
+* **Costo Promedio Ponderado del Capital (WACC):** **7,06%** en USD ($\lambda = 0,20$)
 
 ---
 
-## Estructura del Repositorio
+### Estructura y Navegación del Repositorio
 
-```text
+El repositorio se organiza en **5 carpetas temáticas estandarizadas**:
+
+```
 valuacion-aluar-uncuyo/
-├── README.md                                   # Presentación y documentación del proyecto
-├── LICENSE                                      # Términos de uso académico
-├── CHANGELOG.md                                 # Historial de versiones y entregables
-├── requirements.txt                             # Dependencias de Python fijadas por versión
+│
 ├── 01_Reporte_PDF/
-│   ├── Informe_Valuacion_Aluar_UNCuyo.pdf       # Informe ejecutivo final (30 páginas)
-│   ├── Informe_Valuacion_Aluar_UNCuyo.docx      # Informe en Microsoft Word 1:1 con tablas y figuras nativas
-│   ├── build_pdf.py                             # Script de compilación XeLaTeX (3 pasadas)
-│   ├── generate_master_word_report.py           # Generador maestro de Word con paridad 1:1 y soporte es-AR
-│   └── tex/
-│       └── reporte_valuacion.tex                # Código fuente LaTeX del informe
+│   ├── Informe_Valuacion_Aluar_UNCuyo.pdf   # Informe Institucional de Valuación (16 páginas exactas, XeLaTeX)
+│   ├── Informe_Valuacion_Aluar_UNCuyo.docx  # Informe Institucional en Word (16 páginas exactas, paridad 1:1)
+│   ├── generate_master_word_report.py       # Script generador automatizado de Word
+│   └── tex/                                 # Código fuente LaTeX del reporte
+│
 ├── 02_Presentacion_PPTX/
-│   └── TrabajoFinalEyTBChillonFedericoAluar_HOMOGENEO.pptx  # Presentación de diapositivas
+│   ├── Presentacion_Valuacion_Aluar_UNCuyo.pptx # Diapositivas ejecutivas institucionales (16:9)
+│   └── TrabajoFinalEyTBChillonFedericoAluar_HOMOGENEO.pptx # Archivo de entrega formal de cátedra
+│
 ├── 03_Modelo_y_Codigo/
-│   ├── ValuacionAluar_M1-13_MASTER.ipynb        # Notebook interactivo consolidado (M1 a M13)
-│   ├── engine_valuacion.py                      # Motor de cálculo cuantitativo standalone
-│   ├── datos_auditados.py                       # Base de datos financieros auditados (FY2020–FY2025)
-│   ├── graficos.py                              # Generador de las 31 figuras del informe
-│   ├── m1_mercado.py                            # Ingesta y homogenización de series de mercado (CCL/USD)
-│   ├── static_inputs.json                       # Parámetros macroeconómicos y de la industria
-│   ├── resultados_original.json                 # Resultados persistidos del motor de cálculo
-│   ├── cache_mercado.csv                        # Serie histórica de mercado congelada (2016–2026)
-│   ├── kalman_beta_series.csv                   # Serie estimada de beta dinámico
-│   ├── muestra_montecarlo.npy                   # Muestra estocástica de Monte Carlo (10k iteraciones)
-│   └── figuras/                                 # 31 figuras en formato PNG y PDF
+│   ├── engine_valuacion.py                  # Motor cuantitativo puro en Python 3.12 (12 módulos analíticos)
+│   ├── Modelo_Cuantitativo_Aluar.ipynb      # Jupyter Notebook interactivo con simulaciones y gráficos
+│   ├── datos_auditados.py                   # Serie histórica y estados contables auditados
+│   ├── graficos.py                          # Generador de figuras de alta resolución (300 DPI)
+│   └── figuras/                             # 31 figuras analíticas del informe
+│
 ├── 04_Modelo_Excel/
-│   └── Valuacion_Aluar_Modelo_Oficial.xlsx      # Planilla financiera con fórmulas dinámicas
+│   └── Valuacion_Aluar_Modelo_Oficial.xlsx  # Modelo financiero integral en Excel con DCF dinámico
+│
 └── 05_Guia_de_Estudio/
-    ├── GUIA_DE_ESTUDIO_ALUAR.pdf                # Guía y tratado de estudio integral (51 páginas)
-    ├── GUIA_DE_ESTUDIO_ALUAR.tex                # Código fuente LaTeX modular
-    ├── build_master_encyclopedia.py             # Script de compilación XeLaTeX de la guía
-    ├── README.md                                # Índice temático y mapa de estudio móvil
-    ├── modules/                                 # 12 módulos analíticos de teoría y demostraciones
-    └── theory_charts/                           # 10 diagramas teóricos conceptuales
+    ├── GUIA_DE_ESTUDIO_ALUAR.pdf            # Tratado enciclopédico de estudio (53 páginas, edición libro)
+    ├── GUIA_DE_ESTUDIO_ALUAR.tex            # Código fuente XeLaTeX del libro con portada TikZ y APA 7
+    └── figures_pristine/                    # Figuras vectoriales de alta resolución
 ```
 
 ---
 
-## Requisitos e Instalación
+### Síntesis Metodológica
 
-Para instalar las dependencias de Python:
-
-```bash
-pip install -r requirements.txt
-```
-
-### Ejecución del Notebook Maestro
-
-```bash
-jupyter notebook 03_Modelo_y_Codigo/ValuacionAluar_M1-13_MASTER.ipynb
-```
-
-### Ejecución del Motor de Cálculo
-
-```bash
-python 03_Modelo_y_Codigo/engine_valuacion.py
-```
-
-### Generación de Figuras
-
-```bash
-python 03_Modelo_y_Codigo/graficos.py
-```
-
-### Compilación del Informe PDF y Generación de Word
-
-Para compilar el informe PDF desde la fuente LaTeX (requiere XeLaTeX y tipografía Georgia):
-
-```bash
-python 01_Reporte_PDF/build_pdf.py
-```
-
-Para generar el informe en Microsoft Word (.docx) con paridad 1:1:
-
-```bash
-python 01_Reporte_PDF/generate_master_word_report.py
-```
+1. **Valuación por Flujos Descontados (FCFF):**
+   * Descuento a mitad de período (*Mid-Year*).
+   * Modelo CAPM-$\lambda$ de Damodaran (Dumrauf Cap. 14) con factor de exposición soberana $\lambda = 0,20$.
+   * Desapalancamiento y reapalancamiento del Beta por Hamada (1972) con ajuste bayesiano de Marshall Blume ($\beta_L = 0,888$).
+2. **Opciones Reales (PEAL V):**
+   * Algoritmo de Mínimos Cuadrados Monte Carlo de Longstaff-Schwartz (LSMC) con regresión sobre polinomios ortogonales de Laguerre.
+3. **Modelización Estocástica y Simulación:**
+   * Proceso Ornstein-Uhlenbeck para el commodity LME ($t_{1/2} = 3,46$ meses).
+   * Proceso Cox-Ingersoll-Ross (CIR) con verificación matemática de la Condición de Feller ($2\kappa\theta > \sigma^2$) para tasas de interés.
+4. **Teoría de Cópulas y Dependencia Asimétrica:**
+   * Cópula de Clayton ($\lambda_L = 0,38$, $\Delta\text{AIC} = -88,9$) para modelar co-caídas sistémicas en escenarios de estrés.
+5. **Gestión Cuantitativa de Riesgo (EVT-GPD):**
+   * Modelo Peaks Over Threshold con Distribución Pareto Generalizada para estimación robusta de VaR 99% (-8,20%) y CVaR 99% (-10,35%).
+   * Asignación prudencial de capital bajo el Criterio de *Half-Kelly* ($f = 20,0\%$).
 
 ---
 
-## Entregables Principales
+### Instrucciones de Reproducción
 
-1. **Informe PDF**: [01_Reporte_PDF/Informe_Valuacion_Aluar_UNCuyo.pdf](01_Reporte_PDF/Informe_Valuacion_Aluar_UNCuyo.pdf)
-2. **Informe Word (DOCX)**: [01_Reporte_PDF/Informe_Valuacion_Aluar_UNCuyo.docx](01_Reporte_PDF/Informe_Valuacion_Aluar_UNCuyo.docx)
-3. **Presentación (PPTX)**: [02_Presentacion_PPTX/TrabajoFinalEyTBChillonFedericoAluar_HOMOGENEO.pptx](02_Presentacion_PPTX/TrabajoFinalEyTBChillonFedericoAluar_HOMOGENEO.pptx)
-4. **Modelo en Notebook**: [03_Modelo_y_Codigo/ValuacionAluar_M1-13_MASTER.ipynb](03_Modelo_y_Codigo/ValuacionAluar_M1-13_MASTER.ipynb)
-5. **Modelo en Excel**: [04_Modelo_Excel/Valuacion_Aluar_Modelo_Oficial.xlsx](04_Modelo_Excel/Valuacion_Aluar_Modelo_Oficial.xlsx)
-6. **Tratado y Guía de Estudio (PDF)**: [05_Guia_de_Estudio/GUIA_DE_ESTUDIO_ALUAR.pdf](05_Guia_de_Estudio/GUIA_DE_ESTUDIO_ALUAR.pdf)
+* **Ejecutar el Motor Cuantitativo Completo:**
+  ```bash
+  python 03_Modelo_y_Codigo/engine_valuacion.py
+  ```
+* **Compilar la Guía de Estudio (53 Páginas):**
+  ```bash
+  cd 05_Guia_de_Estudio
+  xelatex -interaction=nonstopmode GUIA_DE_ESTUDIO_ALUAR.tex
+  ```
+* **Regenerar el Informe Word con Paridad 1:1:**
+  ```bash
+  cd 01_Reporte_PDF
+  python generate_master_word_report.py
+  ```
 
 ---
-
-## Fuentes de Información
-
-- **Estados Contables y Memorias Anuales de Aluar (2020–2025)**: Comisión Nacional de Valores (CNV) y Bolsas y Mercados Argentinos (BYMA).
-- **Mercado y Tasas**: J.P. Morgan (EMBI+), NYU Stern / Damodaran (ERP & Betas), CBOE (US 10-Year Treasury Yield), London Metal Exchange (LME Aluminium Spot & Futures).
-- **Industria**: International Aluminium Institute (IAI) y reportes financieros de pares internacionales.
-
----
-
-© 2026 Federico Agustín Chillón — UNCuyo. Ver [LICENSE](LICENSE).
+*Mendoza, República Argentina — Agosto de 2026*

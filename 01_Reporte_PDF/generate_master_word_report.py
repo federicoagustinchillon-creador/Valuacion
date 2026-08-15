@@ -565,11 +565,8 @@ def build_full_word_document():
     
     p_div = doc.add_paragraph()
     p_div.paragraph_format.space_before = Pt(2)
-    p_div.paragraph_format.space_after = Pt(2)
-    r_div = p_div.add_run("―" * 68)
-    r_div.font.size = Pt(9)
-    r_div.font.bold = True
-    r_div.font.color.rgb = COLOR_NAVY
+    p_div.paragraph_format.space_before = Pt(1)
+    p_div.paragraph_format.space_after = Pt(1)
     
     p_aviso = doc.add_paragraph()
     p_aviso.paragraph_format.space_after = Pt(4)
@@ -657,9 +654,8 @@ def build_full_word_document():
     p_sep = box_cell.add_paragraph()
     p_sep.paragraph_format.space_before = Pt(1)
     p_sep.paragraph_format.space_after = Pt(1)
-    r_sp = p_sep.add_run("―" * 32)
-    r_sp.font.size = Pt(7)
-    r_sp.font.color.rgb = COLOR_NAVY
+    p_sep.paragraph_format.space_before = Pt(1)
+    p_sep.paragraph_format.space_after = Pt(1)
     
     params_data = [
         ["Costo de Capital (WACC):", "7,06%"],
@@ -689,9 +685,8 @@ def build_full_word_document():
     p_sep2 = box_cell.add_paragraph()
     p_sep2.paragraph_format.space_before = Pt(1)
     p_sep2.paragraph_format.space_after = Pt(1)
-    r_sp2 = p_sep2.add_run("―" * 32)
-    r_sp2.font.size = Pt(7)
-    r_sp2.font.color.rgb = COLOR_BORDER
+    p_sep2.paragraph_format.space_before = Pt(1)
+    p_sep2.paragraph_format.space_after = Pt(1)
     
     p_cal = box_cell.add_paragraph()
     p_cal.paragraph_format.space_after = Pt(0)
@@ -701,8 +696,8 @@ def build_full_word_document():
     # Cuadro Inferior de Portada: Divergencias Clave
     doc.add_paragraph().paragraph_format.space_after = Pt(2)
     divergencias_bullets = [
-        "**Normalización del EBITDA vs. Múltiplo Deprimido:** El mercado asigna un múltiplo histórico deprimido (13,4x EV/EBITDA) sobre el ejercicio recesivo FY2025; nuestro modelo demuestra que la normalización operativa en FY2026E (EBITDA USD 391,2 MM) reduce el múltiplo forward a 5,2x.",
-        "**Desapalancamiento Acelerado Post-CAPEX:** Tras finalizar la etapa intensiva del parque eólico, el flujo de caja operativo reduce la Deuda Neta a <1,0x EBITDA hacia FY2028E, liberando recursos para dividendos.",
+        "**Normalización del EBITDA vs. Múltiplo Deprimido:** El mercado asigna un múltiplo histórico deprimido (13,4x EV/EBITDA) sobre el ejercicio recesivo 2025; nuestro modelo demuestra que la normalización operativa en 2026e (EBITDA USD 391,2 MM) reduce el múltiplo forward a 5,2x.",
+        "**Desapalancamiento Acelerado Post-CAPEX:** Tras finalizar la etapa intensiva del parque eólico, el flujo de caja operativo reduce la Deuda Neta a <1,0x EBITDA hacia 2028e, liberando recursos para dividendos.",
         "**Cobertura Operativa y Factor λ = 0,20:** El mercado sobreestima la prima por riesgo soberano al asumir λ = 1,0; el 80% de ventas en moneda dura y costos fijos en pesos justifican un costo de capital de 7,06%."
     ]
     add_callout_box(doc, "Divergencias Clave frente a las Expectativas de Mercado (Tesis de Diferenciación)", divergencias_bullets, border_color=HEX_BLUE, bg_color=HEX_LIGHT_BG)
@@ -724,11 +719,7 @@ def build_full_word_document():
     p_title.paragraph_format.space_after = Pt(2)
     add_rich_runs(p_title, "Índice General de Secciones y Contenidos", font_size=Pt(12.0), color=COLOR_NAVY, bold_all=True)
     
-    p_r1 = doc.add_paragraph()
-    p_r1.paragraph_format.space_after = Pt(3)
-    r1 = p_r1.add_run("―" * 32)
-    r1.font.size = Pt(8)
-    r1.font.color.rgb = COLOR_NAVY
+    
     
     p_toc = doc.add_paragraph()
     p_toc.paragraph_format.space_before = Pt(2)
@@ -738,12 +729,7 @@ def build_full_word_document():
     fldSimple.set(qn('w:instr'), 'TOC \\o "1-2" \\h \\z \\u')
     run._r.append(fldSimple)
     
-    p_r2 = doc.add_paragraph()
-    p_r2.paragraph_format.space_before = Pt(3)
-    p_r2.paragraph_format.space_after = Pt(2)
-    r2 = p_r2.add_run("―" * 32)
-    r2.font.size = Pt(8)
-    r2.font.color.rgb = COLOR_GRAY
+    
     
     p_desc = doc.add_paragraph()
     p_desc.paragraph_format.space_after = Pt(0)
