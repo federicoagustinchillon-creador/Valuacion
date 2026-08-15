@@ -16,7 +16,6 @@ import numpy as np
 import pandas as pd
 
 DIR = os.path.dirname(os.path.abspath(__file__))
-CACHE = os.path.join(DIR, "cache_mercado.parquet")
 CACHE_CSV = os.path.join(DIR, "cache_mercado.csv")
 
 FECHA_CORTE = "2026-07-23"          # ultima rueda incluida

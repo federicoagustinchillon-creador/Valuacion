@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-fix_all_charts_flawless.py
-Regenera todas las figuras eliminando cualquier solapamiento posible,
-especialmente en Figura 10 (labels de energía), Figura 3 (x-ticks),
-Figura 5 (leyenda), Figura 6 (x-ticks) y todas las demás.
+graficos.py -- Generador de figuras institucionales para la
+valuación de Aluar Aluminio Argentino S.A.I.C. (ALUA.BA).
+Produce las 31 figuras en 03_Modelo_y_Codigo/figuras/.
 """
 
 import os, json, shutil
@@ -15,13 +14,9 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 
-DIR = r'c:\Users\fedea\Valuacion\valuacion-aluar-uncuyo\03_Modelo_y_Codigo'
+DIR = os.path.dirname(os.path.abspath(__file__))
 FIGDIR = os.path.join(DIR, "figuras")
-FIGDIR_PRISTINE = os.path.join(os.path.dirname(DIR), "Assets_Oficiales_Pristinos")
-FIGDIR_TEX = os.path.join(os.path.dirname(DIR), "01_Reporte_PDF", "figures_pristine")
-
-for d in [FIGDIR, FIGDIR_PRISTINE, FIGDIR_TEX]:
-    os.makedirs(d, exist_ok=True)
+os.makedirs(FIGDIR, exist_ok=True)
 
 C = {
     "navy":    "#0F2C59",
@@ -68,8 +63,6 @@ def exportar(fig, nombre, dpi=300):
     fig.patch.set_edgecolor('none')
     fig.savefig(p_png, dpi=dpi, facecolor="white", edgecolor="none", bbox_inches="tight", pad_inches=0.01)
     plt.close(fig)
-    for outdir in (FIGDIR_TEX, FIGDIR_PRISTINE):
-        shutil.copy2(p_png, os.path.join(outdir, f"{nombre}.png"))
     return p_png
 
 def cargar_fuentes_datos():
@@ -384,7 +377,7 @@ def plot_figura_10(res, stat):
     ax2.scatter(percentiles_pts, sorted_costs, color=C["navy"], s=22, zorder=3)
     ax2.axhline(aluar_cost, color=C["value"], linestyle="--", lw=1.6, label=f"Aluar: ${aluar_cost:,.0f}")
     ax2.axvline(aluar_percentil, color=C["aluar"], linestyle=":", lw=1.8, label=f"P18%")
-    ax2.set_xlabel("Percentil Global (%) $\cdot$ Curva C1 (USD/t)", fontsize=8.5, fontweight="bold", color=C["navy"])
+    ax2.set_xlabel(r"Percentil Global (%) $\cdot$ Curva C1 (USD/t)", fontsize=8.5, fontweight="bold", color=C["navy"])
     ax2.set_ylim(min(sorted_costs)*0.9, max(sorted_costs)*1.12)
     ax2.legend(frameon=False, fontsize=7.2, loc="upper left")
     ax2.grid(axis="y", color=C["grid"], linewidth=0.8)

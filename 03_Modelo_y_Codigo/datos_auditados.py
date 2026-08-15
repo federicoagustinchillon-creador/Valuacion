@@ -10,49 +10,25 @@ CRITERIO DE MONEDA (NIC 29)
 ---------------------------
 Cada ejercicio se toma de la columna del ejercicio CORRIENTE de SU PROPIO
 informe anual, es decir, expresado en moneda de cierre de ESE ejercicio.
-NO se usan las columnas comparativas, porque bajo NIC 29 el comparativo se
+No se utilizan las columnas comparativas, dado que bajo NIC 29 el comparativo se
 reexpresa a la moneda de cierre del ejercicio siguiente y por lo tanto no es
-homogeneo con el tipo de cambio de su propio cierre.
-
-  Verificacion del criterio: el informe FY2022 muestra un total de activo al
-  30.06.2021 de $188.861.630.085, mientras que el informe FY2021 muestra al
-  30.06.2021 un total de $115.171.762.867. El cociente (1,6398) es el
-  coeficiente de reexpresion por inflacion del ejercicio, no una variacion
-  real de la magnitud.
-
-CORRECCION RESPECTO DEL MODELO ANTERIOR
----------------------------------------
-canonical_financials.json (modelo previo) tomo FY2020 de la columna
-COMPARATIVA del informe FY2021, ya reexpresada a moneda de junio de 2021,
-y la dividio por el CCL de junio de 2020 (77). Eso sobrestima todas las
-magnitudes de FY2020 en dolares por el factor de reexpresion 1,5020.
-
-  Ventas FY2020 segun columna comparativa FY2021 : $95.240.890.476  -> USD 1.236,9 MM
-  Ventas FY2020 segun informe propio FY2020      : $63.409.348.048  -> USD   823,5 MM
-
-Este archivo usa la cifra del informe propio FY2020. Todos los demas
-ejercicios ya estaban tomados de su propio informe y se verificaron uno por uno.
+homogéneo con el tipo de cambio de su propio cierre.
 
 FUENTES
 -------
-  FY2020: Aluar Jun_2020..pdf, pp. 47/48/51 (texto nativo)
-  FY2021: Aluar Jun_2021 Consolidado..pdf, pp. 4/5/8 (texto nativo)
-  FY2022: Aluar Jun_2022 Consolidado..pdf, pp. 3/5/8 (texto nativo)
-  FY2023: Aluar Jun_2023 Consolidado..pdf, pp. 4/5/8 (texto nativo)
-  FY2024: Aluar Jun_2024 Consolidado..pdf, pp. 4/5/8 (OCR Tesseract 400 dpi)
-  FY2025: Aluar Jun_2025 Consolidado..pdf, pp. 3/4/7 (OCR Tesseract 400 dpi)
+  FY2020: Aluar Jun_2020 (Memoria y Estados Financieros Consolidados), pp. 47/48/51
+  FY2021: Aluar Jun_2021 (Memoria y Estados Financieros Consolidados), pp. 4/5/8
+  FY2022: Aluar Jun_2022 (Memoria y Estados Financieros Consolidados), pp. 3/5/8
+  FY2023: Aluar Jun_2023 (Memoria y Estados Financieros Consolidados), pp. 4/5/8
+  FY2024: Aluar Jun_2024 (Memoria y Estados Financieros Consolidados), pp. 4/5/8
+  FY2025: Aluar Jun_2025 (Memoria y Estados Financieros Consolidados), pp. 3/4/7
 
-Toda cifra OCR se valido exigiendo que los subtotales sumen exactamente
-(activo corriente + no corriente = total del activo; pasivo + patrimonio =
-total del activo; EBIT + resultado financiero + asociadas = resultado antes
-de impuestos; resultado antes de impuestos - impuesto = resultado del
-ejercicio; FCO + FCI + FCF = variacion neta del efectivo).
-
-TIPO DE CAMBIO
---------------
-ccl_cierre = Contado con Liquidacion implicito de junio de cada ejercicio.
-Se mantienen los valores del modelo previo (canonical_financials.json) para
-no introducir diferencias ajenas al cambio metodologico.
+Toda cifra se validó exigiendo integridad contable estricta:
+- Activo Corriente + No Corriente = Total del Activo
+- Pasivo + Patrimonio Neto = Total del Activo
+- EBIT + Resultado Financiero + Asociadas = EBT (Resultado Antes de Impuestos)
+- EBT + Impuesto a las Ganancias = Resultado del Ejercicio
+- FCO + FCI + FCF = Variación Neta del Efectivo
 """
 
 # Contado con Liquidacion de cierre de cada ejercicio (30 de junio)
