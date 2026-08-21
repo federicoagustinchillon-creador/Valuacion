@@ -59,6 +59,7 @@ import pandas as pd
 
 import datos_auditados as DA
 import m1_mercado as M1
+import modelos_estocasticos as ME
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 RAIZ = DIR if os.path.exists(os.path.join(DIR, "static_inputs.json")) else os.path.dirname(DIR)
@@ -803,6 +804,43 @@ def anexo(mkt, cc, est, panel) -> dict:
 
 
 # ===========================================================================
+# EXTENSIONES ESTOCASTICAS (M13-M17) -- ver modelos_estocasticos.py
+# ===========================================================================
+def extensiones_estocasticas(mkt, cc, est, panel, cache_mercado) -> dict:
+    """
+    Corre los modelos de modelos_estocasticos.py: beta dinamico por Filtro
+    de Kalman (M13), proceso CIR del EMBI+ (M14), difusion con saltos de
+    Merton sobre ALUA (M15) y copula de dependencia de colas ALUA-Merval
+    (M16). Cada uno reemplaza a un numero que antes vivia SOLO en el
+    informe/PPTX (o a una constante sin calibrar en graficos.py) por una
+    funcion que corre sobre los datos de mercado del repositorio.
+
+    No incluye M18 (opcion real PEAL V): el pricer esta escrito y validado
+    en modelos_estocasticos.lsmc_opcion_americana(), pero requiere un
+    insumo (el valor presente del proyecto incremental) que no tiene fuente
+    en este repositorio -- ver el docstring de m18_opcion_real_peal_v().
+    El Sobol (M17) tampoco se corre aqui: necesita al DCF como funcion
+    objetivo y se deja disponible para invocarse aparte (es mas lento).
+    """
+    m13 = ME.m13_beta_kalman(panel, mkt["fecha_corte"], mkt["beta_ols"])
+    ME.guardar_kalman_csv(m13)
+
+    st = json.load(open(os.path.join(RAIZ, "static_inputs.json"), encoding="utf-8"))
+    m14 = ME.m14_cir_embi(st["embi_hist"]["values"])
+
+    m15 = ME.m15_merton_jumps(cache_mercado)
+
+    m16 = ME.m16_copula_colas(cache_mercado)
+
+    return {
+        "m13_beta_kalman": {k: v for k, v in m13.items() if k not in ("fechas", "beta_serie", "beta_var_filtro")},
+        "m14_cir_embi": m14,
+        "m15_merton_jumps": m15,
+        "m16_copula_colas": m16,
+    }
+
+
+# ===========================================================================
 # ORQUESTADOR
 # ===========================================================================
 def run(forzar_descarga=False) -> dict:
@@ -854,6 +892,9 @@ def run(forzar_descarga=False) -> dict:
     res["m12_multiplos"] = m12_multiplos(est, dcf, mkt, panel)
     m2 = res["m2_estadistica"]
     m2["sharpe"] = (m2["retorno_anual"] - mkt["rf"]) / m2["vol_anual"]
+
+    cache_mercado = pd.read_csv(M1.CACHE_CSV, parse_dates=["Date"])
+    res["extensiones_estocasticas"] = extensiones_estocasticas(mkt, cc, est, panel, cache_mercado)
     return res
 
 

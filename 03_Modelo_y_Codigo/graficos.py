@@ -14,6 +14,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 
+import modelos_estocasticos as ME
+
 DIR = os.path.dirname(os.path.abspath(__file__))
 FIGDIR = os.path.join(DIR, "figuras")
 os.makedirs(FIGDIR, exist_ok=True)
@@ -967,18 +969,20 @@ def plot_figura_28(res, stat):
 
 def plot_figura_29(res, stat):
     m6 = res["m6_costo_capital"]
-    embi_hist_pb = np.asarray(res["m3_macro"]["embi_valores"], dtype=float)
-    theta = float(np.mean(embi_hist_pb))
-    kappa = 0.35
+    # kappa, theta y sigma salen del ajuste real de modelos_estocasticos.m14_cir_embi()
+    # (metodo de momentos sobre la regresion AR(1) del EMBI+, con verificacion de
+    # la condicion de Feller) -- ya no son constantes sueltas en este archivo.
+    cir = res["extensiones_estocasticas"]["m14_cir_embi"]
+    theta = cir["theta_pb"]
+    kappa = cir["kappa"]
+    sigma_cir = cir["sigma"]
     embi0 = m6["embi"] * 10000
 
     rng = np.random.default_rng(42)
     n_meses, n_paths = 121, 1000
     t = np.arange(n_meses)
     dt = 1.0 / 12.0
-    
-    sigma_max = np.sqrt(2 * kappa * theta)
-    sigma_cir = min(float(np.std(np.diff(embi_hist_pb))) / np.sqrt(theta), sigma_max * 0.85)
+
     paths_cir = np.zeros((n_paths, n_meses))
     paths_cir[:, 0] = embi0
 
@@ -1042,19 +1046,15 @@ def plot_figura_30(res, stat):
     return exportar(fig, "figura_30")
 
 def plot_figura_31(res, stat, muestra):
-    rng = np.random.default_rng(42)
     n = len(muestra)
-    theta_clayton = 1.225
-    
-    v = rng.gamma(1.0/theta_clayton, 1.0, size=n)
-    u1 = rng.uniform(0, 1, size=n)
-    x1 = (1.0 - np.log(u1)/v) ** (-1.0/theta_clayton)
-    
-    from scipy.stats import norm
-    q1 = norm.ppf(np.clip(x1, 1e-5, 1-1e-5))
-    muestra_clayton = float(np.median(muestra)) + q1 * float(np.std(muestra)) * 0.95
-    muestra_clayton = np.where(q1 < -1.5, muestra_clayton - 32.0, muestra_clayton)
-    
+    # theta sale del ajuste real por MLE de modelos_estocasticos.m16_copula_colas()
+    # (Clayton vs. Gaussiana vs. t-Student sobre ALUA-USD/Merval-USD, comparadas
+    # por AIC) -- ya no es una constante suelta, y no hay corrimiento manual
+    # sobre la cola: simular_cocaida_clayton() simula la copula de punta a punta.
+    theta_clayton = res["extensiones_estocasticas"]["m16_copula_colas"]["clayton"]["theta"]
+    muestra_clayton = ME.simular_cocaida_clayton(
+        theta_clayton, mu=float(np.median(muestra)), sigma=float(np.std(muestra)), n=n)
+
     p5_clayton = float(np.percentile(muestra_clayton, 5))
     p50_clayton = float(np.median(muestra_clayton))
     p95_clayton = float(np.percentile(muestra_clayton, 95))
