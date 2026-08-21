@@ -26,8 +26,8 @@ El repositorio público de entrega comprende **4 módulos temáticos oficiales**
 valuacion-aluar-uncuyo/
 │
 ├── 01_Reporte_PDF/
-│   ├── Informe_Valuacion_Aluar_UNCuyo.pdf   # Informe Institucional de Valuación (16 páginas exactas, XeLaTeX)
-│   └── Informe_Valuacion_Aluar_UNCuyo.docx  # Informe Institucional en Word (16 páginas exactas, paridad 1:1)
+│   ├── Informe_Valuacion_Aluar_UNCuyo.pdf   # Informe Institucional de Valuación (21 páginas, XeLaTeX)
+│   └── Informe_Valuacion_Aluar_UNCuyo.docx  # Informe Institucional en Word (mismo contenido y datos que el PDF; la paginación exacta puede variar levemente según el motor de renderizado)
 │
 ├── 02_Presentacion_PPTX/
 │   └── Presentacion_Valuacion_Aluar_UNCuyo.pptx # Diapositivas ejecutivas institucionales (16:9)

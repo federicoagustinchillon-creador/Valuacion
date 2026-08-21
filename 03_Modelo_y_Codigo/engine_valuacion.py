@@ -36,8 +36,8 @@ DECISIONES METODOLOGICAS (acordadas con el autor del trabajo)
      reapalancar con D/E objetivo). La regresion es contra el S&P 500, no
      contra el Merval: por eso el riesgo pais se suma aparte y no se
      duplica el computo del riesgo soberano.
-  3. Tasa impositiva estatutaria plana del 35% (Ley 20.628) los cinco anios.
-  4. Descuento segun la fila 32 de la plantilla: el primer anio proyectado no
+  3. Tasa impositiva estatutaria plana del 35% (Ley 20.628) los cinco años.
+  4. Descuento segun la fila 32 de la plantilla: el primer año proyectado no
      se descuenta y los siguientes llevan exponentes 1, 2, 3 y 4. El valor
      terminal se descuenta por (1 + WACC)^4 para que sea consistente.
   5. g de perpetuidad = 2,0%. La plantilla trae 2,5% pre-cargado en FCFF!J14,
@@ -500,7 +500,7 @@ def m9_monte_carlo(cc, pro, mkt, dn, est, n_sim=20000, semilla=42) -> dict:
     deriva del error estandar del beta; la del flujo, del error estandar
     de la MEDIA historica del margen EBITDA (no de su desvio anual).
 
-    El shock de margen se aplica en un unico sorteo por corrida a los 5 anios
+    El shock de margen se aplica en un unico sorteo por corrida a los 5 años
     de FCFF proyectado y al flujo terminal (perpetuidad): representa una
     hipotesis sobre el NIVEL DE LARGO PLAZO del margen, no el ruido de un
     ejercicio puntual. Por eso su sigma correcto es el error estandar de la

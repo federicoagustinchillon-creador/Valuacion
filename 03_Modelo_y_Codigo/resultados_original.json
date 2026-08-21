@@ -19,7 +19,7 @@
   "beta_alpha": 0.00014209616984388936,
   "beta_r2": 0.08598025304573453,
   "beta_n_obs": 2376,
-  "beta_fuente": "OLS diario 10 anios, ALUA.BA homogeneizada a USD via CCL, contra ^GSPC",
+  "beta_fuente": "OLS diario 10 años, ALUA.BA homogeneizada a USD via CCL, contra ^GSPC",
   "merval_vol_anual": 0.5454151650615585,
   "lme_spot_usd_tn": 3564.5
  },

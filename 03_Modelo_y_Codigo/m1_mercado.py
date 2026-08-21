@@ -19,7 +19,7 @@ DIR = os.path.dirname(os.path.abspath(__file__))
 CACHE_CSV = os.path.join(DIR, "cache_mercado.csv")
 
 FECHA_CORTE = "2026-07-23"          # ultima rueda incluida
-FECHA_INICIO = "2016-07-01"         # 10 anios de historia
+FECHA_INICIO = "2016-07-01"         # 10 años de historia
 
 TICKERS = {
     "ALUA.BA": "alua_ars",      # ALUAR en BYMA
@@ -30,7 +30,7 @@ TICKERS = {
     "TXAR.BA": "txar_ars",      # Ternium Argentina
     "ALI=F":   "lme",           # futuro de aluminio LME
     "DX-Y.NYB": "dxy",          # indice dolar
-    "^TNX":    "us10y",         # rendimiento del Tesoro a 10 anios (x100)
+    "^TNX":    "us10y",         # rendimiento del Tesoro a 10 años (x100)
 }
 
 # --- Insumos que no provienen de una API de precios -------------------------
@@ -88,8 +88,8 @@ def run(forzar_descarga=False) -> dict:
     alua_px = float(d["alua_ars"].dropna().iloc[-1])
     rf = float(d["us10y"].dropna().iloc[-1]) / 100.0
 
-    # --- Beta OLS contra el S&P 500, retornos diarios en dolares, 10 anios --
-    # Ventana de 10 anios: es la que valida el test de quiebre estructural de
+    # --- Beta OLS contra el S&P 500, retornos diarios en dolares, 10 años --
+    # Ventana de 10 años: es la que valida el test de quiebre estructural de
     # Quandt-Andrews (no hay cambio de regimen dentro de la muestra) y la que
     # da una base rica en eventos de cola para el analisis de riesgo.
     ini_beta = pd.Timestamp(FECHA_CORTE) - pd.DateOffset(years=10)
@@ -106,7 +106,7 @@ def run(forzar_descarga=False) -> dict:
     beta_se = float(np.sqrt(s2 / sxx))
     r2 = 1 - (resid ** 2).sum() / ((y - ym) ** 2).sum()
 
-    # --- Volatilidad anualizada del Merval en dolares, 2 anios --------------
+    # --- Volatilidad anualizada del Merval en dolares, 2 años --------------
     ini_2y = pd.Timestamp(FECHA_CORTE) - pd.DateOffset(years=2)
     merv_vol = float(d.loc[ini_2y:, "merval_usd"].pct_change().dropna().std() * np.sqrt(252))
 
@@ -132,7 +132,7 @@ def run(forzar_descarga=False) -> dict:
         "beta_alpha": float(alpha_ols),
         "beta_r2": float(r2),
         "beta_n_obs": int(n),
-        "beta_fuente": "OLS diario 10 anios, ALUA.BA homogeneizada a USD via CCL, contra ^GSPC",
+        "beta_fuente": "OLS diario 10 años, ALUA.BA homogeneizada a USD via CCL, contra ^GSPC",
         "merval_vol_anual": merv_vol,
         "lme_spot_usd_tn": lme_spot,
     }
