@@ -33,15 +33,18 @@ valuacion-aluar-uncuyo/
 │   └── Presentacion_Valuacion_Aluar_UNCuyo.pptx # Diapositivas ejecutivas institucionales (16:9)
 │
 ├── 03_Modelo_y_Codigo/
-│   ├── engine_valuacion.py                  # Motor cuantitativo puro en Python 3.12 (12 módulos analíticos)
+│   ├── engine_valuacion.py                  # Motor cuantitativo puro en Python 3.12 (12 módulos analíticos + extensiones M13-M17)
+│   ├── modelos_estocasticos.py              # Kalman, CIR-MLE, Merton, cópulas, Sobol y LSMC (Longstaff-Schwartz)
 │   ├── Modelo_Cuantitativo_Aluar.ipynb      # Jupyter Notebook interactivo con simulaciones y gráficos
 │   ├── datos_auditados.py                   # Serie histórica y estados contables auditados
 │   ├── graficos.py                          # Generador de figuras de alta resolución (300 DPI)
+│   ├── kalman_beta_series.csv               # Serie de beta dinámico, generada por modelos_estocasticos.m13_beta_kalman()
 │   └── figuras/                             # 31 figuras analíticas oficiales del informe
 │
 ├── 04_Modelo_Excel/
 │   └── Valuacion_Aluar_Modelo_Oficial.xlsx  # Modelo financiero integral en Excel con DCF dinámico
 │
+├── CAMBIOS_PENDIENTES.md                    # Valores del PDF/Word/PPTX desactualizados frente al código actual
 ├── CHANGELOG.md                             # Registro de versiones y cambios del proyecto
 ├── LICENSE                                  # Licencia de uso académico
 ├── README.md                                # Este documento maestro de navegación
@@ -57,12 +60,12 @@ valuacion-aluar-uncuyo/
    * Modelo CAPM-$\lambda$ de Damodaran (Dumrauf Cap. 14) con factor de exposición soberana $\lambda = 0,20$.
    * Desapalancamiento y reapalancamiento del Beta por Hamada (1972) con ajuste bayesiano de Marshall Blume ($\beta_L = 0,888$).
 2. **Opciones Reales (PEAL V):**
-   * Algoritmo de Mínimos Cuadrados Monte Carlo de Longstaff-Schwartz (LSMC) con regresión sobre polinomios ortogonales de Laguerre.
+   * Algoritmo de Mínimos Cuadrados Monte Carlo de Longstaff-Schwartz (LSMC) con regresión sobre polinomios ortogonales de Laguerre, implementado y validado en `modelos_estocasticos.lsmc_opcion_americana()` (contrastado contra Black-Scholes). Aplicarlo a PEAL V requiere el valor presente del proyecto incremental, que no tiene fuente en este repositorio — ver `CAMBIOS_PENDIENTES.md`.
 3. **Modelización Estocástica y Simulación:**
-   * Proceso de Reversión a la Media de Ornstein-Uhlenbeck para el precio spot del aluminio LME ($t_{1/2} = 3,46$ meses).
-   * Proceso Cox-Ingersoll-Ross (CIR) con verificación matemática de la Condición de Feller ($2\kappa\theta > \sigma^2$) para la dinámica de tasas.
+   * Proceso de Reversión a la Media de Ornstein-Uhlenbeck para el precio spot del aluminio LME.
+   * Proceso Cox-Ingersoll-Ross (CIR) sobre el EMBI+, calibrado por método de momentos ($\kappa=0,277$, $\theta=422$ pb, $\sigma=12,84$), con verificación de la Condición de Feller ($2\kappa\theta > \sigma^2$: se cumple) y comparación por AIC contra el AR(1) lineal.
 4. **Teoría de Cópulas y Dependencia Asimétrica en Caídas:**
-   * Cópula de Clayton ($\lambda_L = 0,38$, $\Delta\text{AIC} = -88,9$) para modelar la correlación extrema no lineal entre el commodity y el riesgo soberano.
+   * Cópulas de Clayton, Gaussiana y t-Student ajustadas por máxima verosimilitud sobre ALUA-USD y Merval-USD (proxy diario de riesgo doméstico), comparadas por AIC. Con datos reales, la t-Student ajusta mejor que la Clayton — dependencia de cola simétrica, no asimétrica hacia abajo.
 5. **Gestión Cuantitativa de Riesgo (EVT-GPD):**
    * Modelo Peaks Over Threshold (POT) con Distribución Pareto Generalizada para estimación robusta de VaR 99% (-8,20%) y CVaR 99% (-10,35%).
    * Asignación prudencial de capital bajo el Criterio de *Half-Kelly* ($f = 20,0\%$).
