@@ -267,8 +267,11 @@ def plot_figura_07(res, stat):
     orden = np.argsort(prod)
     paises = [paises[i] for i in orden]
     prod = [prod[i] for i in orden]
-    total_prod = sum(prod)
-    shares = [p / total_prod * 100 for p in prod]
+    # Denominador: produccion primaria mundial total (IAI 2024/2025, ~69.6 MM Tn/ano),
+    # NO la suma de los paises listados en el grafico (que es solo un subconjunto de
+    # los principales productores y subestimaria el total, inflando los shares).
+    total_prod_mundial = 69.6
+    shares = [p / total_prod_mundial * 100 for p in prod]
 
     fig, ax = create_fig(figsize=(4.8, 2.7), margins=dict(left=0.25, right=0.95, top=0.94, bottom=0.15))
     colors = [C["aluar"] if "ALUAR" in p else (C["navy"] if i > 3 else C["slate"]) for i, p in enumerate(paises)]
@@ -369,7 +372,8 @@ def plot_figura_10(res, stat):
     n = len(sorted_costs)
     percentiles_pts = np.linspace(0, 100, n)
     aluar_cost = cash_cost[[i for i, nm in enumerate(names) if "ALUAR" in nm][0]]
-    aluar_percentil = 18.0
+    nombres_ordenados = [names[j] for j in order]
+    aluar_percentil = float(percentiles_pts[[i for i, nm in enumerate(nombres_ordenados) if "ALUAR" in nm][0]])
 
     percentiles_smooth = np.linspace(0, 100, 200)
     costs_smooth = np.interp(percentiles_smooth, percentiles_pts, sorted_costs)
@@ -384,7 +388,7 @@ def plot_figura_10(res, stat):
     ax2.axvline(aluar_percentil, color=C["aluar"], linestyle=":", lw=1.2, alpha=0.7)
     
     ax2.scatter([aluar_percentil], [aluar_cost], color=C["value"], s=60, zorder=5, edgecolor="white", lw=1.5)
-    ax2.annotate("Aluar: USD 1.680/t (P18%)",
+    ax2.annotate(f"Aluar: USD {aluar_cost:,.0f}/t (P{aluar_percentil:.0f}%)",
                  xy=(aluar_percentil, aluar_cost),
                  xytext=(aluar_percentil + 18, aluar_cost - 380),
                  arrowprops=dict(facecolor=C["value"], edgecolor=C["value"], arrowstyle="->", lw=1.1),
