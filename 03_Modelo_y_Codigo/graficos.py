@@ -449,7 +449,7 @@ def plot_figura_12(res, stat):
     m5 = res["m5_proyecciones"]["proyecciones"]
     ebitda_hist = [m4[a]["ebitda"] for a in anios_hist]
     ebitda_proj = [m5[a]["ebitda"] for a in anios_proj]
-    years = ["FY20", "FY21", "FY22", "FY23", "FY24", "FY25", "26E", "27E", "28E", "29E", "30E"]
+    years = ["2020", "2021", "2022", "2023", "2024", "2025", "26E", "27E", "28E", "29E", "30E"]
     ebitda = ebitda_hist + ebitda_proj
 
     fig, ax = create_fig(figsize=(4.8, 2.7), margins=dict(left=0.14, right=0.94, top=0.92, bottom=0.15))
