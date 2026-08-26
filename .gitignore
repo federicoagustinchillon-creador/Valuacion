@@ -21,3 +21,7 @@ desktop.ini
 # Entornos y scratch locales
 .system_generated/
 scratch/
+
+# Scripts locales de generación de PDF/Word (no publicados)
+01_Reporte_PDF/build_pdf.py
+01_Reporte_PDF/generate_master_word_report.py

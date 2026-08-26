@@ -619,8 +619,8 @@ Spread (ROIC - WACC) & -3,33\% & +0,44\% & +10,79\% & -1,84\% & +0,88\% & -3,54\
 
 \subsection{Caso Base y Ajuste por Reinversión del Flujo Terminal}
 \begin{itemize}
-    \item \textbf{Caso Base Oficial (Dumrauf, Cap. 14):} En estado estacionario a plena capacidad (460 kt), $CAPEX = D\&A$ y $\Delta NWC = 0$, por lo que $FCFF_{\text{terminal}} = NOPAT_{2030} = \text{USD } 135,5\text{ MM}$. El valor terminal descontado resulta $TV = \frac{135,5 \times 1,02}{0,0706 - 0,02} = \mathbf{USD\text{ }2.731,4\text{ MM}}$, determinando el precio objetivo de \textbf{ARS 1.268,47}.
-    \item \textbf{Ajuste por Tasa de Reinversión (Damodaran, $ROIC \to WACC$):} Con una reinversión implícita $RR = g / WACC = 2,0\% / 6,95\% = 28,3\%$, el flujo terminal ajustado resulta en $NOPAT \times (1 - RR) = \text{USD } 97,1\text{ MM}$, determinando una valuación de ARS 993,00 por acción.
+    \item \textbf{Caso Base Oficial (Dumrauf, Cap. 14):} En estado estacionario a plena capacidad (460 kt), $CAPEX = D\&A$ y $\Delta NWC = 0$, por lo que $FCFF_{\text{terminal}} = NOPAT_{2030} = \text{USD } 135,5\text{ MM}$. El valor terminal resulta $TV = \frac{135,5 \times 1,02}{0,0695 - 0,02} = \mathbf{USD\text{ }2.791,4\text{ MM}}$, que descontado a valor presente y sumado al flujo explícito determina el precio objetivo de \textbf{ARS 1.268,47}.
+    \item \textbf{Ajuste por Tasa de Reinversión (Damodaran, $ROIC \to WACC$):} Con una reinversión implícita $RR = g / WACC = 2,0\% / 6,95\% = 28,78\%$, el flujo terminal ajustado resulta en $NOPAT \times (1 - RR) = \text{USD } 96,5\text{ MM}$, determinando una valuación de ARS 921,10 por acción.
 \end{itemize}
 
 % ═════════════════════════════════════════════════════════════════════════
@@ -741,7 +741,7 @@ El valor patrimonial se determina mediante el descuento de flujos de fondos libr
 \end{equation}
 \begin{itemize}
     \item \textbf{Precio Objetivo DCF Caso Base:} \textbf{ARS 1.268,47} por acción (USD 0,80, +29,1\% de retorno esperado).
-    \item \textbf{Opción Real sobre la Etapa V Eólica (Longstaff-Schwartz) -- Flexibilidad Gerencial y Diferimiento de CAPEX:} Frente a la rigidez estática del DCF clásico, la opción real cuantifica la flexibilidad gerencial para diferir o ejecutar la ampliación de 312 MW anunciados originalmente (312--336 MW según etapa de construcción) según evolucionen las cotizaciones del metal y el costo eléctrico, modelada mediante mínimos cuadrados (LSMC) con polinomios de Laguerre ($I_0 = \text{USD } 400\text{ MM}$, inversión estimada de la Etapa V, tenor de 5 años, $\sigma = 19,97\%$ del proceso GBM del LME calibrado sobre la serie histórica diaria de cotizaciones del metal (2016--2026), $R_f = 4,70\%$, ahorro de USD 25--30/MWh):
+    \item \textbf{Opción Real sobre la Etapa V Eólica (Longstaff-Schwartz):} Cuantifica el valor de poder diferir o ejecutar la ampliación de 312 MW anunciados originalmente (312--336 MW según etapa de construcción) según evolucionen las cotizaciones del metal y el costo eléctrico, modelada mediante mínimos cuadrados (LSMC) con polinomios de Laguerre ($I_0 = \text{USD } 400\text{ MM}$, inversión estimada de la Etapa V, tenor de 5 años, $\sigma = 19,97\%$ del proceso GBM del LME calibrado sobre la serie histórica diaria de cotizaciones del metal (2016--2026), $R_f = 4,70\%$, ahorro de USD 25--30/MWh):
     \begin{equation}
         \hat{C}(S_t) = \mathbb{E}^{\mathbb{Q}}\left[ e^{-r \Delta t} V_{t+1} \mid S_t \right] = \sum_{j=0}^{2} a_j L_j(S_t)
     \end{equation}
@@ -879,9 +879,9 @@ El análisis comparativo sectorial confirma la divergencia entre la valuación b
 \midrule
 ALUAR (ALUA.BA) & 13,3x & 8,0\% & 14,9\% & 4,3\% & -4,1\% / +12,8\% \\
 Alcoa Corp. (AA) & 8,5x & 6,5\% & 12,0\% & 5,5\% & 4,8\% \\
-Chalco (ACH) & 9,0x & 9,2\% & 15,1\% & 8,0\% & 5,2\% \\
+Chalco (2600.HK) & 9,0x & 9,2\% & 15,1\% & 8,0\% & 5,2\% \\
 Kaiser Aluminum (KALU) & 7,2x & 4,1\% & 9,8\% & 3,5\% & 3,0\% \\
-Norsk Hydro (NHYDY) & 6,4x & 5,8\% & 13,5\% & 6,2\% & 4,1\% \\
+Norsk Hydro (NHY.OL) & 6,4x & 5,8\% & 13,5\% & 6,2\% & 4,1\% \\
 Constellium (CSTM) & 5,4x & 3,2\% & 10,1\% & 5,0\% & 3,5\% \\
 Rusal & 5,1x & -2,0\% & 8,4\% & 2,1\% & 1,5\% \\
 \midrule
@@ -896,7 +896,7 @@ Rusal & 5,1x & -2,0\% & 8,4\% & 2,1\% & 1,5\% \\
 \section{Gestión de Riesgos de Mercado y Asignación Óptima de Cartera}
 
 \subsection{Criterio de Asignación de Kelly y Matriz de Riesgos Operativos}
-En el marco de la teoría moderna de selección de inversiones y optimización de media-varianza (Alexander, Sharpe \& Bailey, 2003), el criterio de crecimiento de Kelly determina una fracción teórica óptima de:
+El criterio de crecimiento de Kelly (Alexander, Sharpe \& Bailey, 2003) determina una fracción teórica óptima de:
 \begin{equation}
     f^* = \frac{\mu - R_f}{\sigma^2} = \frac{24,63\% - 4,70\%}{(52,06\%)^2} = \mathbf{73,5\%} \text{ (Full-Kelly)} \implies Half-Kelly = \mathbf{36,8\%}
 \end{equation}
@@ -1081,7 +1081,7 @@ Se calibraron por máxima verosimilitud tres estructuras de cópulas sobre retor
 \end{figure}
 
 \subsection{Diagnóstico Econométrico y Convalidación del Modelo de Valuación}
-La validez del modelo fundamental descansa en la verificación econométrica de sus supuestos. La ventana muestral de 10 años (2016--2026, $N=2.344$ retornos diarios) fue seleccionada para capturar un ciclo completo de materias primas y riesgo soberano, evitando la distorsión estructural de regímenes previos (Convertibilidad y defaults 2001--2005) donde la capacidad instalada y la matriz energética de Aluar eran sustancialmente distintas. El test de estabilidad de Quandt-Andrews sobre la regresión de mercado ($\sup F = 11,27$, $p \approx 0,00$ por bootstrap de residuos, recorte 15\,\%--85\,\%) sí detecta un quiebre paramétrico significativo, fechado el 19 de marzo de 2020 (semana del colapso global por COVID-19): el Beta salta de 1,208 en el tramo previo a 0,665 en el posterior. Se conserva de todos modos la regresión de 10 años sin segmentar porque (i) es la ventana estándar de referencia para el Beta OLS en la práctica de valuación, (ii) el quiebre corresponde a un evento de mercado extremo y transitorio, no a un cambio estructural del negocio de Aluar, y (iii) el propio proceso de Blume y el Filtro de Kalman de la Sección \ref{subsec:kalman-garch} ya corrigen el Beta hacia su nivel reciente, absorbiendo en la práctica el efecto del quiebre. Se documenta el resultado completo del test, en lugar de omitirlo, precisamente porque contradice la hipótesis de estabilidad y el lector debe poder juzgarlo.
+La validez del modelo fundamental descansa en la verificación econométrica de sus supuestos. La ventana muestral de 10 años (2016--2026, $N=2.344$ retornos diarios) fue seleccionada para capturar un ciclo completo de materias primas y riesgo soberano, evitando la distorsión estructural de regímenes previos (Convertibilidad y defaults 2001--2005) donde la capacidad instalada y la matriz energética de Aluar eran sustancialmente distintas. El test de estabilidad de Quandt-Andrews sobre la regresión de mercado ($\sup F = 11,27$, $p \approx 0,00$ por bootstrap de residuos, recorte 15\,\%--85\,\%) sí detecta un quiebre paramétrico significativo, fechado el 19 de marzo de 2020 (semana del colapso global por COVID-19): el Beta salta de 1,208 en el tramo previo a 0,665 en el posterior. Se conserva de todos modos la regresión de 10 años sin segmentar porque (i) es la ventana estándar de referencia para el Beta OLS en la práctica de valuación, (ii) el quiebre corresponde a un evento de mercado extremo y transitorio, no a un cambio estructural del negocio de Aluar, y (iii) el propio proceso de Blume y el Filtro de Kalman de la Sección \ref{subsec:kalman-garch} ya corrigen el Beta hacia su nivel reciente, absorbiendo en la práctica el efecto del quiebre.
 
 \begin{table}[H]
 \centering
