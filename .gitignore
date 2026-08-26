@@ -1,0 +1,23 @@
+# Archivos de compilación y temporales
+*.aux
+*.log
+*.out
+*.toc
+*.synctex*
+*.bak*
+*.tmp
+
+# Caches de Python
+__pycache__/
+*.pyc
+
+# Archivos de sistema operativo y bloqueos de Office
+.DS_Store
+Thumbs.db
+desktop.ini
+~$*.pptx
+~$*.docx
+
+# Entornos y scratch locales
+.system_generated/
+scratch/
